@@ -1,0 +1,74 @@
+* {
+    all: unset;
+    font-family:
+        JetBrainsMonoNerdFont,
+        Font Awesome;
+    font-weight: bold;
+    min-height: 0;
+    font-size: 100%;
+    font-feature-settings: '"zero", "ss01", "ss02", "ss03", "ss04", "ss05", "cv31"';
+    padding: 0px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+window#waybar {
+    background: rgba(0, 0, 0, 0);
+}
+
+window#waybar.hidden {
+    opacity: 0.5;
+}
+
+tooltip {
+    background: #24273a;
+    border-radius: 8px;
+}
+
+tooltip label {
+    color: #cad3f5;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.modules-right,
+.modules-center,
+.modules-left {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 0px solid #b4befe;
+    border-radius: 8px;
+}
+
+.modules-left {
+    margin-left: 5px;
+}
+
+.modules-right {
+    margin-right: 5px;
+}
+
+#custom-yapbar,
+#language,
+#network,
+#battery,
+#hardware,
+#clock {
+    color: #dfdfdf;
+    padding: 0px 10px;
+    border-radius: 8px;
+}
+
+@keyframes blink {
+    to {
+        background-color: #000000;
+    }
+}
+
+#battery.critical:not(.charging) {
+    color: #f53c3c;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
