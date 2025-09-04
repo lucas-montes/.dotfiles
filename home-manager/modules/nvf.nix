@@ -4,6 +4,7 @@
     enable = true;
     settings = {
       vim = {
+        withNodeJs = false;
         navigation = {harpoon = {enable = true;};};
         notes.todo-comments.enable = true;
         options = {

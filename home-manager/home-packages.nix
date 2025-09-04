@@ -1,6 +1,8 @@
 {pkgs, ...}: {
   nixpkgs.config.allowUnfree = true;
   home.packages = [
+    pkgs.azahar
+    pkgs.gimp
     pkgs.obs-studio
     pkgs.audacity
     pkgs.nomacs

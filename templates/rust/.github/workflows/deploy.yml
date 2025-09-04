@@ -1,0 +1,98 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Image tag (e.g., vx.x.x or vx.x.x-payment) you can find the image tag from the "Build Image" workflow run'
+        required: true
+        type: string
+      environment:
+        required: true
+        type: choice
+        options: [staging, production]
+
+env:
+  CARGO_TERM_COLOR: always
+  IMAGE_NAME: ${{ github.repository }}
+  REGISTRY: ghcr.io
+  USERNAME: ${{ github.actor }}
+  PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set deployment variables
+        id: deployment-variables
+        run: |
+          REPO_LOWER=$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE=${{ env.REGISTRY }}/${REPO_LOWER}:${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+      
+          if [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
+            echo "DATABASE_URL=${{ secrets.PROD_DATABASE_URL }}" >> $GITHUB_ENV
+            echo "RUST_LOG=stefn=warn,smartlinker=warn,tower_http=warn" >> $GITHUB_ENV
+            echo "STRIPE_PRIVATE_KEY=${{ secrets.STRIPE_PRIVATE_KEY_PROD }}" >> $GITHUB_ENV
+            echo "WEB_STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}" >> $GITHUB_ENV
+            echo "WEB_STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY_PROD }}" >> $GITHUB_ENV
+            echo "WEB_DOMAIN=smartlinker.ai" >> $GITHUB_ENV
+          else
+            echo "DATABASE_URL=${{ secrets.STAGE_DATABASE_URL }}" >> $GITHUB_ENV
+            echo "RUST_LOG=stefn=debug,smartlinker=debug,tower_http=warn" >> $GITHUB_ENV
+            echo "STRIPE_PRIVATE_KEY=${{ secrets.STRIPE_PRIVATE_KEY_TEST }}" >> $GITHUB_ENV
+            echo "WEB_STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_TEST }}" >> $GITHUB_ENV
+            echo "WEB_STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY_TEST }}" >> $GITHUB_ENV
+            echo "WEB_DOMAIN=stage.smartlinker.ai" >> $GITHUB_ENV
+          fi
+
+
+      - name: Create env file
+        run: |
+          cat << EOF > env.txt
+          IMAGE=${{ env.IMAGE }}
+          ENV=${{ github.event.inputs.environment }}
+          DATABASE_URL=${{ env.DATABASE_URL }}
+          RUST_LOG=${{ env.RUST_LOG }}
+          SQLITE_VOLUME=${{ github.event.inputs.environment }}_sqlite_data
+          STRIPE_PRIVATE_KEY=${{ env.STRIPE_PRIVATE_KEY }}
+          WEB_STRIPE_WEBHOOK_SECRET=${{ env.WEB_STRIPE_WEBHOOK_SECRET }}
+          WEB_STRIPE_PUBLIC_KEY=${{ env.WEB_STRIPE_PUBLIC_KEY }}
+          WEB_DOMAIN=${{ env.WEB_DOMAIN }}
+          WEB_ALLOWED_ORIGINS=${{ env.WEB_DOMAIN }}
+          WEB_SESSION_KEY=${{ secrets.WEB_SESSION_KEY }}
+          WEB_GOOGLE_CLIENT_ID=${{ secrets.WEB_GOOGLE_CLIENT_ID }}
+          WEB_GOOGLE_CLIENT_SECRET=${{ secrets.WEB_GOOGLE_CLIENT_SECRET }}
+          WEB_CAPTCHA_PUBLIC_KEY=${{ secrets.CAPTCHA_PUBLIC_KEY }}
+          WEB_CAPTCHA_SECRET_KEY=${{ secrets.CAPTCHA_SECRET_KEY }}
+          SENTRY_TOKEN=${{ secrets.SENTRY_TOKEN }}
+          SERVICE_NAME=${{ github.event.inputs.environment }}-smartlinker
+          EOF
+
+      - name: 'Docker Stack Deploy'
+        uses: cssnr/stack-deploy-action@v1
+        with:
+          name: smartlinker_${{ github.event.inputs.environment }}
+          file: infra/smartlinker.yaml
+          host: ${{ secrets.HOST }}
+          user: deploy
+          env_file: env.txt
+          ssh_key: ${{ secrets.SSH_KEY }}
+          registry_auth: true
+          registry_host: ${{ env.REGISTRY }}
+          registry_user: ${{ env.USERNAME }}
+          registry_pass: ${{ env.PASSWORD }}
+      
+      - name: Show Final Summary
+        run: |
+          echo "## 🎉 Pipeline Finished Successfully! ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ env.IMAGE }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** \`${{ github.event.inputs.environment }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**At:** \`${{ env.WEB_DOMAIN }}\`" >> $GITHUB_STEP_SUMMARY
