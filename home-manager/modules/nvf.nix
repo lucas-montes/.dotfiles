@@ -4,6 +4,7 @@
     enable = true;
     settings = {
       vim = {
+        assistant.supermaven-nvim.enable = true;
         withNodeJs = false;
         navigation = {harpoon = {enable = true;};};
         notes.todo-comments.enable = true;
@@ -66,8 +67,8 @@
           sql.enable = true;
           rust.enable = true;
           html.enable = true;
-          css.enable = true;
-          ts.enable = true;
+          css.enable = false;
+          ts.enable = false;
           python.enable = true;
         };
       };
