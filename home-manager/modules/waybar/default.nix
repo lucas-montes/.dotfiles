@@ -7,7 +7,7 @@
         "layer" = "top";
         "position" = "top";
         modules-left = [
-          "custom/yapbar"
+          "custom/maia"
         ];
         modules-center = [
           "clock"
@@ -23,12 +23,11 @@
           format = "{short} {variant}";
         };
 
-        "custom/yapbar" = {
-          exec = "$HOME/Projects/waybar-rusty/target/debug/yapbar";
+        "custom/maia" = {
+          exec = "$HOME/Projects/maia/target/debug/cli waybar";
           format = "  {}";
-          interval = 1800;
+          interval = 60;
           tooltip = true;
-          return-type = "json";
         };
 
         battery = {

@@ -17,10 +17,21 @@
 
   # TODO: maybe move this to the user home-manager
   # Configure keymap in X11
+  # This seems not used, it follows only the hyprland settings
   services.xserver.xkb = {
-    layout = "latam,us";
+    layout = "es,us";
     variant = "";
   };
+
+    #  hardware.tuxedo-keyboard.enable = true;
+
+  # services.xserver.xkb = {
+  #   layout = "es";
+  #   variant = "nodeadkeys";
+  # };
+
+  # Configure console keymap
+  # console.keyMap = "es";
 
   services.printing.enable = true;
   services.printing.drivers = [pkgs.cnijfilter2];

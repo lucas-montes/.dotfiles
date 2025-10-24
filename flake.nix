@@ -9,6 +9,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    #    tuxedo-nixos = {
+    #      url = "github:sund3RRR/tuxedo-nixos";
+    #    };
+
     nvf = {
       url = "github:notashelf/nvf";
     };
@@ -22,10 +26,11 @@
   outputs = {
     nixpkgs,
     home-manager,
+    #    tuxedo-nixos,
     ...
   } @ inputs: let
     system = "x86_64-linux";
-    homeStateVersion = "24.11";
+    homeStateVersion = "25.05";
     user = "lucas";
     pkgs = import nixpkgs {
       inherit system;
@@ -33,7 +38,7 @@
     hosts = [
       {
         hostname = "luctop";
-        stateVersion = "24.11";
+        stateVersion = "25.05";
       }
     ];
 
@@ -49,6 +54,10 @@
 
         modules = [
           ./hosts/${hostname}/configuration.nix
+          #  tuxedo-nixos.nixosModules.default
+          #  {
+          #    hardware.tuxedo-control-center.enable = true;
+          #  }
         ];
       };
   in {
