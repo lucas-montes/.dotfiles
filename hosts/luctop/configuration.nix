@@ -23,8 +23,6 @@
     variant = "";
   };
 
-    #  hardware.tuxedo-keyboard.enable = true;
-
   # services.xserver.xkb = {
   #   layout = "es";
   #   variant = "nodeadkeys";

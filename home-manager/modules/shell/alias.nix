@@ -7,6 +7,7 @@ in {
   con-ap = "bluetoothctl connect F8:4D:89:37:41:A0";
   ro = "sudo nixos-rebuild switch --flake";
   #es = "do {cd ${dotfiles} ; vim .}";
+  sushell = "sudo -E nix-shell -p gparted --run gparted"; #TODO: replace the gparted with other app
   rs = "home-manager switch --flake ${dotfiles}";
   rt = "tmux source ~/.config/tmux/tmux.conf";
   tx = "_new_named_session";
