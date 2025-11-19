@@ -60,6 +60,10 @@
         "diffEditor.diffAlgorithm" = "advanced";
         "diffEditor.experimental.showMoves" = true;
 
+        "files.exclude" = {
+          "**/.git" = false;
+        };
+
         "markdown.preview.fontFamily" = "DejaVu Sans";
         "markdown.preview.fontSize" = 16.0;
         "scm.inputFontFamily" = "JetBrains Mono";
