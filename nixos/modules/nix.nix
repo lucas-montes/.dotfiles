@@ -1,9 +1,7 @@
-{
-  pkgs,
-  ...
-}:{
-nix = {
+{pkgs, ...}: {
+  nix = {
     settings = {
+      trusted-users = ["lucas"];
       auto-optimise-store = true;
       substituters = [
         "https://cache.nixos.org/"
@@ -31,8 +29,8 @@ nix = {
     optimise.automatic = true;
     package = pkgs.nixVersions.stable;
     gc = {
-      automatic = true;dates = "03:15";
+      automatic = true;
+      dates = "03:15";
     };
   };
-
 }

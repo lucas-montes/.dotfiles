@@ -6,33 +6,30 @@
 }: {
   imports = [
     ./hardware-configuration.nix
-    ./local-packages.nix
     ../../nixos/modules
     ../../services/postgres.nix
   ];
 
-  environment.systemPackages = [pkgs.home-manager];
+  environment.systemPackages = [
+    pkgs.home-manager
+    pkgs.openrgb
+    pkgs.curl
+    pkgs.wget
+    pkgs.git
+    pkgs.cudatoolkit
+  ];
 
   networking.hostName = hostname;
 
-  # TODO: maybe move this to the user home-manager
-  # Configure keymap in X11
-  # This seems not used, it follows only the hyprland settings
-  services.xserver.xkb = {
-    layout = "es,us";
-    variant = "";
+  services = {
+    printing.enable = true;
+    xserver.xkb = {
+      layout = "us";
+      variant = "";
+    };
+    gnome.gnome-keyring = {enable = true;};
+    hardware.openrgb.enable = true;
   };
-
-  # services.xserver.xkb = {
-  #   layout = "es";
-  #   variant = "nodeadkeys";
-  # };
-
-  # Configure console keymap
-  # console.keyMap = "es";
-
-  services.printing.enable = true;
-  services.printing.drivers = [pkgs.cnijfilter2];
 
   programs = {
     neovim = {
@@ -44,7 +41,7 @@
     nix-ld.enable = true;
     seahorse.enable = true;
   };
-  services.gnome.gnome-keyring = {enable = true;};
+
   virtualisation.docker.enable = true;
   # Files, browser, screen sharing stuff
   xdg.portal = {

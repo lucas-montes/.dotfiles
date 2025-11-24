@@ -9,7 +9,6 @@
     pkgs.xournalpp
     pkgs.nautilus
 
-    pkgs.rpi-imager
     pkgs.sqlitestudio
 
     pkgs.usbutils
