@@ -12,7 +12,6 @@
 
   environment.systemPackages = [
     pkgs.home-manager
-    pkgs.openrgb
     pkgs.curl
     pkgs.wget
     pkgs.git
@@ -20,6 +19,7 @@
   ];
 
   networking.hostName = hostname;
+  hardware.tuxedo-control-center.enable = true;
 
   services = {
     printing.enable = true;
@@ -28,7 +28,6 @@
       variant = "";
     };
     gnome.gnome-keyring = {enable = true;};
-    hardware.openrgb.enable = true;
   };
 
   programs = {

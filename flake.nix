@@ -13,6 +13,8 @@
       url = "github:notashelf/nvf";
     };
 
+    tuxedo-nixos.url = "github:sund3RRR/tuxedo-nixos";
+
     stylix = {
       url = "github:danth/stylix/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -22,6 +24,7 @@
   outputs = {
     nixpkgs,
     home-manager,
+    tuxedo-nixos,
     ...
   } @ inputs: let
     system = "x86_64-linux";
@@ -49,6 +52,7 @@
 
         modules = [
           ./hosts/${hostname}/configuration.nix
+          tuxedo-nixos.nixosModules.default
         ];
       };
   in {
