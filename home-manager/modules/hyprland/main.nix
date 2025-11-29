@@ -2,6 +2,11 @@
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
+      env = [
+        "LIBVA_DRIVER_NAME,nvidia"
+        "__GLX_VENDOR_LIBRARY_NAME,nvidia"
+      ];
+
       monitor = ",preferred,auto,1";
       "$mainMod" = "SUPER";
       "$terminal" = "ghostty";
@@ -52,7 +57,7 @@
       };
 
       input = {
-        kb_layout = "us,latam";
+        kb_layout = "us,es";
         kb_options = "grp:alt_shift_toggle";
         follow_mouse = false;
       };

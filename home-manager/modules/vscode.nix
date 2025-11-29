@@ -42,6 +42,7 @@
         "git-graph.repository.sign.commits" = true;
         "git-graph.repository.sign.tags" = true;
         "git-graph.repository.commits.showSignatureStatus" = true;
+        "files.exclude"."**/.git" = false;
 
         "chat.editor.fontFamily" = "JetBrains Mono";
         "chat.editor.fontSize" = 16.0;

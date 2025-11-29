@@ -13,6 +13,8 @@
       url = "github:notashelf/nvf";
     };
 
+    tuxedo-nixos.url = "github:sund3RRR/tuxedo-nixos";
+
     stylix = {
       url = "github:danth/stylix/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -22,10 +24,11 @@
   outputs = {
     nixpkgs,
     home-manager,
+    tuxedo-nixos,
     ...
   } @ inputs: let
     system = "x86_64-linux";
-    homeStateVersion = "24.11";
+    homeStateVersion = "25.05";
     user = "lucas";
     pkgs = import nixpkgs {
       inherit system;
@@ -33,7 +36,7 @@
     hosts = [
       {
         hostname = "luctop";
-        stateVersion = "24.11";
+        stateVersion = "25.05";
       }
     ];
 
@@ -49,6 +52,7 @@
 
         modules = [
           ./hosts/${hostname}/configuration.nix
+          tuxedo-nixos.nixosModules.default
         ];
       };
   in {
@@ -70,6 +74,8 @@
         - run `direnv allow` to enter the development environment
       '';
     };
+
+    # nixosConfigurations = nixpkgs.lib.mapAttrs mkNixosConfig hosts;
 
     nixosConfigurations = nixpkgs.lib.foldl' (configs: host:
       configs
