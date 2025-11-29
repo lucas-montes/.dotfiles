@@ -17,7 +17,6 @@
   ];
 
   networking.hostName = "luctop";
-  hardware.tuxedo-control-center.enable = true;
 
   services = {
     printing.enable = true;
