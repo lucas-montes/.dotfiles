@@ -1,6 +1,6 @@
 {
   pkgs,
-  user,
+  mainUser,
   ...
 }: {
   programs.hyprland = {
@@ -13,7 +13,7 @@
     settings = rec {
       initial_session = {
         command = "${pkgs.hyprland}/bin/hyprland";
-        inherit user;
+        inherit mainUser;
       };
       default_session = initial_session;
     };
