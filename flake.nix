@@ -75,6 +75,8 @@
       '';
     };
 
+    # nixosConfigurations = nixpkgs.lib.mapAttrs mkNixosConfig hosts;
+
     nixosConfigurations = nixpkgs.lib.foldl' (configs: host:
       configs
       // {

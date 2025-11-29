@@ -6,7 +6,7 @@
 }: {
   imports = [
     ./hardware-configuration.nix
-    ../../nixos/modules
+    ../../settings
     ../../services/postgres.nix
   ];
 
