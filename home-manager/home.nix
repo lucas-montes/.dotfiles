@@ -1,5 +1,5 @@
 {
-  homeStateVersion,
+  stateVersion,
   mainUser,
   ...
 }: {
@@ -11,7 +11,7 @@
   home = {
     username = mainUser;
     homeDirectory = "/home/${mainUser}";
-    stateVersion = homeStateVersion;
+    stateVersion = stateVersion;
   };
 
   home.sessionVariables = {
