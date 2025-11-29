@@ -1,13 +1,11 @@
 {
   pkgs,
   stateVersion,
-  hostname,
   ...
 }: {
   imports = [
     ./hardware-configuration.nix
     ../../settings
-    ../../services/postgres.nix
   ];
 
   environment.systemPackages = [
@@ -18,7 +16,7 @@
     pkgs.cudatoolkit
   ];
 
-  networking.hostName = hostname;
+  networking.hostName = "luctop";
   hardware.tuxedo-control-center.enable = true;
 
   services = {

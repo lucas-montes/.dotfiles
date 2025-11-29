@@ -28,33 +28,10 @@
     ...
   } @ inputs: let
     system = "x86_64-linux";
-    homeStateVersion = "25.05";
-    user = "lucas";
-    pkgs = import nixpkgs {
-      inherit system;
-    };
-    hosts = [
-      {
-        hostname = "luctop";
-        stateVersion = "25.05";
-      }
-    ];
+    stateVersion = "25.05";
+    mainUser = "lucas";
+    pkgs = import nixpkgs { inherit system; };
 
-    makeSystem = {
-      hostname,
-      stateVersion,
-    }:
-      nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {
-          inherit inputs stateVersion hostname user;
-        };
-
-        modules = [
-          ./hosts/${hostname}/configuration.nix
-          tuxedo-nixos.nixosModules.default
-        ];
-      };
   in {
     # Used by `nix flake init -t <flake>#<name>`
     templates."rust" = {
@@ -77,19 +54,25 @@
 
     # nixosConfigurations = nixpkgs.lib.mapAttrs mkNixosConfig hosts;
 
-    nixosConfigurations = nixpkgs.lib.foldl' (configs: host:
-      configs
-      // {
-        "${host.hostname}" = makeSystem {
-          inherit (host) hostname stateVersion;
-        };
-      }) {}
-    hosts;
+    nixosConfigurations.luctop = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs stateVersion mainUser; };
+        modules = [ ./hosts/luctop/configuration.nix ];
+      };
 
-    homeConfigurations.${user} = home-manager.lib.homeManagerConfiguration {
+      nixosConfigurations.server = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs stateVersion mainUser; };
+        modules = [
+          ./hosts/server/configuration.nix
+          tuxedo-nixos.nixosModules.default
+        ];
+      };
+
+    homeConfigurations.${mainUser} = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       extraSpecialArgs = {
-        inherit inputs homeStateVersion user;
+        inherit inputs stateVersion mainUser;
       };
       modules = [
         ./home-manager/home.nix

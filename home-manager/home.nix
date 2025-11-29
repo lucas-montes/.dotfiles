@@ -1,6 +1,6 @@
 {
   homeStateVersion,
-  user,
+  mainUser,
   ...
 }: {
   imports = [
@@ -9,8 +9,8 @@
   ];
 
   home = {
-    username = user;
-    homeDirectory = "/home/${user}";
+    username = mainUser;
+    homeDirectory = "/home/${mainUser}";
     stateVersion = homeStateVersion;
   };
 

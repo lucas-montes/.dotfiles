@@ -1,7 +1,6 @@
 {
   pkgs,
   stateVersion,
-  hostname,
   ...
 }: {
   imports = [
@@ -18,7 +17,7 @@
     pkgs.cudatoolkit
   ];
 
-  networking.hostName = hostname;
+  networking.hostName = "server";
   hardware.tuxedo-control-center.enable = true;
 
   services = {

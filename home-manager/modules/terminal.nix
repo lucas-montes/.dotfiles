@@ -21,6 +21,5 @@
         confirm-close-surface = false;
       };
     };
-    alacritty.enable = false;
   };
 }
