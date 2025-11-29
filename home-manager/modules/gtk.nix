@@ -1,17 +1,17 @@
 {
-  user,
+  mainUser,
   ...
 }: {
   gtk = {
     enable = true;
     gtk3 = {
       bookmarks = [
-        "file:///home/${user}/Documents"
-        "file:///home/${user}/Downloads"
-        "file:///home/${user}/Pictures"
-        "file:///home/${user}/Downloads/music"
-        "file:///home/${user}/Projects"
-        "file:///home/${user}/Notes"
+        "file:///home/${mainUser}/Documents"
+        "file:///home/${mainUser}/Downloads"
+        "file:///home/${mainUser}/Pictures"
+        "file:///home/${mainUser}/Downloads/music"
+        "file:///home/${mainUser}/Projects"
+        "file:///home/${mainUser}/Notes"
         "file:///data"
       ];
     };

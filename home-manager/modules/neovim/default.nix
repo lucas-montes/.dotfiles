@@ -2,7 +2,6 @@
   config,
   inputs,
   pkgs,
-  user,
   ...
 }: let
   inherit (config.lib.stylix) colors;
