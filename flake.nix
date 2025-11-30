@@ -37,12 +37,22 @@
       {
         hostname = "luctop";
         stateVersion = "25.05";
+        modules = [];
+      }
+      {
+        hostname = "server";
+        stateVersion = "25.05";
+        modules = [
+          tuxedo-nixos.nixosModules.default
+          ./settings/nvidia.nix
+        ];
       }
     ];
 
     makeSystem = {
       hostname,
       stateVersion,
+      modules
     }:
       nixpkgs.lib.nixosSystem {
         inherit system;
@@ -52,8 +62,7 @@
 
         modules = [
           ./hosts/${hostname}/configuration.nix
-          tuxedo-nixos.nixosModules.default
-        ];
+        ] ++ modules;
       };
   in {
     # Used by `nix flake init -t <flake>#<name>`
@@ -81,7 +90,7 @@
       configs
       // {
         "${host.hostname}" = makeSystem {
-          inherit (host) hostname stateVersion;
+          inherit (host) hostname stateVersion modules;
         };
       }) {}
     hosts;

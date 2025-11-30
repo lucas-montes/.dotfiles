@@ -8,6 +8,7 @@
     ./hardware-configuration.nix
     ../../settings
     ../../services/postgres.nix
+    ../../services/git.nix
   ];
 
   environment.systemPackages = [
