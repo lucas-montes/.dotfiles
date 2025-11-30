@@ -57,7 +57,7 @@
     nixosConfigurations.luctop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs stateVersion mainUser; };
-        modules = [ ./hosts/luctop/configuration.nix ];
+        modules = [ ./hosts/luctop/configuration.nix ./settings/nvidia-luctop.nix ];
       };
 
       nixosConfigurations.server = nixpkgs.lib.nixosSystem {
@@ -66,6 +66,7 @@
         modules = [
           ./hosts/server/configuration.nix
           tuxedo-nixos.nixosModules.default
+          ./settings/nvidia.nix
         ];
       };
 

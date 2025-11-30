@@ -6,7 +6,6 @@
   imports = [
     ./hardware-configuration.nix
     ../../settings
-    ../../settings/nvidia.nix
     ../../services/postgres.nix
   ];
 
