@@ -24,22 +24,33 @@ in {
   users.groups.git = {};
   users.users.lucas.extraGroups = ["git"];
 
+   # Create the post-receive hook in /etc with executable permissions
+  environment.etc."git-server/post-receive" = {
+    source = postReceiveHook;
+    mode = "0755";
+  };
+
+  # Create git config in /etc
+  environment.etc."git-server/gitconfig" = {
+    source = gitConfig;
+    mode = "0644";
+  };
+
   # Define filesystem structure and permissions using systemd-tmpfiles
   systemd.tmpfiles.rules = [
-    # Create hooks directory with read/execute permissions for git user/group
-    "d ${gitServerPath}/hooks 755 git git - -"
+    # Create the base git server directory with correct permissions FIRST
+    "d ${gitServerPath} 2775 git git - -"
+
+    # Create hooks directory with group write permissions
+    "d ${gitServerPath}/hooks 2775 git git - -"
 
     # Create symlink from hooks directory to the actual post-receive script
-    # L = create symlink, target is the script created by pkgs.writeScript
-    "L ${gitServerPath}/hooks/post-receive - - - - ${postReceiveHook}"
+    "L ${gitServerPath}/hooks/post-receive - - - - /etc/git-server/post-receive"
 
     # Create symlink to git config file for the git user
-    # L = create symlink, target is the config file created by pkgs.writeText
-    "L ${gitServerPath}/.gitconfig - - - - ${gitConfig}"
+    "L ${gitServerPath}/.gitconfig - - - - /etc/git-server/gitconfig"
 
-    # Z = recursively fix ownership/permissions of git server directory
-    # 2775 = rwxrwsr-x (owner: rwx, group: rws, other: r-x, setgid bit set)
-    # setgid ensures new files inherit the git group
+    # Z = recursively fix ownership/permissions (cleanup pass)
     "Z ${gitServerPath} 2775 git git - -"
   ];
 
