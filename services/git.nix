@@ -10,6 +10,8 @@ gitConfig = pkgs.writeText "gitconfig" ''
       directory = *
 '';
 in {
+  users.groups.git = {};
+
   users.users.git = {
     isSystemUser = true;
     group = "git";
@@ -21,7 +23,6 @@ in {
     ];
   };
 
-  users.groups.git = {};
   users.users.lucas.extraGroups = ["git"];
 
    # Create the post-receive hook in /etc with executable permissions
@@ -45,10 +46,10 @@ in {
     "d ${gitServerPath}/hooks 2775 git git - -"
 
     # Create symlink from hooks directory to the actual post-receive script
-    "L ${gitServerPath}/hooks/post-receive - - - - /etc/git-server/post-receive"
+    "L+ ${gitServerPath}/hooks/post-receive - - - - /etc/git-server/post-receive"
 
     # Create symlink to git config file for the git user
-    "L ${gitServerPath}/.gitconfig - - - - /etc/git-server/gitconfig"
+    "L+ ${gitServerPath}/.gitconfig - - - - /etc/git-server/gitconfig"
 
     # Z = recursively fix ownership/permissions (cleanup pass)
     "Z ${gitServerPath} 2775 git git - -"
