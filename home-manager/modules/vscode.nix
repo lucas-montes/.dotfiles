@@ -48,6 +48,8 @@
         "debug.console.fontFamily" = "JetBrains Mono";
         "debug.console.fontSize" = 16.0;
 
+        "remote.SSH.enableRemoteCommand" = true;
+
         "editor.fontFamily" = "JetBrains Mono";
         "editor.fontSize" = 16.0;
         "editor.inlayHints.fontFamily" = "JetBrains Mono";

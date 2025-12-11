@@ -1,7 +1,4 @@
-{
-  user,
-  ...
-}: {
+{user, ...}: {
   gtk = {
     enable = true;
     gtk3 = {
@@ -13,6 +10,7 @@
         "file:///home/${user}/Projects"
         "file:///home/${user}/Notes"
         "file:///data"
+        #"sftp://lucas@homelab/home/lucas"
       ];
     };
   };
