@@ -16,8 +16,6 @@
     pkgs.ripgrep
     pkgs.jq
 
-    pkgs.code-cursor
-
     pkgs.unzip
     pkgs.zip
 

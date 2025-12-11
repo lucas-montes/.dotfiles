@@ -17,71 +17,74 @@
       url = "github:danth/stylix/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
+    };
   };
 
   outputs = {
     nixpkgs,
     home-manager,
+    nixos-hardware,
     ...
   } @ inputs: let
-    system = "x86_64-linux";
     homeStateVersion = "24.11";
     user = "lucas";
-    pkgs = import nixpkgs {
-      inherit system;
-    };
-    hosts = [
-      {
-        hostname = "luctop";
-        stateVersion = "24.11";
-      }
-    ];
-
-    makeSystem = {
-      hostname,
-      stateVersion,
-    }:
-      nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {
-          inherit inputs stateVersion hostname user;
-        };
-
-        modules = [
-          ./hosts/${hostname}/configuration.nix
-        ];
-      };
   in {
     # Used by `nix flake init -t <flake>#<name>`
-    templates."rust" = {
-      path = ./templates/rust;
-      description = "Template for a rust project";
-      welcomeText = ''
-        # Getting Started
-        - run `direnv allow` to enter the development environment
-      '';
+    templates = {
+      rust = {
+        path = ./templates/rust;
+        description = "Template for a rust project";
+        welcomeText = ''
+          # Getting Started
+          - run `direnv allow` to enter the development environment
+        '';
+      };
+      python = {
+        path = ./templates/python;
+        description = "Template for python project";
+        welcomeText = ''
+          # Getting Started
+          - run `direnv allow` to enter the development environment
+        '';
+      };
     };
 
-    templates."python" = {
-      path = ./templates/python;
-      description = "Template for python project";
-      welcomeText = ''
-        # Getting Started
-        - run `direnv allow` to enter the development environment
-      '';
-    };
-
-    nixosConfigurations = nixpkgs.lib.foldl' (configs: host:
-      configs
-      // {
-        "${host.hostname}" = makeSystem {
-          inherit (host) hostname stateVersion;
+    nixosConfigurations = {
+      # Laptop configuration
+      luctop = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs user;
+          stateVersion = "24.11";
+          hostname = "luctop";
         };
-      }) {}
-    hosts;
+        modules = [
+          ./hosts/luctop/configuration.nix
+        ];
+      };
+
+      # Raspberry Pi 4 configuration
+      raspi4 = nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        specialArgs = {
+          inherit user;
+          hostname = "raspi4";
+        };
+        modules = [
+          "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
+          nixos-hardware.nixosModules.raspberry-pi-4
+          ./hosts/raspi4/configuration.nix
+        ];
+      };
+    };
 
     homeConfigurations.${user} = home-manager.lib.homeManagerConfiguration {
-      inherit pkgs;
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+      };
       extraSpecialArgs = {
         inherit inputs homeStateVersion user;
       };
