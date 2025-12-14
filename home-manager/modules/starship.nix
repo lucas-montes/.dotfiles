@@ -11,7 +11,8 @@ in {
 
         format = lib.strings.concatStrings [
           "[╭](fg:base02)"
-          "$username"
+          # "$username"
+          "\${custom.user_host}"
           "$directory"
 
           "$git_branch"
@@ -30,10 +31,25 @@ in {
           style = "fg:base02";
         };
 
+        custom = {
+          user_host = {
+            command = "echo $USER@$(hostname)";
+            when = "true";
+            shell = ["bash" "--norc" "--noprofile"];
+            format = createAllComponent "purple" "" "$output";
+          };
+        };
+
         username = {
           show_always = true;
           disabled = false;
           format = createAllComponent "purple" "" "$user";
+        };
+
+        hostname = {
+          ssh_only = false;
+          format = createAllComponent "purple" "$ssh_symbol" "$hostname";
+          disabled = false;
         };
 
         directory = {

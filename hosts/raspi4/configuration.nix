@@ -11,6 +11,7 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    ../../services/procurator
   ];
 
   # networking.hostName = "nixos"; # Define your hostname.
@@ -57,20 +58,6 @@
     };
   };
 
-  #NOTE: not sure this is working correctly
-  systemd.services.bluetooth-autoconnect = {
-    description = "Auto-connect to trusted Bluetooth device";
-    after = ["bluetooth.service"];
-    wantedBy = ["multi-user.target"];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
-      ExecStart = "${pkgs.bluez}/bin/bluetoothctl connect 10:12:51:59:00:01";
-      Restart = "on-failure";
-      RestartSec = "5s";
-    };
-  };
-
   hardware = {
     enableRedistributableFirmware = lib.mkForce true;
     bluetooth = {
@@ -99,7 +86,28 @@
 
   services = {
     # Enable the OpenSSH daemon.
-    openssh.enable = true;
+    openssh = {
+    enable = true;
+    ports = [22];
+    settings = {
+      PasswordAuthentication = false; # Disable password login, use keys only
+      PubkeyAuthentication = true; # Allow public key authentication
+      PermitRootLogin = "no"; # Never allow root SSH login
+      X11Forwarding = false; # Disable X11 (not needed for server)
+      AllowUsers = ["lucas" "git"]; # Only these users can SSH
+      UseDns = false; # Speed up login, disable DNS lookup
+      MaxAuthTries = 3;  # Rate limit auth attempts
+      ClientAliveInterval = 60;  # Keep connections alive
+    };
+    extraConfig = ''
+      Match user git
+        AllowTcpForwarding no
+        AllowAgentForwarding no
+        PermitTTY no
+        X11Forwarding no
+        GatewayPorts no
+    '';
+  };
     getty.autologinUser = user;
     # Enable the X11 windowing system.
     xserver = {
