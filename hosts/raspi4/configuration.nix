@@ -24,13 +24,51 @@
     # networking.interfaces.end0.useDHCP = lib.mkDefault true;
     # networking.interfaces.wlan0.useDHCP = lib.mkDefault true;
     hostName = hostname;
-    wireless = {
+    wireless.enable = false;
+    networkmanager = {
       enable = true;
-      networks."Livebox-14A0".psk = "_your_wifi_password_";
-      interfaces = ["wlan0"];
+      ensureProfiles = {
+        profiles = {
+          home-wifi = {
+            connection = {
+              id = "home-wifi";
+              type = "wifi";
+              autoconnect = true;
+            };
+            wifi = {
+              mode = "infrastructure";
+              ssid = "Livebox-14A0";
+            };
+            wifi-security = {
+              auth-alg = "open";
+              key-mgmt = "wpa-psk";
+              # 64-char hex hash - NetworkManager will recognize this as pre-hashed
+              psk = "af896899cd85c5fa3d8d0315fa8789a7a4a722fcbaa82686c99de4bfda63c488";
+            };
+            ipv4 = {
+              method = "auto";
+            };
+            ipv6 = {
+              method = "auto";
+            };
+          };
+        };
+      };
     };
-    # # Disable NetworkManager for the SD image
-    networkmanager.enable = false;
+  };
+
+  #NOTE: not sure this is working correctly
+  systemd.services.bluetooth-autoconnect = {
+    description = "Auto-connect to trusted Bluetooth device";
+    after = ["bluetooth.service"];
+    wantedBy = ["multi-user.target"];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
+      ExecStart = "${pkgs.bluez}/bin/bluetoothctl connect 10:12:51:59:00:01";
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
   };
 
   hardware = {
@@ -38,6 +76,13 @@
     bluetooth = {
       enable = true;
       powerOnBoot = true;
+    };
+    raspberry-pi = {
+      "4" = {
+        bluetooth = {
+          enable = true;
+        };
+      };
     };
   };
 
@@ -56,7 +101,6 @@
     # Enable the OpenSSH daemon.
     openssh.enable = true;
     getty.autologinUser = user;
-    blueman.enable = true;
     # Enable the X11 windowing system.
     xserver = {
       # Configure keymap in X11
@@ -80,7 +124,7 @@
     users.${user} = {
       openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJk9K6n6KDOI9dKTu9ocqKnBF29KVlOlIm413Ci4M8dU lucas@luctop"];
       isNormalUser = true;
-      extraGroups = ["wheel" "docker" "dialout" "disk" "kvm" "gpio"];
+      extraGroups = ["wheel" "docker" "dialout" "disk" "kvm" "gpio" "networkmanager"];
       hashedPassword = "$y$j9T$OzgG8fcv5KaA/HpZvJrv80$hN.dajpIRuROuLmIO3HGMfGKMKkxOwiJCMm9kvv/p46";
     };
   };
@@ -89,11 +133,12 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    git
-    curl
-    libraspberrypi
-    raspberrypi-eeprom
+  environment.systemPackages = [
+    pkgs.git
+    pkgs.curl
+    pkgs.libraspberrypi
+    pkgs.raspberrypi-eeprom
+    pkgs.home-manager
   ];
 
   nix = {
@@ -113,6 +158,7 @@
         "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       ];
+      trusted-users = ["root" "@wheel"];
       experimental-features = ["nix-command" "flakes"];
       warn-dirty = false;
       keep-outputs = true;
@@ -124,6 +170,10 @@
       automatic = true;
       dates = "03:15";
     };
+  };
+  security.sudo = {
+    enable = true;
+    wheelNeedsPassword = false;
   };
 
   programs = {

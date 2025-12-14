@@ -67,6 +67,8 @@
       };
 
       # Raspberry Pi 4 configuration
+      # nixos-rebuild switch --flake .#raspi4 --target-host raspi --use-remote-sudo
+      # nix build .#nixosConfigurations.raspi4.config.system.build.sdImage
       raspi4 = nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
         specialArgs = {
@@ -81,16 +83,32 @@
       };
     };
 
-    homeConfigurations.${user} = home-manager.lib.homeManagerConfiguration {
-      pkgs = import nixpkgs {
-        system = "x86_64-linux";
+    homeConfigurations = {
+      ${user} = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          system = "x86_64-linux";
+        };
+        extraSpecialArgs = {
+          inherit inputs homeStateVersion user;
+        };
+        modules = [
+          ./home-manager/home.nix
+        ];
       };
-      extraSpecialArgs = {
-        inherit inputs homeStateVersion user;
+
+      # home-manager switch --flake .#lucas@raspi4 --target-host raspi --use-remote-sudo
+      "${user}@raspi4" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          system = "aarch64-linux";
+        };
+        extraSpecialArgs = {
+          homeStateVersion = "25.05";
+          inherit inputs user;
+        };
+        modules = [
+          ./home-manager/raspi4.nix
+        ];
       };
-      modules = [
-        ./home-manager/home.nix
-      ];
     };
   };
 }
