@@ -1,4 +1,6 @@
-{pkgs, config, ...}: {
+{pkgs, config, ...}: let
+  colors = import ../colorscheme.nix;
+in {
   programs.tmux = {
     enable = true;
     baseIndex = 1;
@@ -22,27 +24,18 @@
       bind-key k select-pane -U
       bind-key l select-pane -R
 
-      # Plugin name: tmux-minimal-rounded
-
-      # Top status bar
-      set-option -g status-position top
-
-
       set-option -g default-terminal "screen-256color"
       set-option -ga terminal-overrides ",xterm-256color:Tc"
 
-
-      base="#${config.lib.stylix.colors.base00}"
-      grey="#${config.lib.stylix.colors.base02}"
-
-      text="#${config.lib.stylix.colors.base05}"
-
-      blue="#${config.lib.stylix.colors.base0D}"
-      green="#${config.lib.stylix.colors.base0F}"
-      yellow="#${config.lib.stylix.colors.base07}"
-      peach="#${config.lib.stylix.colors.base09}"
-      red="#${config.lib.stylix.colors.base08}"
-      mauve="#${config.lib.stylix.colors.base0E}"
+      base="#${colors.base00}"
+      grey="#${colors.base02}"
+      text="#${colors.base05}"
+      blue="#${colors.base0D}"
+      green="#${colors.base0A}"
+      yellow="#${colors.base0A}"
+      peach="#${colors.base09}"
+      red="#${colors.base08}"
+      mauve="#${colors.base0E}"
 
       # Status bar background and foreground
       set-option -g status-style "bg=$base,fg=$text"
@@ -52,16 +45,16 @@
       setw -g window-status-style "fg=$grey,bg=$base"
 
       # Left side
-      set-option -g status-left "#[fg=$blue,bg=$base]#[bg=$blue,fg=$base] #[fg=$blue,bg=$grey]#[bg=$grey,fg=$text] #S #[fg=$grey,bg=$base]"
+      set-option -g status-left "#[fg=$blue,bg=$base]#[bg=$blue,fg=$base] #[fg=$blue,bg=$grey]#[bg=$grey,fg=$text] #S #[fg=$grey,bg=$base]"
 
       # Window status format (inactive windows)
-      setw -g window-status-format "#[fg=$red,bg=$base]#[bg=$red,fg=$base,bold]#I#[fg=$red,bg=$grey]#[bg=$grey,fg=$text] #W #[fg=$grey,bg=$base]"
+      setw -g window-status-format "#[fg=$red,bg=$base]#[bg=$red,fg=$base,bold]#I#[fg=$red,bg=$grey]#[bg=$grey,fg=$text] #W #[fg=$grey,bg=$base]"
 
       # Current window status format (active window)
-      setw -g window-status-current-format "#[fg=$green,bg=$base]#[bg=$green,fg=$base,bold]#I#[fg=$green,bg=$grey]#[bg=$grey,fg=$text] #W #[fg=$grey,bg=$base]"
+      setw -g window-status-current-format "#[fg=$green,bg=$base]#[bg=$green,fg=$base,bold]#I#[fg=$green,bg=$grey]#[bg=$grey,fg=$text] #W #[fg=$grey,bg=$base]"
 
       # Right side
-      set-option -g status-right "#[fg=$grey,bg=$base]#[bg=$grey,fg=$text] #{pane_current_command} #[fg=$peach,bg=$grey]#[bg=$peach,fg=$base,bold] #{pane_index} #[fg=$peach,bg=$base]"
+      set-option -g status-right "#[fg=$grey,bg=$base]#[bg=$grey,fg=$text] #{pane_current_command} #[fg=$peach,bg=$grey]#[bg=$peach,fg=$base,bold] #{pane_index} #[fg=$peach,bg=$base]"
 
       # Window status separator
       setw -g window-status-separator ""
