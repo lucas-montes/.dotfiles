@@ -64,11 +64,11 @@
         follow_mouse = false;
       };
 
-      gestures = {
-        workspace_swipe = true;
-        workspace_swipe_invert = false;
-        workspace_swipe_forever = true;
-      };
+      # gestures = {
+      #   workspace_swipe = true;
+      #   workspace_swipe_invert = false;
+      #   workspace_swipe_forever = true;
+      # };
 
       dwindle = {
         pseudotile = true;
