@@ -10,7 +10,6 @@
 
     nixpkgs.config.allowUnfree = true;
 
-    hardware.opengl.enable = true;
 boot.kernelModules = [ "amdgpu" ];
 hardware = {
     graphics = {
