@@ -12,6 +12,16 @@
 
     hardware.opengl.enable = true;
 boot.kernelModules = [ "amdgpu" ];
+hardware = {
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+      extraPackages = with pkgs; [
+        amdvlk
+        rocmPackages.clr.icd
+      ];
+    };
+  };
 
 # Enable the integrated graphics (for an APU like the Ryzen)
 services.xserver.videoDrivers = [ "amdgpu" ];
@@ -21,6 +31,8 @@ services.xserver.videoDrivers = [ "amdgpu" ];
     pkgs.curl
     pkgs.wget
     pkgs.git
+    pkgs.clinfo
+    pkgs.vulkan-tools
   ];
 
   networking.hostName = "luctop";

@@ -2,10 +2,10 @@
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
-      # env = [
-      #   "LIBVA_DRIVER_NAME,nvidia"
-      #   "__GLX_VENDOR_LIBRARY_NAME,nvidia"
-      # ];
+      env = [
+        "WLR_NO_HARDWARE_CURSORS,1"  # Important for AMD iGPUs
+        "AMD_VULKAN_ICD,RADV"
+      ];
 
       monitor = ",preferred,auto,1";
       "$mainMod" = "SUPER";

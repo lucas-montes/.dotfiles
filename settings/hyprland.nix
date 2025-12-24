@@ -9,7 +9,7 @@
   };
 
   services.greetd = {
-    enable = true;
+    enable = false;
     settings = rec {
       initial_session = {
         command = "${pkgs.hyprland}/bin/hyprland";
