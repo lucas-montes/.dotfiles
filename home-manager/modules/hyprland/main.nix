@@ -1,6 +1,8 @@
 {
   wayland.windowManager.hyprland = {
     enable = true;
+    package = null;
+    portalPackage = null;
     settings = {
       env = [
         "WLR_NO_HARDWARE_CURSORS,1"  # Important for AMD iGPUs
