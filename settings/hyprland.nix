@@ -14,11 +14,12 @@
   };
 
   services.greetd = {
-    enable = false;
+    enable = true;
     settings = rec {
       initial_session = {
-        command = "${pkgs.hyprland}/bin/hyprland";
-        inherit mainUser;
+        command = "start-hyprland";
+        user = mainUser;
+        # The arg is user not mainUser, if you change it, it get stuck in the boot screen and there are no errors
       };
       default_session = initial_session;
     };

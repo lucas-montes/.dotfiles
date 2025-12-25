@@ -9,9 +9,9 @@
   ];
 
   home = {
+    inherit stateVersion;
     username = mainUser;
     homeDirectory = "/home/${mainUser}";
-    stateVersion = stateVersion;
   };
 
   home.sessionVariables = {

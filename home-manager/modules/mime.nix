@@ -43,7 +43,7 @@ in {
     enable = true;
     mime.enable = true;
     desktopEntries = {
-      nvim = createEntry "vim";
+      nvim = createEntry "nvim";
       zathura = createEntry "zathura";
       nomacs = createEntry "nomacs";
     };
