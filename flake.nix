@@ -2,6 +2,8 @@
   description = "My system configuration";
 
   inputs = {
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
 
     home-manager = {

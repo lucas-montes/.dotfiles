@@ -53,8 +53,8 @@
 
       input = {
         kb_layout = "us,latam";
-        kb_options = "grp:alt_shift_toggle";
-        follow_mouse = false;
+        kb_options = "grp:alt_shift_toggle,compose:caps";
+        follow_mouse = true;
       };
 
       gestures = {
