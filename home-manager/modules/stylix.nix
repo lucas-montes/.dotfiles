@@ -17,6 +17,7 @@
 
     targets = {
       tmux.enable = false;
+      firefox.enable = false;
       hyprland.enable = false;
     };
     cursor = {
