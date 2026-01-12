@@ -80,10 +80,10 @@
       ",XF86AudioLowerVolume,  exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
       ",XF86AudioMute,         exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
       ",XF86AudioMicMute,      exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
-      ",XF86MonBrightnessUp, exec, brightnessctl -d amdgpu_bl1 s 10%+"
-      ",XF86MonBrightnessDown, exec, brightnessctl -d amdgpu_bl1 s 10%-"
-      "$mainMod, bracketright, exec, brightnessctl -d amdgpu_bl1 s 10%+"
-      "$mainMod, bracketleft,  exec, brightnessctl -d amdgpu_bl1 s 10%-"
+      ",XF86MonBrightnessUp, exec, brightnessctl s 10%+"
+      ",XF86MonBrightnessDown, exec, brightnessctl s 10%-"
+      "$mainMod, bracketright, exec, brightnessctl s 10%+"
+      "$mainMod, bracketleft,  exec, brightnessctl s 10%-"
     ];
 
     # Audio playback

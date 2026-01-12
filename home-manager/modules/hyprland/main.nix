@@ -61,14 +61,8 @@
       input = {
         kb_layout = "us,es";
         kb_options = "grp:alt_shift_toggle";
-        follow_mouse = false;
+        follow_mouse = true;
       };
-
-      # gestures = {
-      #   workspace_swipe = true;
-      #   workspace_swipe_invert = false;
-      #   workspace_swipe_forever = true;
-      # };
 
       dwindle = {
         pseudotile = true;
