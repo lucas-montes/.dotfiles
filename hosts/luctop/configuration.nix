@@ -45,14 +45,6 @@
   services.openssh.enable = true;
 
   virtualisation.docker.enable = true;
-  # Files, browser, screen sharing stuff
-  # xdg.portal = {
-  #   enable = true;
-  #   extraPortals = [
-  #     pkgs.xdg-desktop-portal-hyprland
-  #     pkgs.xdg-desktop-portal-gtk
-  #   ];
-  # };
 
   system.stateVersion = stateVersion;
 }
