@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   nixpkgs.config.allowUnfree = true;
   home.packages = [
     pkgs.azahar
@@ -15,6 +15,7 @@
     pkgs.openssl
     pkgs.ripgrep
     pkgs.jq
+    pkgs.nixfmt-classic
 
     pkgs.unzip
     pkgs.zip

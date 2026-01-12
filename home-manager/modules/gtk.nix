@@ -1,7 +1,4 @@
-{
-  mainUser,
-  ...
-}: {
+{ mainUser, ... }: {
   gtk = {
     enable = true;
     gtk3 = {

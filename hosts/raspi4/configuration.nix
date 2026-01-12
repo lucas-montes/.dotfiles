@@ -1,12 +1,7 @@
 # Edit this configuration file to define what should be installed on
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: {
+{ config, lib, pkgs, ... }: {
   imports = [
     # Include the results of the hardware scan.
     # <nixos-hardware/raspberry-pi/4>
@@ -37,7 +32,7 @@
     wireless = {
       enable = true;
       networks."Livebox-14A0".psk = "__replace__";
-      interfaces = ["wlan0"];
+      interfaces = [ "wlan0" ];
     };
   };
 
@@ -59,13 +54,13 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users = {
     # Create gpio group
-    groups.gpio = {};
-    groups.spi = {};
+    groups.gpio = { };
+    groups.spi = { };
     defaultUserShell = pkgs.zsh;
     users.lucas = {
-      openssh.authorizedKeys.keys = ["__replace__"];
+      openssh.authorizedKeys.keys = [ "__replace__" ];
       isNormalUser = true;
-      extraGroups = ["wheel" "docker" "dialout" "disk" "kvm" "gpio"];
+      extraGroups = [ "wheel" "docker" "dialout" "disk" "kvm" "gpio" ];
     };
   };
 
@@ -104,7 +99,7 @@
         "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       ];
-      experimental-features = ["nix-command" "flakes"];
+      experimental-features = [ "nix-command" "flakes" ];
       warn-dirty = false;
       keep-outputs = true;
       keep-derivations = true;

@@ -1,11 +1,11 @@
-{
-  config,
-  inputs,
-  pkgs,
-  ...
-}: let
+{ config, inputs, pkgs, ... }:
+let
   inherit (config.lib.stylix) colors;
-  toLua = str: "lua << EOF\n${str}\nEOF\n";
+  toLua = str: ''
+    lua << EOF
+    ${str}
+    EOF
+  '';
   toLuaFile = file: toLua (builtins.readFile "${./config}/${file}.lua");
   fromPlugin = file: toLuaFile "plugins/${file}";
 in {
@@ -33,7 +33,7 @@ in {
 
       {
         plugin = comment-nvim;
-        config = toLua "require(\"Comment\").setup()";
+        config = toLua ''require("Comment").setup()'';
       }
 
       neodev-nvim

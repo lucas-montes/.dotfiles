@@ -1,12 +1,12 @@
-{inputs, ...}: {
-  imports = [inputs.nvf.homeManagerModules.default];
+{ inputs, ... }: {
+  imports = [ inputs.nvf.homeManagerModules.default ];
   programs.nvf = {
     enable = true;
     settings = {
       vim = {
         assistant.supermaven-nvim.enable = true;
         withNodeJs = false;
-        navigation = {harpoon = {enable = true;};};
+        navigation = { harpoon = { enable = true; }; };
         notes.todo-comments.enable = true;
         options = {
           wrap = false;
@@ -25,15 +25,13 @@
           enable = true;
           path = "/tmp";
         };
-        binds = {
-          whichKey.enable = true;
-        };
+        binds = { whichKey.enable = true; };
         keymaps = [
           {
             key = "<leader>y";
-            mode = ["n" "v"];
+            mode = [ "n" "v" ];
             silent = true;
-            action = "\"+y";
+            action = ''"+y'';
           }
           {
             key = "<leader>pv";

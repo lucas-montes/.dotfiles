@@ -1,24 +1,10 @@
-{
-  pkgs,
-  stateVersion,
-  inputs,
-  ...
-}: {
-  imports = [
-    ./hardware-configuration.nix
-    ../../settings
-  ];
+{ pkgs, stateVersion, inputs, mainUser, ... }: {
+  imports = [ ./hardware-configuration.nix ../../settings ];
 
-    nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfree = true;
 
-
-  environment.systemPackages = [
-    pkgs.home-manager
-    pkgs.curl
-    pkgs.wget
-    pkgs.git
-    pkgs.cudatoolkit
-  ];
+  environment.systemPackages =
+    [ pkgs.home-manager pkgs.curl pkgs.wget pkgs.git pkgs.cudatoolkit ];
 
   networking.hostName = "luctop";
 
@@ -28,7 +14,7 @@
       layout = "us";
       variant = "";
     };
-    gnome.gnome-keyring = {enable = true;};
+    gnome.gnome-keyring = { enable = true; };
   };
 
   programs = {

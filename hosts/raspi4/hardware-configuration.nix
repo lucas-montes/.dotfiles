@@ -4,21 +4,19 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
-    ];
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "uas" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_rpi4 ;
+  boot.kernelPackages = pkgs.linuxKernel.packages.linux_rpi4;
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-label/NIXOS_SD";
-      fsType = "ext4";
-options = ["noatime"];
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-label/NIXOS_SD";
+    fsType = "ext4";
+    options = [ "noatime" ];
+  };
 
   swapDevices = [ ];
 

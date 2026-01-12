@@ -10,18 +10,18 @@
     ];
   };
 
-  users.groups.git = {};
+  users.groups.git = { };
 
   services.openssh = {
     enable = true;
     ports = [ 22 ];
     settings = {
-      PasswordAuthentication = false;        # Disable password login, use keys only
-      PubkeyAuthentication = true;           # Allow public key authentication
-      PermitRootLogin = "no";                # Never allow root SSH login
-      X11Forwarding = false;                 # Disable X11 (not needed for server)
-      AllowUsers = [ "lucas" "git" ];        # Only these users can SSH
-      UseDns = false;                        # Speed up login, disable DNS lookup
+      PasswordAuthentication = false; # Disable password login, use keys only
+      PubkeyAuthentication = true; # Allow public key authentication
+      PermitRootLogin = "no"; # Never allow root SSH login
+      X11Forwarding = false; # Disable X11 (not needed for server)
+      AllowUsers = [ "lucas" "git" ]; # Only these users can SSH
+      UseDns = false; # Speed up login, disable DNS lookup
     };
     extraConfig = ''
       Match user git

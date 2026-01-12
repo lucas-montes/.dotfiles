@@ -7,7 +7,8 @@
       pkgs.fira-code
       pkgs.fira-code-symbols
       pkgs.font-awesome
-    ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
+    ] ++ builtins.filter lib.attrsets.isDerivation
+      (builtins.attrValues pkgs.nerd-fonts);
   };
 
 }

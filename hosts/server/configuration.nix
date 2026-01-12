@@ -1,15 +1,8 @@
-{
-  pkgs,
-  stateVersion,
-  ...
-}: {
-  imports = [
-    ./hardware-configuration.nix
-    ../../settings
-    ../../services/postgres.nix
-  ];
+{ pkgs, stateVersion, ... }: {
+  imports =
+    [ ./hardware-configuration.nix ../../settings ../../services/postgres.nix ];
 
-    nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfree = true;
   hardware = {
     graphics.enable = true;
     nvidia-container-toolkit.enable = true;
@@ -32,15 +25,10 @@
       };
     };
   };
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = [ "nvidia" ];
 
-  environment.systemPackages = [
-    pkgs.home-manager
-    pkgs.curl
-    pkgs.wget
-    pkgs.git
-    pkgs.cudatoolkit
-  ];
+  environment.systemPackages =
+    [ pkgs.home-manager pkgs.curl pkgs.wget pkgs.git pkgs.cudatoolkit ];
 
   networking.hostName = "server";
   hardware.tuxedo-control-center.enable = true;
@@ -51,7 +39,7 @@
       layout = "us";
       variant = "";
     };
-    gnome.gnome-keyring = {enable = true;};
+    gnome.gnome-keyring = { enable = true; };
   };
 
   programs = {
@@ -69,10 +57,8 @@
   # Files, browser, screen sharing stuff
   xdg.portal = {
     enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-hyprland
-      pkgs.xdg-desktop-portal-gtk
-    ];
+    extraPortals =
+      [ pkgs.xdg-desktop-portal-hyprland pkgs.xdg-desktop-portal-gtk ];
   };
 
   system.stateVersion = stateVersion;

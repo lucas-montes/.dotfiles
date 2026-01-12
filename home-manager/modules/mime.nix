@@ -1,4 +1,5 @@
-{pkgs, ...}: let
+{ pkgs, ... }:
+let
   apps = {
     "text/markdown" = "nvim.desktop";
     "text/plain" = "nvim.desktop";
@@ -33,11 +34,11 @@
     "application/x-extension-xhtml" = "brave-browser.desktop";
     "application/x-extension-xht" = "brave-browser.desktop";
   };
-    createEntry = appName: {
-        name = appName;
-        exec = "${pkgs.${appName}}/bin/${appName}";
-        noDisplay = true;
-      };
+  createEntry = appName: {
+    name = appName;
+    exec = "${pkgs.${appName}}/bin/${appName}";
+    noDisplay = true;
+  };
 in {
   xdg = {
     enable = true;

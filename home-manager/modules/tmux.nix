@@ -1,12 +1,10 @@
-{pkgs, config, ...}: {
+{ pkgs, config, ... }: {
   programs.tmux = {
     enable = true;
     baseIndex = 1;
     keyMode = "vi";
     escapeTime = 0;
-    plugins = [
-      pkgs.tmuxPlugins.better-mouse-mode
-    ];
+    plugins = [ pkgs.tmuxPlugins.better-mouse-mode ];
 
     extraConfig = ''
       unbind r

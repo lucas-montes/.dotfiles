@@ -53,9 +53,7 @@
           button-text = "Clear All";
         };
 
-        dnd = {
-          text = "Do Not Disturb";
-        };
+        dnd = { text = "Do Not Disturb"; };
 
         label = {
           max-lines = 1;
@@ -79,9 +77,7 @@
           subsystem = "leds";
         };
 
-        volume = {
-          label = "";
-        };
+        volume = { label = ""; };
 
         menubar = {
           "menu#power-buttons" = {
@@ -155,11 +151,13 @@
             actions = [
               {
                 label = "   Entire screen";
-                command = "swaync-client -cp && sleep 1 && recording.sh toggle fullscreen";
+                command =
+                  "swaync-client -cp && sleep 1 && recording.sh toggle fullscreen";
               }
               {
                 label = "   Select a region";
-                command = "swaync-client -cp && sleep 1 && recording.sh toggle region";
+                command =
+                  "swaync-client -cp && sleep 1 && recording.sh toggle region";
               }
               {
                 label = "   Stop";

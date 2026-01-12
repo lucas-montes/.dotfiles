@@ -1,5 +1,5 @@
-{pkgs, ...}: let
-  shellAliases = import ./alias.nix;
+{ pkgs, ... }:
+let shellAliases = import ./alias.nix;
 in {
   programs.zsh = {
     enable = true;
@@ -11,18 +11,16 @@ in {
 
     oh-my-zsh = {
       enable = true;
-      plugins = ["git" "direnv"];
+      plugins = [ "git" "direnv" ];
     };
 
     inherit shellAliases;
 
-    plugins = [
-      {
-        name = "you-should-use";
-        src = pkgs.zsh-you-should-use;
-        file = "share/zsh/plugins/you-should-use/you-should-use.plugin.zsh";
-      }
-    ];
+    plugins = [{
+      name = "you-should-use";
+      src = pkgs.zsh-you-should-use;
+      file = "share/zsh/plugins/you-should-use/you-should-use.plugin.zsh";
+    }];
 
     history.size = 10000;
 

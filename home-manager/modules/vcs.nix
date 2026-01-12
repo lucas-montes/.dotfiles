@@ -8,15 +8,9 @@
       userName = name;
       userEmail = email;
       extraConfig = {
-        push = {
-          autoSetupRemote = true;
-        };
-        fetch = {
-          prune = true;
-        };
-        pull = {
-          rebase = true;
-        };
+        push = { autoSetupRemote = true; };
+        fetch = { prune = true; };
+        pull = { rebase = true; };
       };
       delta = {
         enable = true;
@@ -33,11 +27,7 @@
     };
     jujutsu = {
       enable = true;
-      settings = {
-        user = {
-          inherit email name;
-        };
-      };
+      settings = { user = { inherit email name; }; };
     };
   };
 }

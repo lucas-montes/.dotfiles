@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   programs.vscode = {
     enable = true;
     profiles.default = {
@@ -21,15 +21,12 @@
           tamasfe.even-better-toml
           # platformio.platformio-ide
           ms-vscode.cpptools
-        ]
-        ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-          {
-            name = "cucumberautocomplete";
-            publisher = "alexkrechik";
-            version = "3.0.5";
-            sha256 = "sha256-Tgqd4uoVgGJQKlj4JUM1CrjQhbi0qv9bAGz5NIHyofQ=";
-          }
-        ];
+        ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [{
+          name = "cucumberautocomplete";
+          publisher = "alexkrechik";
+          version = "3.0.5";
+          sha256 = "sha256-Tgqd4uoVgGJQKlj4JUM1CrjQhbi0qv9bAGz5NIHyofQ=";
+        }];
       userSettings = {
         # Whitespace
         "files.trimTrailingWhitespace" = true;

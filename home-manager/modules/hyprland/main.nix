@@ -5,7 +5,7 @@
     portalPackage = null;
     settings = {
       env = [
-        "WLR_NO_HARDWARE_CURSORS,1"  # Important for AMD iGPUs
+        "WLR_NO_HARDWARE_CURSORS,1" # Important for AMD iGPUs
         "AMD_VULKAN_ICD,RADV"
       ];
 
@@ -16,9 +16,13 @@
       "$menu" = "rofi";
       "$browser" = "brave";
 
-      "windowrulev2" = ["float, title:^(Picture in picture)$" "pin, title:^(Picture in picture)$"];
+      "windowrulev2" = [
+        "float, title:^(Picture in picture)$"
+        "pin, title:^(Picture in picture)$"
+      ];
 
-      exec-once = ["waybar" "[workspace 1] $browser" "[workspace 2] $terminal"];
+      exec-once =
+        [ "waybar" "[workspace 1] $browser" "[workspace 2] $terminal" ];
 
       general = {
         gaps_in = 5;
@@ -29,9 +33,7 @@
         layout = "dwindle";
       };
 
-      cursor = {
-        no_hardware_cursors = true;
-      };
+      cursor = { no_hardware_cursors = true; };
 
       decoration = {
         rounding = 10;
@@ -49,14 +51,12 @@
           size = 12;
           passes = 3;
           new_optimizations = true;
-          noise = 0.05;
+          noise = 5.0e-2;
           ignore_opacity = true;
         };
       };
 
-      animations = {
-        enabled = true;
-      };
+      animations = { enabled = true; };
 
       input = {
         kb_layout = "us,es";
@@ -69,9 +69,7 @@
         preserve_split = true;
       };
 
-      master = {
-        new_status = "master";
-      };
+      master = { new_status = "master"; };
 
       misc = {
         force_default_wallpaper = 2;
