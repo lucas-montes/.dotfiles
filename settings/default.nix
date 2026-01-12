@@ -10,6 +10,7 @@
     ./locale.nix
     ./net.nix
     ./nix.nix
+    ./nvidia.nix
     ./storage.nix
     ./user.nix
     ./zram.nix

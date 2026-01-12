@@ -17,6 +17,7 @@
     pkgs.curl
     pkgs.wget
     pkgs.git
+    pkgs.cudatoolkit
   ];
 
   networking.hostName = "luctop";
