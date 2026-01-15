@@ -38,10 +38,10 @@
         "diffEditor.ignoreTrimWhitespace" = false;
         # Git
         "git.confirmSync" = false;
-        #      "git.enableCommitSigning" = true;
-        "git-graph.repository.sign.commits" = true;
-        "git-graph.repository.sign.tags" = true;
-        "git-graph.repository.commits.showSignatureStatus" = true;
+        "git.useEditorAsCommitInput" = true;
+        "github.copilot.chat.commitMessageGeneration.instructions"= [
+    { "text"= "Always include a list of key changes."; }
+  ];
 
         "chat.editor.fontFamily" = "JetBrains Mono";
         "chat.editor.fontSize" = 16.0;
@@ -55,14 +55,12 @@
         "editor.inlayHints.fontFamily" = "JetBrains Mono";
         "editor.inlineSuggest.fontFamily" = "JetBrains Mono";
         "editor.minimap.enabled" = false;
-        "editor.minimap.sectionHeaderFontSize" = 10.285714285714286;
         "editor.stickyScroll.enabled" = false;
         "extensions.autoCheckUpdates" = false;
 
         "diffEditor.diffAlgorithm" = "advanced";
         "diffEditor.experimental.showMoves" = true;
 
-        "markdown.preview.fontFamily" = "DejaVu Sans";
         "markdown.preview.fontSize" = 16.0;
         "scm.inputFontFamily" = "JetBrains Mono";
         "scm.inputFontSize" = 14.857142857142858;

@@ -4,6 +4,7 @@
   hostname,
   ...
 }: {
+
   imports = [
     ./hardware-configuration.nix
     ../../nixos/modules
@@ -13,10 +14,15 @@
   environment = {
     systemPackages = [
       pkgs.opensc
-      pkgs.pcsc-tools
-      pkgs.web-eid-app
       pkgs.qdigidoc
+      pkgs.pcsc-tools
       pkgs.ccid
+      pkgs.web-eid-app
+      pkgs.p11-kit
+
+
+      # https://github.com/open-eid/DigiDoc4-Client/pull/1371
+      # https://github.com/open-eid/DigiDoc4-Client/issues/1281
 
       pkgs.curl
       pkgs.wget

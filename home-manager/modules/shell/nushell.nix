@@ -7,8 +7,8 @@ in {
       extraConfig = builtins.readFile ./extraConfig.nu;
       inherit shellAliases;
     };
-    carapace.enable = true;
-    carapace.enableNushellIntegration = true;
+    carapace.enable = false;
+    carapace.enableNushellIntegration = false;
 
     starship = {
       enable = true;

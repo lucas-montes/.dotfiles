@@ -19,6 +19,7 @@
       tmux.enable = false;
       firefox.enable = false;
       hyprland.enable = false;
+       gnome.enable = false;
     };
     cursor = {
       package = pkgs.bibata-cursors;

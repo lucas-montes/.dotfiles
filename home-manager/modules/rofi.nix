@@ -6,7 +6,7 @@
   mkLiteral = config.lib.formats.rasi.mkLiteral;
 in {
   programs.rofi = {
-    package = pkgs.rofi-wayland;
+    package = pkgs.rofi;
     enable = true;
     extraConfig = {
       modi = "drun";

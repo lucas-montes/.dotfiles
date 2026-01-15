@@ -5,9 +5,11 @@
   in {
     git = {
       enable = true;
-      userName = name;
-      userEmail = email;
-      extraConfig = {
+      settings = {
+        user = {
+          name = name;
+          email = email;
+        };
         push = {
           autoSetupRemote = true;
         };
@@ -18,17 +20,18 @@
           rebase = true;
         };
       };
-      delta = {
-        enable = true;
-        options = {
-          decorations = {
-            commit-decoration-style = "bold yellow box ul";
-            file-decoration-style = "none";
-            file-style = "bold yellow ul";
-          };
-          features = "decorations";
-          whitespace-error-style = "22 reverse";
+    };
+    delta = {
+      enable = true;
+      enableGitIntegration = true;
+      options = {
+        decorations = {
+          commit-decoration-style = "bold yellow box ul";
+          file-decoration-style = "none";
+          file-style = "bold yellow ul";
         };
+        features = "decorations";
+        whitespace-error-style = "22 reverse";
       };
     };
     jujutsu = {
