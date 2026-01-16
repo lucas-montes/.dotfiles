@@ -39,6 +39,7 @@
         # Git
         "git.confirmSync" = false;
         "git.useEditorAsCommitInput" = true;
+        "git.alwaysSignOff" = true;
         "github.copilot.chat.commitMessageGeneration.instructions"= [
     { "text"= "Always include a list of key changes."; }
   ];
