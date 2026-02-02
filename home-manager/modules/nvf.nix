@@ -67,6 +67,7 @@
           lua.enable = true;
           nu.enable = true;
           clang.enable = true;
+          go.enable = true;
           sql.enable = true;
           rust.enable = true;
           html.enable = true;
