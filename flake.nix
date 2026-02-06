@@ -48,7 +48,7 @@
       };
 
       nixosConfigurations = {
-        # Laptop configuration
+        # Laptop configuration currently the tuxedo
         luctop = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = {
@@ -57,6 +57,17 @@
             hostname = "luctop";
           };
           modules = [ ./hosts/luctop/configuration.nix ];
+        };
+
+        # Currently the old laptop
+        lucver = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit inputs mainUser;
+            stateVersion = "25.05";
+            hostname = "lucver";
+          };
+          modules = [ ./hosts/lucver/configuration.nix ];
         };
 
         # Raspberry Pi 4 configuration

@@ -1,38 +1,75 @@
 # Edit this configuration file to define what should be installed on
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-{ config, lib, pkgs, ... }: {
+{
+  pkgs,
+  lib,
+  user,
+  hostname,
+  ...
+}: {
   imports = [
     # Include the results of the hardware scan.
-    # <nixos-hardware/raspberry-pi/4>
     ./hardware-configuration.nix
+    ../../services/procurator
   ];
-
-  # Use the extlinux boot loader. (NixOS wants to enable GRUB by default)
-  boot.loader.grub.enable = false;
-  # Enables the generation of /boot/extlinux/extlinux.conf
-  boot.loader.generic-extlinux-compatible.enable = true;
-
-  #  hardware = {
-  #    raspberry-pi."4" = {
-  #      apply-overlays-dtmerge.enable = true;
-  #      touch-ft5406.enable = true;
-  #    };
-  #    deviceTree = {
-  #      enable = true;
-  #      filter = "*rpi-4-*.dtb";
-  #    };
-  #  };
 
   # networking.hostName = "nixos"; # Define your hostname.
   # Pick only one of the below networking options.
   networking = {
-    # networkmanager.enable = true; # Easiest to use and most distros use this by default.
-    hostName = "raspi4";
-    wireless = {
+    # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
+    # (the default) this is the recommended approach. When using systemd-networkd it's
+    # still possible to use this option, but it's recommended to use it in conjunction
+    # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+    useDHCP = lib.mkDefault true;
+    # networking.interfaces.end0.useDHCP = lib.mkDefault true;
+    # networking.interfaces.wlan0.useDHCP = lib.mkDefault true;
+    hostName = hostname;
+    wireless.enable = false;
+    networkmanager = {
       enable = true;
-      networks."Livebox-14A0".psk = "__replace__";
-      interfaces = [ "wlan0" ];
+      ensureProfiles = {
+        profiles = {
+          home-wifi = {
+            connection = {
+              id = "home-wifi";
+              type = "wifi";
+              autoconnect = true;
+            };
+            wifi = {
+              mode = "infrastructure";
+              ssid = "Livebox-14A0";
+            };
+            wifi-security = {
+              auth-alg = "open";
+              key-mgmt = "wpa-psk";
+              # 64-char hex hash - NetworkManager will recognize this as pre-hashed
+              psk = "af896899cd85c5fa3d8d0315fa8789a7a4a722fcbaa82686c99de4bfda63c488";
+            };
+            ipv4 = {
+              method = "auto";
+            };
+            ipv6 = {
+              method = "auto";
+            };
+          };
+        };
+      };
+    };
+  };
+
+  hardware = {
+    enableRedistributableFirmware = lib.mkForce true;
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+    };
+    raspberry-pi = {
+      "4" = {
+        bluetooth = {
+          enable = true;
+        };
+      };
     };
   };
 
@@ -47,39 +84,69 @@
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
-  # Configure keymap in X11
-  services.xserver.xkb.layout = "us";
+  services = {
+    # Enable the OpenSSH daemon.
+    openssh = {
+    enable = true;
+    ports = [22];
+    settings = {
+      PasswordAuthentication = false; # Disable password login, use keys only
+      PubkeyAuthentication = true; # Allow public key authentication
+      PermitRootLogin = "no"; # Never allow root SSH login
+      X11Forwarding = false; # Disable X11 (not needed for server)
+      AllowUsers = ["lucas" "git"]; # Only these users can SSH
+      UseDns = false; # Speed up login, disable DNS lookup
+      MaxAuthTries = 3;  # Rate limit auth attempts
+      ClientAliveInterval = 60;  # Keep connections alive
+    };
+    extraConfig = ''
+      Match user git
+        AllowTcpForwarding no
+        AllowAgentForwarding no
+        PermitTTY no
+        X11Forwarding no
+        GatewayPorts no
+    '';
+  };
+    getty.autologinUser = user;
+    # Enable the X11 windowing system.
+    xserver = {
+      # Configure keymap in X11
+      xkb.layout = "us";
+      enable = false;
+    };
+    # Change permissions gpio devices
+    udev.extraRules = ''
+      SUBSYSTEM=="spidev", KERNEL=="spidev0.0", GROUP="spi", MODE="0660"
+      SUBSYSTEM=="bcm2835-gpiomem", KERNEL=="gpiomem", GROUP="gpio",MODE="0660"
+      SUBSYSTEM=="gpio", KERNEL=="gpiochip*", ACTION=="add", RUN+="${pkgs.bash}/bin/bash -c 'chown root:gpio /sys/class/gpio/export /sys/class/gpio/unexport ; chmod 220 /sys/class/gpio/export /sys/class/gpio/unexport'"
+      SUBSYSTEM=="gpio", KERNEL=="gpio*", ACTION=="add",RUN+="${pkgs.bash}/bin/bash -c 'chown root:gpio /sys%p/active_low /sys%p/direction /sys%p/edge /sys%p/value ; chmod 660 /sys%p/active_low /sys%p/direction /sys%p/edge /sys%p/value'"
+    '';
+  };
 
-  programs.zsh.enable = true;
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users = {
     # Create gpio group
-    groups.gpio = { };
-    groups.spi = { };
-    defaultUserShell = pkgs.zsh;
-    users.lucas = {
-      openssh.authorizedKeys.keys = [ "__replace__" ];
+    groups.gpio = {};
+    groups.spi = {};
+    defaultUserShell = pkgs.nushell;
+    users.${user} = {
+      openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJk9K6n6KDOI9dKTu9ocqKnBF29KVlOlIm413Ci4M8dU lucas@luctop"];
       isNormalUser = true;
-      extraGroups = [ "wheel" "docker" "dialout" "disk" "kvm" "gpio" ];
+      extraGroups = ["wheel" "docker" "dialout" "disk" "kvm" "gpio" "networkmanager"];
+      hashedPassword = "$y$j9T$OzgG8fcv5KaA/HpZvJrv80$hN.dajpIRuROuLmIO3HGMfGKMKkxOwiJCMm9kvv/p46";
     };
   };
 
-  # Change permissions gpio devices
-  services.udev.extraRules = ''
-    SUBSYSTEM=="spidev", KERNEL=="spidev0.0", GROUP="spi", MODE="0660"
-    SUBSYSTEM=="bcm2835-gpiomem", KERNEL=="gpiomem", GROUP="gpio",MODE="0660"
-    SUBSYSTEM=="gpio", KERNEL=="gpiochip*", ACTION=="add", RUN+="${pkgs.bash}/bin/bash -c 'chown root:gpio /sys/class/gpio/export /sys/class/gpio/unexport ; chmod 220 /sys/class/gpio/export /sys/class/gpio/unexport'"
-    SUBSYSTEM=="gpio", KERNEL=="gpio*", ACTION=="add",RUN+="${pkgs.bash}/bin/bash -c 'chown root:gpio /sys%p/active_low /sys%p/direction /sys%p/edge /sys%p/value ; chmod 660 /sys%p/active_low /sys%p/direction /sys%p/edge /sys%p/value'"
-  '';
+  sdImage.compressImage = false;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    wget
-    git
-    curl
-    libraspberrypi
-    raspberrypi-eeprom
+  environment.systemPackages = [
+    pkgs.git
+    pkgs.curl
+    pkgs.libraspberrypi
+    pkgs.raspberrypi-eeprom
+    pkgs.home-manager
   ];
 
   nix = {
@@ -99,7 +166,8 @@
         "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
         "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       ];
-      experimental-features = [ "nix-command" "flakes" ];
+      trusted-users = ["root" "@wheel"];
+      experimental-features = ["nix-command" "flakes"];
       warn-dirty = false;
       keep-outputs = true;
       keep-derivations = true;
@@ -111,11 +179,10 @@
       dates = "03:15";
     };
   };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
+  security.sudo = {
+    enable = true;
+    wheelNeedsPassword = false;
+  };
 
   programs = {
     neovim = {
@@ -123,6 +190,7 @@
       defaultEditor = true;
       viAlias = true;
       vimAlias = true;
+      withRuby = false;
     };
   };
   virtualisation.docker.enable = true;
@@ -155,5 +223,5 @@
   # and migrated your data accordingly.
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "24.05"; # Did you read the comment?
 }

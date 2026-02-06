@@ -4,10 +4,6 @@
     package = null;
     portalPackage = null;
     settings = {
-      env = [
-        "WLR_NO_HARDWARE_CURSORS,1" # Important for AMD iGPUs
-        "AMD_VULKAN_ICD,RADV"
-      ];
 
       monitor = ",preferred,auto,1";
       "$mainMod" = "SUPER";
@@ -19,6 +15,7 @@
       "windowrulev2" = [
         "float, title:^(Picture in picture)$"
         "pin, title:^(Picture in picture)$"
+        "size 800 600, floating:1"
       ];
 
       exec-once =
@@ -59,7 +56,7 @@
       animations = { enabled = true; };
 
       input = {
-        kb_layout = "us,es";
+        kb_layout = "us";
         kb_options = "grp:alt_shift_toggle";
         follow_mouse = true;
       };
