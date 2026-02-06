@@ -2,10 +2,10 @@
   description = "My system configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -14,7 +14,7 @@
     nvf = { url = "github:notashelf/nvf"; };
 
     stylix = {
-      url = "github:danth/stylix/release-25.05";
+      url = "github:danth/stylix/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -64,7 +64,7 @@
           system = "x86_64-linux";
           specialArgs = {
             inherit inputs mainUser;
-            stateVersion = "25.05";
+            stateVersion = "24.11";
             hostname = "lucver";
           };
           modules = [ ./hosts/lucver/configuration.nix ];
@@ -87,6 +87,7 @@
         };
       };
 
+#Let's keep the same home manager config for the lucver and the luctop
       homeConfigurations = {
         ${mainUser} = home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs { system = "x86_64-linux"; };
