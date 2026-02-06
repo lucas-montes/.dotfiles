@@ -1,8 +1,8 @@
 {
   wayland.windowManager.hyprland = {
     enable = true;
-    package = null;
-    portalPackage = null;
+    # package = null;
+    # portalPackage = null;
     settings = {
 
       monitor = ",preferred,auto,1";
@@ -57,8 +57,13 @@
 
       input = {
         kb_layout = "us";
-        kb_options = "grp:alt_shift_toggle";
+        kb_options = "grp:alt_shift_toggle,compose:caps";
         follow_mouse = true;
+      };
+
+      gestures = {
+        workspace_swipe_invert = false;
+        workspace_swipe_forever = true;
       };
 
       dwindle = {

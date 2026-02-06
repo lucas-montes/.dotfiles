@@ -15,7 +15,7 @@
     pkgs.openssl
     pkgs.ripgrep
     pkgs.jq
-    pkgs.nixfmt-classic
+    pkgs.alejandra
 
     pkgs.unzip
     pkgs.zip

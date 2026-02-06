@@ -9,7 +9,8 @@
         "file:///home/${mainUser}/Downloads/music"
         "file:///home/${mainUser}/Projects"
         "file:///home/${mainUser}/Notes"
-        "file:///data"
+        "file:///home/${mainUser}/Work"
+        #"sftp://lucas@homelab/home/lucas"
       ];
     };
   };

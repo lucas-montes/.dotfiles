@@ -39,11 +39,6 @@ def _fzf_tmux [path: path] {
   _new_named_session (glob $"($path)/**" --depth 1 --no-file | nufzf)
 }
 
-def --env use_dotenv [] {
-    if (".env" | path exists) {
-        load-env (open .env | lines | parse "{key}={value}" | transpose -r | into record)
-    }
-}
 
 def l [...args] { ls -lsa ...(if $args == [] {["."]} else {$args}) | sort-by type name -i }
 

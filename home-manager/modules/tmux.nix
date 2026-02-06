@@ -1,4 +1,6 @@
-{ pkgs, config, ... }: {
+{ pkgs, config, ... }:  let
+  colors = import ../colorscheme.nix;
+in {
   programs.tmux = {
     enable = true;
     baseIndex = 1;
@@ -30,17 +32,15 @@
       set-option -ga terminal-overrides ",xterm-256color:Tc"
 
 
-      base="#${config.lib.stylix.colors.base00}"
-      grey="#${config.lib.stylix.colors.base02}"
-
-      text="#${config.lib.stylix.colors.base05}"
-
-      blue="#${config.lib.stylix.colors.base0D}"
-      green="#${config.lib.stylix.colors.base0F}"
-      yellow="#${config.lib.stylix.colors.base07}"
-      peach="#${config.lib.stylix.colors.base09}"
-      red="#${config.lib.stylix.colors.base08}"
-      mauve="#${config.lib.stylix.colors.base0E}"
+      base="#${colors.base00}"
+      grey="#${colors.base02}"
+      text="#${colors.base05}"
+      blue="#${colors.base0D}"
+      green="#${colors.base0A}"
+      yellow="#${colors.base0A}"
+      peach="#${colors.base09}"
+      red="#${colors.base08}"
+      mauve="#${colors.base0E}"
 
       # Status bar background and foreground
       set-option -g status-style "bg=$base,fg=$text"

@@ -4,7 +4,10 @@
     enable = true;
     settings = {
       vim = {
-        assistant.supermaven-nvim.enable = true;
+        assistant.supermaven-nvim = {
+          enable = true;
+          setupOpts.keymaps.accept_suggestion = "<C-y>";
+        };
         withNodeJs = false;
         navigation = { harpoon = { enable = true; }; };
         notes.todo-comments.enable = true;
@@ -61,6 +64,7 @@
           nix.enable = true;
           lua.enable = true;
           nu.enable = true;
+          go.enable = true;
           clang.enable = true;
           sql.enable = true;
           rust.enable = true;
