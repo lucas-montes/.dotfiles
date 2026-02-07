@@ -5,20 +5,20 @@
     nvidia-container-toolkit.enable = true;
     nvidia = {
       modesetting.enable = true;
-      powerManagement.enable = true;
-      powerManagement.finegrained = true;
-      open = true;
+      powerManagement.enable = false;
+      powerManagement.finegrained = false;
+      open = false;
       nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.stable;
       prime = {
-        amdgpuBusId = "PCI:6:0:0";
-        #intelBusId = "PCI:0:2:0";
+        #amdgpuBusId = "PCI:6:0:0";
+        intelBusId = "PCI:0:2:0";
         nvidiaBusId = "PCI:1:0:0";
-        sync.enable = false;
-        offload = {
-          enable = true;
-          enableOffloadCmd = true;
-        };
+        sync.enable = true;
+        # offload = {
+        #   enable = true;
+        #   enableOffloadCmd = true;
+        # };
       };
     };
   };
