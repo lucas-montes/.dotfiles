@@ -11,103 +11,105 @@
 
     hyprland.url = "github:hyprwm/Hyprland";
 
-    nvf = { url = "github:notashelf/nvf"; };
+    nvf = {url = "github:notashelf/nvf";};
 
     stylix = {
       url = "github:danth/stylix/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixos-hardware = { url = "github:NixOS/nixos-hardware/master"; };
-
+    nixos-hardware = {url = "github:NixOS/nixos-hardware/master";};
   };
 
-  outputs = { nixpkgs, home-manager, nixos-hardware, ... }@inputs:
-    let
-
-      mainUser = "lucas";
-    in {
-      # Used by `nix flake init -t <flake>#<name>`
-      templates = {
-        rust = {
-          path = ./templates/rust;
-          description = "Template for a rust project";
-          welcomeText = ''
-            # Getting Started
-            - run `direnv allow` to enter the development environment
-          '';
-        };
-        python = {
-          path = ./templates/python;
-          description = "Template for python project";
-          welcomeText = ''
-            # Getting Started
-            - run `direnv allow` to enter the development environment
-          '';
-        };
+  outputs = {
+    nixpkgs,
+    home-manager,
+    nixos-hardware,
+    ...
+  } @ inputs: let
+    mainUser = "lucas";
+  in {
+    # Used by `nix flake init -t <flake>#<name>`
+    templates = {
+      rust = {
+        path = ./templates/rust;
+        description = "Template for a rust project";
+        welcomeText = ''
+          # Getting Started
+          - run `direnv allow` to enter the development environment
+        '';
       };
-
-      nixosConfigurations = {
-        # Laptop configuration currently the tuxedo
-        luctop = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = {
-            inherit inputs mainUser;
-            stateVersion = "25.05";
-            hostname = "luctop";
-          };
-          modules = [ ./hosts/luctop/configuration.nix ];
-        };
-
-        # Currently the old laptop
-        lucver = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = {
-            inherit inputs mainUser;
-            stateVersion = "24.11";
-            hostname = "lucver";
-          };
-          modules = [ ./hosts/lucver/configuration.nix ];
-        };
-
-        # Raspberry Pi 4 configuration
-        # nixos-rebuild switch --flake .#raspi4 --target-host raspi --use-remote-sudo
-        # nix build .#nixosConfigurations.raspi4.config.system.build.sdImage
-        raspi4 = nixpkgs.lib.nixosSystem {
-          system = "aarch64-linux";
-          specialArgs = {
-            user = mainUser;
-            hostname = "raspi4";
-          };
-          modules = [
-            "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
-            nixos-hardware.nixosModules.raspberry-pi-4
-            ./hosts/raspi4/configuration.nix
-          ];
-        };
-      };
-
-#Let's keep the same home manager config for the lucver and the luctop
-      homeConfigurations = {
-        ${mainUser} = home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs { system = "x86_64-linux"; };
-          extraSpecialArgs = {
-            inherit inputs mainUser;
-            stateVersion = "25.05";
-          };
-          modules = [ ./home-manager/home.nix ];
-        };
-
-        # home-manager switch --flake .#lucas@raspi4 --target-host raspi --use-remote-sudo
-        "${mainUser}@raspi4" = home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs { system = "aarch64-linux"; };
-          extraSpecialArgs = {
-            homeStateVersion = "25.05";
-            inherit inputs;
-            user = mainUser;
-          };
-          modules = [ ./home-manager/raspi4.nix ];
-        };
+      python = {
+        path = ./templates/python;
+        description = "Template for python project";
+        welcomeText = ''
+          # Getting Started
+          - run `direnv allow` to enter the development environment
+        '';
       };
     };
+
+    nixosConfigurations = {
+      # Laptop configuration currently the tuxedo
+      luctop = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs mainUser;
+          stateVersion = "25.05";
+          hostname = "luctop";
+        };
+        modules = [./hosts/luctop/configuration.nix];
+      };
+
+      # Currently the old laptop
+      lucver = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs mainUser;
+          stateVersion = "24.11";
+          hostname = "lucver";
+        };
+        modules = [./hosts/lucver/configuration.nix];
+      };
+
+      # Raspberry Pi 4 configuration
+      # nixos-rebuild switch --flake .#raspi4 --target-host raspi --use-remote-sudo
+      # nix build .#nixosConfigurations.raspi4.config.system.build.sdImage
+      raspi4 = nixpkgs.lib.nixosSystem {
+        system = "aarch64-linux";
+        specialArgs = {
+          user = mainUser;
+          hostname = "raspi4";
+        };
+        modules = [
+          "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
+          nixos-hardware.nixosModules.raspberry-pi-4
+          ./hosts/raspi4/configuration.nix
+        ];
+      };
+    };
+
+    #Let's keep the same home manager config for the lucver and the luctop
+    homeConfigurations = {
+      ${mainUser} = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {system = "x86_64-linux";};
+        extraSpecialArgs = {
+          inherit inputs mainUser;
+          stateVersion = "25.05";
+        };
+        modules = [./home-manager/home.nix];
+      };
+
+      # home-manager switch --flake .#lucas@raspi4 --target-host raspi --use-remote-sudo
+      "${mainUser}@raspi4" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {system = "aarch64-linux";};
+        extraSpecialArgs = {
+          homeStateVersion = "25.05";
+          inherit inputs;
+          user = mainUser;
+        };
+        modules = [./home-manager/raspi4.nix];
+      };
+    };
+  };
 }
