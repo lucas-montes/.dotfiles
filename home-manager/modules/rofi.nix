@@ -1,5 +1,9 @@
-{ config, pkgs, ... }:
-let mkLiteral = config.lib.formats.rasi.mkLiteral;
+{
+  config,
+  pkgs,
+  ...
+}: let
+  mkLiteral = config.lib.formats.rasi.mkLiteral;
 in {
   programs.rofi = {
     package = pkgs.rofi;
@@ -57,10 +61,10 @@ in {
         border = mkLiteral "0px solid";
         border-radius = 0;
         background-color = "transparent";
-        children = [ "textbox-prompt-colon" "entry" ];
+        children = ["textbox-prompt-colon" "entry"];
       };
 
-      prompt = { enabled = true; };
+      prompt = {enabled = true;};
 
       "textbox-prompt-colon" = {
         enabled = true;
@@ -75,7 +79,7 @@ in {
         placeholder = "Search...";
       };
 
-      "case-indicator" = { enabled = true; };
+      "case-indicator" = {enabled = true;};
 
       listview = {
         enabled = true;

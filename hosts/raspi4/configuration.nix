@@ -87,27 +87,27 @@
   services = {
     # Enable the OpenSSH daemon.
     openssh = {
-    enable = true;
-    ports = [22];
-    settings = {
-      PasswordAuthentication = false; # Disable password login, use keys only
-      PubkeyAuthentication = true; # Allow public key authentication
-      PermitRootLogin = "no"; # Never allow root SSH login
-      X11Forwarding = false; # Disable X11 (not needed for server)
-      AllowUsers = ["lucas" "git"]; # Only these users can SSH
-      UseDns = false; # Speed up login, disable DNS lookup
-      MaxAuthTries = 3;  # Rate limit auth attempts
-      ClientAliveInterval = 60;  # Keep connections alive
+      enable = true;
+      ports = [22];
+      settings = {
+        PasswordAuthentication = false; # Disable password login, use keys only
+        PubkeyAuthentication = true; # Allow public key authentication
+        PermitRootLogin = "no"; # Never allow root SSH login
+        X11Forwarding = false; # Disable X11 (not needed for server)
+        AllowUsers = ["lucas" "git"]; # Only these users can SSH
+        UseDns = false; # Speed up login, disable DNS lookup
+        MaxAuthTries = 3; # Rate limit auth attempts
+        ClientAliveInterval = 60; # Keep connections alive
+      };
+      extraConfig = ''
+        Match user git
+          AllowTcpForwarding no
+          AllowAgentForwarding no
+          PermitTTY no
+          X11Forwarding no
+          GatewayPorts no
+      '';
     };
-    extraConfig = ''
-      Match user git
-        AllowTcpForwarding no
-        AllowAgentForwarding no
-        PermitTTY no
-        X11Forwarding no
-        GatewayPorts no
-    '';
-  };
     getty.autologinUser = user;
     # Enable the X11 windowing system.
     xserver = {

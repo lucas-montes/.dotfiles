@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-let
+{pkgs, ...}: let
   apps = {
     "text/markdown" = "nvim.desktop";
     "text/plain" = "nvim.desktop";

@@ -29,8 +29,8 @@
     pkgs.font-awesome
   ];
 
-stylix = {
-  autoEnable = false;
+  stylix = {
+    autoEnable = false;
     enable = true;
     polarity = "dark";
     base16Scheme = import ./colorscheme.nix;
@@ -42,5 +42,4 @@ stylix = {
       nushell.enable = true;
     };
   };
-
 }

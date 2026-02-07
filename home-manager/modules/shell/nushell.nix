@@ -1,4 +1,5 @@
-let shellAliases = import ./alias.nix;
+let
+  shellAliases = import ./alias.nix;
 in {
   programs = {
     nushell = {
@@ -11,7 +12,7 @@ in {
 
     starship = {
       enable = true;
-      settings = { add_newline = true; };
+      settings = {add_newline = true;};
     };
   };
 }

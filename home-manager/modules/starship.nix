@@ -1,7 +1,5 @@
-{ lib, ... }:
-let
-  createAllComponent = color: symbol: value:
-    "[─](fg:base02)[](fg:${color})[${symbol} ](fg:base01 bg:${color})[](fg:${color} bg:base02)[ ${value}](fg:base05 bg:base02)[](fg:base02)";
+{lib, ...}: let
+  createAllComponent = color: symbol: value: "[─](fg:base02)[](fg:${color})[${symbol} ](fg:base01 bg:${color})[](fg:${color} bg:base02)[ ${value}](fg:base05 bg:base02)[](fg:base02)";
   createComponent = color: value: createAllComponent color "$symbol" value;
 in {
   programs = {
@@ -48,12 +46,11 @@ in {
           format = createAllComponent "purple" "" "$user";
         };
 
-         hostname = {
+        hostname = {
           ssh_only = false;
           format = createAllComponent "purple" "$ssh_symbol" "$hostname";
           disabled = false;
         };
-
 
         directory = {
           disabled = false;
@@ -79,20 +76,20 @@ in {
           symbol = "🦀";
           style = "bold red bg:0x86BBD8";
           disabled = false;
-          detect_extensions = [ "rs" ];
-          detect_files = [ "Cargo.toml" ];
-          detect_folders = [ ];
+          detect_extensions = ["rs"];
+          detect_files = ["Cargo.toml"];
+          detect_folders = [];
         };
         python = {
           format =
             createComponent "green" "$pyenv_prefix($version )(($virtualenv) )";
-          python_binary = [ "python" "python3" "python2" ];
+          python_binary = ["python" "python3" "python2"];
           pyenv_prefix = "pyenv ";
           pyenv_version_name = true;
           symbol = "🐍";
           version_format = "v$raw";
           disabled = false;
-          detect_extensions = [ "py" ];
+          detect_extensions = ["py"];
           detect_files = [
             "requirements.txt"
             ".python-version"
@@ -102,7 +99,7 @@ in {
             "setup.py"
             "__init__.py"
           ];
-          detect_folders = [ ];
+          detect_folders = [];
         };
 
         package = {

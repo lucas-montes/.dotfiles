@@ -1,7 +1,11 @@
-{ pkgs, inputs, ... }: {
-  imports = [ inputs.stylix.homeModules.stylix ];
+{
+  pkgs,
+  inputs,
+  ...
+}: {
+  imports = [inputs.stylix.homeModules.stylix];
 
-  home.packages = [ pkgs.jetbrains-mono pkgs.font-awesome ];
+  home.packages = [pkgs.jetbrains-mono pkgs.font-awesome];
 
   stylix = {
     enable = true;
@@ -12,7 +16,7 @@
       tmux.enable = false;
       firefox.enable = false;
       hyprland.enable = false;
-       gnome.enable = false;
+      gnome.enable = false;
     };
     cursor = {
       package = pkgs.bibata-cursors;

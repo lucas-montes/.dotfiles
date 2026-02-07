@@ -1,4 +1,8 @@
-{ pkgs, config, ... }:  let
+{
+  pkgs,
+  config,
+  ...
+}: let
   colors = import ../colorscheme.nix;
 in {
   programs.tmux = {
@@ -6,7 +10,7 @@ in {
     baseIndex = 1;
     keyMode = "vi";
     escapeTime = 0;
-    plugins = [ pkgs.tmuxPlugins.better-mouse-mode ];
+    plugins = [pkgs.tmuxPlugins.better-mouse-mode];
 
     extraConfig = ''
       unbind r

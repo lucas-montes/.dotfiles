@@ -1,4 +1,9 @@
-{ pkgs, mainUser, inputs, ... }: {
+{
+  pkgs,
+  mainUser,
+  inputs,
+  ...
+}: {
   programs.hyprland = {
     enable = true;
     withUWSM = true;
@@ -22,5 +27,5 @@
     };
   };
 
-  security.pam.services.hyprlock = { };
+  security.pam.services.hyprlock = {};
 }

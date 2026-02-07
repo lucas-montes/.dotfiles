@@ -4,7 +4,6 @@
     # package = null;
     # portalPackage = null;
     settings = {
-
       monitor = ",preferred,auto,1";
       "$mainMod" = "SUPER";
       "$terminal" = "ghostty";
@@ -18,8 +17,7 @@
         "size 800 600, floating:1"
       ];
 
-      exec-once =
-        [ "waybar" "[workspace 1] $browser" "[workspace 2] $terminal" ];
+      exec-once = ["waybar" "[workspace 1] $browser" "[workspace 2] $terminal"];
 
       general = {
         gaps_in = 5;
@@ -30,7 +28,7 @@
         layout = "dwindle";
       };
 
-      cursor = { no_hardware_cursors = true; };
+      cursor = {no_hardware_cursors = true;};
 
       decoration = {
         rounding = 10;
@@ -53,7 +51,7 @@
         };
       };
 
-      animations = { enabled = true; };
+      animations = {enabled = true;};
 
       input = {
         kb_layout = "us";
@@ -71,7 +69,7 @@
         preserve_split = true;
       };
 
-      master = { new_status = "master"; };
+      master = {new_status = "master";};
 
       misc = {
         force_default_wallpaper = 2;

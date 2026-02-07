@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   programs.vscode = {
     enable = true;
     profiles.default = {
@@ -21,18 +21,24 @@
           tamasfe.even-better-toml
           # platformio.platformio-ide
           ms-vscode.cpptools
-        ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [{
-          name = "cucumberautocomplete";
-          publisher = "alexkrechik";
-          version = "3.0.5";
-          sha256 = "sha256-Tgqd4uoVgGJQKlj4JUM1CrjQhbi0qv9bAGz5NIHyofQ=";
-        }];
+        ]
+        ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+          {
+            name = "cucumberautocomplete";
+            publisher = "alexkrechik";
+            version = "3.0.5";
+            sha256 = "sha256-Tgqd4uoVgGJQKlj4JUM1CrjQhbi0qv9bAGz5NIHyofQ=";
+          }
+        ];
       userSettings = {
         # Whitespace
         "files.trimTrailingWhitespace" = true;
         "files.trimFinalNewlines" = true;
         "files.insertFinalNewline" = true;
         "diffEditor.ignoreTrimWhitespace" = false;
+
+        "nix.formatterPath" = "alejandra";
+
         # Git
         "git.confirmSync" = false;
         #      "git.enableCommitSigning" = true;
@@ -42,9 +48,9 @@
         "git-graph.repository.commits.showSignatureStatus" = true;
         "files.exclude"."**/.git" = false;
 
-        "github.copilot.chat.commitMessageGeneration.instructions"= [
-    { "text"= "Always include a list of key changes."; }
-  ];
+        "github.copilot.chat.commitMessageGeneration.instructions" = [
+          {"text" = "Always include a list of key changes.";}
+        ];
 
         "chat.editor.fontFamily" = "JetBrains Mono";
         "chat.editor.fontSize" = 16.0;

@@ -1,4 +1,8 @@
-{ pkgs, mainUser, ... }: {
+{
+  pkgs,
+  mainUser,
+  ...
+}: {
   programs.zsh.enable = true;
 
   users = {
@@ -9,8 +13,7 @@
       ];
       isNormalUser = true;
       description = "lucas";
-      extraGroups =
-        [ "networkmanager" "wheel" "docker" "dialout" "disk" "kvm" ];
+      extraGroups = ["networkmanager" "wheel" "docker" "dialout" "disk" "kvm"];
     };
   };
 

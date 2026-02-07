@@ -1,14 +1,14 @@
 {pkgs, ...}: let
-gitServerPath = "/var/lib/git-server";
-# TO make it executable
-postReceiveHook = pkgs.writeScript "post-receive" (builtins.readFile ./post-receive);
-# Create git config file the same way as the hook
-gitConfig = pkgs.writeText "gitconfig" ''
-  [core]
-      hooksPath = ${gitServerPath}/hooks
-  [safe]
-      directory = *
-'';
+  gitServerPath = "/var/lib/git-server";
+  # TO make it executable
+  postReceiveHook = pkgs.writeScript "post-receive" (builtins.readFile ./post-receive);
+  # Create git config file the same way as the hook
+  gitConfig = pkgs.writeText "gitconfig" ''
+    [core]
+        hooksPath = ${gitServerPath}/hooks
+    [safe]
+        directory = *
+  '';
 in {
   users.groups.git = {};
 
@@ -25,7 +25,7 @@ in {
 
   users.users.lucas.extraGroups = ["git"];
 
-   # Create the post-receive hook in /etc with executable permissions
+  # Create the post-receive hook in /etc with executable permissions
   environment.etc."git-server/post-receive" = {
     source = postReceiveHook;
     mode = "0755";
@@ -54,5 +54,4 @@ in {
     # Z = recursively fix ownership/permissions (cleanup pass)
     "Z ${gitServerPath} 2775 git git - -"
   ];
-
 }

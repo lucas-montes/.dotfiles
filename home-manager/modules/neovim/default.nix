@@ -1,5 +1,9 @@
-{ config, inputs, pkgs, ... }:
-let
+{
+  config,
+  inputs,
+  pkgs,
+  ...
+}: let
   inherit (config.lib.stylix) colors;
   toLua = str: ''
     lua << EOF

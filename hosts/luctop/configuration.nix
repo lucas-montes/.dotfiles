@@ -1,5 +1,11 @@
-{ pkgs, stateVersion, inputs, mainUser, ... }: {
-  imports = [ ./hardware-configuration.nix ../../settings ];
+{
+  pkgs,
+  stateVersion,
+  inputs,
+  mainUser,
+  ...
+}: {
+  imports = [./hardware-configuration.nix ../../settings];
 
   nixpkgs.config.allowUnfree = true;
 
@@ -11,7 +17,6 @@
       # pkgs.ccid
       # pkgs.web-eid-app
       # pkgs.p11-kit
-
 
       # https://github.com/open-eid/DigiDoc4-Client/pull/1371
       # https://github.com/open-eid/DigiDoc4-Client/issues/1281
@@ -28,7 +33,6 @@
   };
 
   networking.hostName = "luctop";
-
 
   # TODO: maybe worth testing again the tuxedo control center
   # hardware.tuxedo-control-center.enable = true;
