@@ -11,8 +11,8 @@ in {
 
         format = lib.strings.concatStrings [
           "[╭](fg:base02)"
-          "$username"
-          # "\${custom.user_host}"
+          #"$username"
+          "\${custom.user_host}"
           "$directory"
 
           "$git_branch"
