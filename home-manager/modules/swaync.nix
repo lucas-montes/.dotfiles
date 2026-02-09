@@ -65,9 +65,11 @@
           image-radius = 6;
         };
 
+# Run this to find your actual backlight device:
+# ls /sys/class/backlight/
         backlight = {
           label = "";
-          device = "intel_backlight";
+          device = "intel_backlight"; #TODO: fix
           min = 10;
         };
 

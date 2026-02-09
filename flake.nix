@@ -58,7 +58,12 @@
           stateVersion = "25.05";
           hostname = "luctop";
         };
-        modules = [./hosts/luctop/configuration.nix];
+        modules = [
+          ./hosts/luctop/configuration.nix
+          # nixos-hardware.nixosModules.common-cpu-amd
+          # nixos-hardware.nixosModules.common-cpu-amd-pstate
+          # nixos-hardware.nixosModules.common-gpu-amd
+          ];
       };
 
       # Currently the old laptop
