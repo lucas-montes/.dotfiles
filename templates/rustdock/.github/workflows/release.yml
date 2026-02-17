@@ -31,7 +31,7 @@ jobs:
       # otherwise, read permission is required at least
       pull-requests: write
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Get latest tag
         # Use a little bit of bash to extract the tag name from the GitHub ref
@@ -54,14 +54,14 @@ jobs:
         #   disable-autolabeler: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # build:
-  #   permissions:
-  #     contents: read
-  #     packages: write
-  #     id-token: write
-  #   needs: create-release
-  #   uses: ./.github/workflows/build.yml
-  #   secrets: inherit
-  #   with:
-  #     production_release: true
+  
+  build:
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    needs: create-release
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+    with:
+      production_release: true

@@ -39,6 +39,22 @@
           - run `direnv allow` to enter the development environment
         '';
       };
+      rustdock = {
+        path = ./templates/rustdock;
+        description = "Template for a rust project packaged as a docker container";
+        welcomeText = ''
+          # Getting Started
+          - run `direnv allow` to enter the development environment
+        '';
+      };
+      android = {
+        path = ./templates/android;
+        description = "Template for a android project";
+        welcomeText = ''
+          # Getting Started
+          - run `direnv allow` to enter the development environment
+        '';
+      };
       python = {
         path = ./templates/python;
         description = "Template for python project";
@@ -103,6 +119,15 @@
           stateVersion = "25.05";
         };
         modules = [./home-manager/home.nix];
+      };
+
+      "${mainUser}@lucver" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {system = "x86_64-linux";};
+        extraSpecialArgs = {
+          inherit inputs mainUser;
+          stateVersion = "25.05";
+        };
+        modules = [./home-manager/lucver.nix];
       };
 
       # home-manager switch --flake .#lucas@raspi4 --target-host raspi --use-remote-sudo
