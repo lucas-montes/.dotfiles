@@ -1,17 +1,19 @@
 {
   pkgs,
   stateVersion,
-  inputs,
-  mainUser,
   ...
-}: {
-  imports = [./hardware-configuration.nix ../../settings];
+}:
+{
+  imports = [
+    ./hardware-configuration.nix
+    ../../settings
+  ];
 
-  # Use latest kernel for best AMD Radeon 890M support
-  # boot.kernelPackages = pkgs.linuxPackages_latest;
+  # latest kernel to try to avoid errors with AMD Radeon 890M gpu
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Ensure AMD GPU firmware is available
-  hardware.firmware = [pkgs.linux-firmware];
+  hardware.firmware = [ pkgs.linux-firmware ];
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -19,7 +21,7 @@
 
   # AMDGPU specific kernel parameters to help with stability
   boot.kernelParams = [
-    "amdgpu.sg_display=0"     # Fixes some display freezes on newer AMD APUs
+    "amdgpu.sg_display=0" # Fixes some display freezes on newer AMD APUs
     "amdgpu.dcdebugmask=0x10" # Workaround for PSR-related freezes
   ];
 
@@ -66,9 +68,11 @@
     };
     printing = {
       enable = true;
-      drivers = [pkgs.gutenprint];
+      drivers = [ pkgs.gutenprint ];
     };
-    gnome.gnome-keyring = {enable = true;};
+    gnome.gnome-keyring = {
+      enable = true;
+    };
   };
 
   programs = {
