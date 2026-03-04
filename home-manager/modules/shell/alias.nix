@@ -17,4 +17,10 @@ in {
   dw-venv = "venv -p yt-dlp";
   dwm = "yt-dlp -x --audio-format mp3 -o '~/Downloads/music/%(title)s.%(ext)s'";
   lz = "lazygit";
+  gcsa = "git commit --all --signoff --no-edit --amend";
+  gcs = "git commit --signoff --message";
+  glg = "git log --graph --decorate --all";
+  glga = 'git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" --all';
+  glgs = 'git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" --stat';
+  gsps = "git show --pretty=short --show-signature";
 }
