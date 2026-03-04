@@ -1,10 +1,12 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   programs.vscode = {
     enable = true;
     profiles.default = {
       enableUpdateCheck = false;
       enableExtensionUpdateCheck = false;
-      extensions = with pkgs.vscode-extensions;
+      extensions =
+        with pkgs.vscode-extensions;
         [
           jnoortheen.nix-ide
           donjayamanne.githistory
@@ -41,7 +43,6 @@
 
         # Git
         "git.confirmSync" = false;
-        #      "git.enableCommitSigning" = true;
         "git-graph.repository.sign.commits" = true;
         "git-graph.repository.sign.tags" = true;
         "git.alwaysSignOff" = true;
@@ -49,9 +50,12 @@
         "files.exclude"."**/.git" = false;
 
         "github.copilot.chat.commitMessageGeneration.instructions" = [
-          {"text" = "Always include a list of key changes.";}
+          { "text" = "Always include a list of key changes."; }
         ];
 
+        "chat.tools.terminal.autoApprove" = {
+          "cp" = true;
+        };
         "chat.editor.fontFamily" = "JetBrains Mono";
         "chat.editor.fontSize" = 16.0;
         "debug.console.fontFamily" = "JetBrains Mono";

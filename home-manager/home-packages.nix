@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   nixpkgs.config.allowUnfree = true;
   home.packages = [
     pkgs.azahar
@@ -10,6 +11,8 @@
     pkgs.nautilus
 
     pkgs.sqlitestudio
+
+    pkgs.opencode
 
     pkgs.usbutils
     pkgs.openssl

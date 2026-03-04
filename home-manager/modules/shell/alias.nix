@@ -12,7 +12,7 @@ in {
   rt = "tmux source ~/.config/tmux/tmux.conf";
   tx = "_new_named_session";
   notes = "_new_named_session ~/Notes/";
-  venv = "nix-shell --command zsh";
+  venv = "nix-shell --command nushell";
   gpj = "_fzf_tmux ~/Projects";
   dw-venv = "venv -p yt-dlp";
   dwm = "yt-dlp -x --audio-format mp3 -o '~/Downloads/music/%(title)s.%(ext)s'";
