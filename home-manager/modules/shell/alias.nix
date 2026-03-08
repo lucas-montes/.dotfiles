@@ -6,7 +6,6 @@ in {
   cprsync = "rsync -chavzP --stats --progress";
   con-ap = "bluetoothctl connect F8:4D:89:37:41:A0";
   ro = "sudo nixos-rebuild switch --flake";
-  #es = "do {cd ${dotfiles} ; vim .}";
   sushell = "sudo -E nix-shell -p gparted --run gparted"; # TODO: replace the gparted with other app
   rs = "home-manager switch --flake ${dotfiles}";
   rt = "tmux source ~/.config/tmux/tmux.conf";
@@ -20,7 +19,7 @@ in {
   gcsa = "git commit --all --signoff --no-edit --amend";
   gcs = "git commit --signoff --message";
   glg = "git log --graph --decorate --all";
-  glga = 'git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" --all';
-  glgs = 'git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" --stat';
+  glga = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all";
+  glgs = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat";
   gsps = "git show --pretty=short --show-signature";
 }

@@ -36,7 +36,7 @@ def _new_named_session [path: path] {
 }
 
 def _fzf_tmux [path: path] {
-  _new_named_session (glob $"($path)/**" --depth 1 --no-file | nufzf)
+  _new_named_session (glob $"($path)/**" --depth 2 --no-file | nufzf)
 }
 
 
