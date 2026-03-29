@@ -2,8 +2,7 @@
   pkgs,
   stateVersion,
   ...
-}:
-{
+}: {
   imports = [
     ./hardware-configuration.nix
     ../../settings
@@ -13,7 +12,7 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Ensure AMD GPU firmware is available
-  hardware.firmware = [ pkgs.linux-firmware ];
+  hardware.firmware = [pkgs.linux-firmware];
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -50,8 +49,38 @@
     # };
   };
 
-  networking.hostName = "luctop";
+  networking = {
+    hostName = "luctop";
+    # speed up DHCP: don't block boot while dhcpcd waits for leases
+    dhcpcd = {
+      wait = "background";
+      extraConfig = "noarp";
+    };
+  };
 
+  # systemd.services = {
+  #         NetworkManager-wait-online.enable = false;
+  #         systemd-udev-settle.enable = false;
+  #       };
+
+  #  this shit is ai generated, i don't trust it
+  # systemd = {
+  #     services = {
+  #       "nix-gc.service" = { mask = true; };
+  #       "NetworkManager-wait-online.service" = { mask = true; };
+  #       "systemd-tmpfiles-clean.service" = { mask = true; };
+  #       "docker.service" = { mask = true; }; # if you want docker only socket-activated
+  #     };
+
+  #     timers = {
+  #       "systemd-tmpfiles-clean.timer" = { enable = true; };
+  #       "nix-gc.timer" = { mask = true; };
+  #     };
+
+  #     sockets = {
+  #       "docker.socket" = { enable = true; };
+  #     };
+  #   };
   # TODO: maybe worth testing again the tuxedo control center
   # hardware.tuxedo-control-center.enable = true;
 
@@ -68,7 +97,7 @@
     };
     printing = {
       enable = true;
-      drivers = [ pkgs.gutenprint ];
+      drivers = [pkgs.gutenprint];
     };
     gnome.gnome-keyring = {
       enable = true;
