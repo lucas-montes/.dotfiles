@@ -11,14 +11,16 @@
 
     hyprland.url = "github:hyprwm/Hyprland";
 
-    nvf = {url = "github:notashelf/nvf";};
+    nvf.url = "github:notashelf/nvf";
 
     stylix = {
       url = "github:danth/stylix/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixos-hardware = {url = "github:NixOS/nixos-hardware/master";};
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
+    procurator.url = "path:/home/lucas/Projects/procurator/nix";
   };
 
   outputs = {
@@ -79,7 +81,7 @@
           # nixos-hardware.nixosModules.common-cpu-amd
           # nixos-hardware.nixosModules.common-cpu-amd-pstate
           # nixos-hardware.nixosModules.common-gpu-amd
-          ];
+        ];
       };
 
       # Currently the old laptop
