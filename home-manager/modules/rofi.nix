@@ -19,7 +19,6 @@ in {
       display-window = "";
       display-combi = "";
       terminal = "ghostty";
-      # terminal = "${pkgs.ghostty}/bin/ghostty";
       drun-match-fields = "name";
       drun-display-format = "{name}";
       me-select-entry = "";

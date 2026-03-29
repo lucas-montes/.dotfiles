@@ -1,12 +1,10 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   programs.vscode = {
     enable = true;
     profiles.default = {
       enableUpdateCheck = false;
       enableExtensionUpdateCheck = false;
-      extensions =
-        with pkgs.vscode-extensions;
+      extensions = with pkgs.vscode-extensions;
         [
           jnoortheen.nix-ide
           donjayamanne.githistory
@@ -14,7 +12,6 @@
           github.copilot-chat
           gruntfuggly.todo-tree
           mkhl.direnv
-          ms-azuretools.vscode-docker
           ms-python.debugpy
           ms-python.vscode-pylance
           rust-lang.rust-analyzer
@@ -50,11 +47,14 @@
         "files.exclude"."**/.git" = false;
 
         "github.copilot.chat.commitMessageGeneration.instructions" = [
-          { "text" = "Always include a list of key changes."; }
+          {"text" = "Always include a list of key changes.";}
         ];
 
         "chat.tools.terminal.autoApprove" = {
           "cp" = true;
+          "nix" = true;
+          "cargo" = true;
+          "sed" = true;
         };
         "chat.editor.fontFamily" = "JetBrains Mono";
         "chat.editor.fontSize" = 16.0;

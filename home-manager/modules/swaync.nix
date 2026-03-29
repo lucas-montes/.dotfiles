@@ -57,7 +57,7 @@
 
         label = {
           max-lines = 1;
-          text = "Controll Center";
+          text = "Control Center";
         };
 
         mpris = {
@@ -65,8 +65,8 @@
           image-radius = 6;
         };
 
-# Run this to find your actual backlight device:
-# ls /sys/class/backlight/
+        # Run this to find your actual backlight device:
+        # ls /sys/class/backlight/
         backlight = {
           label = "";
           device = "intel_backlight"; #TODO: fix
@@ -92,7 +92,7 @@
               }
               {
                 label = "   Lock";
-                command = "swaylock.sh";
+                command = "loginctl lock-session $XDG_SESSION_ID";
               }
               {
                 label = "   Logout";
@@ -112,6 +112,7 @@
               {
                 label = "Performance";
                 command = "powerprofilesctl set performance";
+                # TODO: i don't have those commands
               }
               {
                 label = "Balanced";
