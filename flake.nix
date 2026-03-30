@@ -26,7 +26,6 @@
   outputs = {
     nixpkgs,
     home-manager,
-    nixos-hardware,
     ...
   } @ inputs: let
     mainUser = "lucas";
@@ -78,6 +77,7 @@
         };
         modules = [
           ./hosts/luctop/configuration.nix
+          inputs.procurator.nixosModules.x86_64-linux.procurator
           # nixos-hardware.nixosModules.common-cpu-amd
           # nixos-hardware.nixosModules.common-cpu-amd-pstate
           # nixos-hardware.nixosModules.common-gpu-amd
@@ -106,7 +106,7 @@
         };
         modules = [
           "${nixpkgs}/nixos/modules/installer/sd-card/sd-image-aarch64.nix"
-          nixos-hardware.nixosModules.raspberry-pi-4
+          inputs.nixos-hardware.nixosModules.raspberry-pi-4
           ./hosts/raspi4/configuration.nix
         ];
       };
@@ -114,7 +114,7 @@
 
     #Let's keep the same home manager config for the lucver and the luctop
     homeConfigurations = {
-      ${mainUser} = home-manager.lib.homeManagerConfiguration {
+      ${mainUser} = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {system = "x86_64-linux";};
         extraSpecialArgs = {
           inherit inputs mainUser;
@@ -123,7 +123,7 @@
         modules = [./home-manager/home.nix];
       };
 
-      "${mainUser}@lucver" = home-manager.lib.homeManagerConfiguration {
+      "${mainUser}@lucver" = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {system = "x86_64-linux";};
         extraSpecialArgs = {
           inherit inputs mainUser;
@@ -133,7 +133,7 @@
       };
 
       # home-manager switch --flake .#lucas@raspi4 --target-host raspi --use-remote-sudo
-      "${mainUser}@raspi4" = home-manager.lib.homeManagerConfiguration {
+      "${mainUser}@raspi4" = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {system = "aarch64-linux";};
         extraSpecialArgs = {
           homeStateVersion = "25.05";

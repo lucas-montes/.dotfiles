@@ -876,8 +876,8 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1774817286,
-        "narHash": "sha256-kJo8OSi4CKZJGNuaPxwNM7M2HloAVVGjs2tTfjcqeVs=",
+        "lastModified": 1774897758,
+        "narHash": "sha256-c8OXwpbI3fYWjHSDDCDLgpSX2vo5Z0eFfnOjlkcpZKI=",
         "path": "/home/lucas/Projects/procurator/nix",
         "type": "path"
       },

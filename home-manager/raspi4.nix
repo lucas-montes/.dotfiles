@@ -4,8 +4,7 @@
   inputs,
   pkgs,
   ...
-}:
-{
+}: {
   imports = [
     ./modules/btop.nix
     ./modules/dev.nix

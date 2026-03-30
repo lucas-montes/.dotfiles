@@ -6,7 +6,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../settings
-    ../../services/procurator
+    ../../services/procurator.nix
   ];
 
   # latest kernel to try to avoid errors with AMD Radeon 890M gpu

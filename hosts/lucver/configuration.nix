@@ -8,7 +8,7 @@
     ../../settings
     ../../settings/nvidia.nix
     ../../services/postgres.nix
-    ../../services/procurator
+    ../../services/procurator.nix
   ];
 
   environment.systemPackages = [pkgs.home-manager pkgs.curl pkgs.git pkgs.cudatoolkit];

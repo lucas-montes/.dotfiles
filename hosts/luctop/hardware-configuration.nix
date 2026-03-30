@@ -6,8 +6,7 @@
   lib,
   modulesPath,
   ...
-}:
-{
+}: {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
@@ -22,10 +21,10 @@
         "sd_mod"
         "sdhci_pci"
       ];
-      kernelModules = [ ];
+      kernelModules = [];
     };
-    kernelModules = [ "kvm-amd" ];
-    extraModulePackages = [ ];
+    kernelModules = ["kvm-amd"];
+    extraModulePackages = [];
   };
 
   fileSystems."/" = {
@@ -43,7 +42,7 @@
   };
 
   swapDevices = [
-    { device = "/dev/disk/by-uuid/61e472dc-5242-447c-b808-b71b155393aa"; }
+    {device = "/dev/disk/by-uuid/61e472dc-5242-447c-b808-b71b155393aa";}
   ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
