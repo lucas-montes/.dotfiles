@@ -30,7 +30,8 @@
     package = pkgs.nixVersions.stable;
     gc = {
       automatic = true;
-      dates = "03:15";
+      dates = "weekly";
+      options = "--delete-older-than 30d";
     };
   };
 }

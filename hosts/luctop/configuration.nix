@@ -59,29 +59,31 @@
     };
   };
 
-  # systemd.services = {
-  #         NetworkManager-wait-online.enable = false;
-  #         systemd-udev-settle.enable = false;
-  #       };
+  systemd = {
+    timers = {
+      systemd-tmpfiles-clean = {
+        timerConfig = {
+          OnBootSec = "15min"; # delay after boot
+        };
+      };
+      nix-gc = {
+        timerConfig = {
+          OnBootSec = "15min"; # delay GC after boot, don't run immediately
+        };
+      };
+    };
+    services = {
+      nix-gc = {
+        serviceConfig = {
+          IOSchedulingClass = "idle"; # run GC with low I/O priority
+          CPUSchedulingPolicy = "idle"; # run GC with low CPU priority
+        };
+      };
+      NetworkManager-wait-online.enable = false;
+      # systemd-udev-settle.enable = false;
+    };
+  };
 
-  #  this shit is ai generated, i don't trust it
-  # systemd = {
-  #     services = {
-  #       "nix-gc.service" = { mask = true; };
-  #       "NetworkManager-wait-online.service" = { mask = true; };
-  #       "systemd-tmpfiles-clean.service" = { mask = true; };
-  #       "docker.service" = { mask = true; }; # if you want docker only socket-activated
-  #     };
-
-  #     timers = {
-  #       "systemd-tmpfiles-clean.timer" = { enable = true; };
-  #       "nix-gc.timer" = { mask = true; };
-  #     };
-
-  #     sockets = {
-  #       "docker.socket" = { enable = true; };
-  #     };
-  #   };
   # TODO: maybe worth testing again the tuxedo control center
   # hardware.tuxedo-control-center.enable = true;
 
@@ -116,7 +118,10 @@
     seahorse.enable = true;
   };
 
-  virtualisation.docker.enable = true;
+  virtualisation.docker = {
+    enable = true;
+    enableOnBoot = false;
+  };
 
   system.stateVersion = stateVersion;
 }
