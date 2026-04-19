@@ -2,7 +2,8 @@
   pkgs,
   stateVersion,
   ...
-}: {
+}:
+{
   imports = [
     ./hardware-configuration.nix
     ../../settings
@@ -13,7 +14,7 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Ensure AMD GPU firmware is available
-  hardware.firmware = [pkgs.linux-firmware];
+  hardware.firmware = [ pkgs.linux-firmware ];
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -30,7 +31,7 @@
   environment = {
     systemPackages = [
       # pkgs.opensc
-      # pkgs.qdigidoc
+      pkgs.qdigidoc
       # pkgs.pcsc-tools
       # pkgs.ccid
       # pkgs.web-eid-app
@@ -100,7 +101,7 @@
     };
     printing = {
       enable = true;
-      drivers = [pkgs.gutenprint];
+      drivers = [ pkgs.gutenprint ];
     };
     gnome.gnome-keyring = {
       enable = true;

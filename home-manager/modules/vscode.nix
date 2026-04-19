@@ -1,10 +1,12 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   programs.vscode = {
     enable = true;
     profiles.default = {
       enableUpdateCheck = false;
       enableExtensionUpdateCheck = false;
-      extensions = with pkgs.vscode-extensions;
+      extensions =
+        with pkgs.vscode-extensions;
         [
           jnoortheen.nix-ide
           donjayamanne.githistory
@@ -47,7 +49,7 @@
         "files.exclude"."**/.git" = false;
 
         "github.copilot.chat.commitMessageGeneration.instructions" = [
-          {"text" = "Always include a list of key changes.";}
+          { "text" = "Always include a list of key changes."; }
         ];
 
         "chat.tools.terminal.autoApprove" = {
@@ -82,6 +84,9 @@
         "terminal.integrated.fontSize" = 16.0;
         "update.mode" = "none";
         "update.showReleaseNotes" = false;
+
+        "testing.showAllMessages" = true;
+        "task.verboseLogging" = true;
       };
     };
   };
