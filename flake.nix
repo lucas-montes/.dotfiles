@@ -18,9 +18,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-
-    procurator.url = "path:/home/lucas/Projects/procurator/nix";
+    procurator.url = "github:lucas-montes/procurator";
   };
 
   outputs = {
@@ -78,13 +76,11 @@
         modules = [
           ./hosts/luctop/configuration.nix
           inputs.procurator.nixosModules.x86_64-linux.procurator
-          # nixos-hardware.nixosModules.common-cpu-amd
-          # nixos-hardware.nixosModules.common-cpu-amd-pstate
-          # nixos-hardware.nixosModules.common-gpu-amd
         ];
       };
 
       # Currently the old laptop
+      # nixos-rebuild switch --flake .#lucver --target-host lucver --sudo --ask-sudo-password
       lucver = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
@@ -92,11 +88,14 @@
           stateVersion = "24.11";
           hostname = "lucver";
         };
-        modules = [./hosts/lucver/configuration.nix];
+        modules = [
+          ./hosts/lucver/configuration.nix
+          inputs.procurator.nixosModules.x86_64-linux.procurator
+        ];
       };
 
       # Raspberry Pi 4 configuration
-      # nixos-rebuild switch --flake .#raspi4 --target-host raspi --use-remote-sudo
+      # nixos-rebuild switch --flake .#raspi4 --target-host raspi --sudo
       # nix build .#nixosConfigurations.raspi4.config.system.build.sdImage
       raspi4 = nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";

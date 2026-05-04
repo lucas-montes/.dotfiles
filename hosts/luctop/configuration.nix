@@ -2,8 +2,7 @@
   pkgs,
   stateVersion,
   ...
-}:
-{
+}: {
   imports = [
     ./hardware-configuration.nix
     ../../settings
@@ -14,7 +13,7 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Ensure AMD GPU firmware is available
-  hardware.firmware = [ pkgs.linux-firmware ];
+  hardware.firmware = [pkgs.linux-firmware];
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -81,7 +80,6 @@
         };
       };
       NetworkManager-wait-online.enable = false;
-      # systemd-udev-settle.enable = false;
     };
   };
 
@@ -101,7 +99,7 @@
     };
     printing = {
       enable = true;
-      drivers = [ pkgs.gutenprint ];
+      drivers = [pkgs.gutenprint];
     };
     gnome.gnome-keyring = {
       enable = true;
@@ -109,6 +107,8 @@
   };
 
   programs = {
+    # For android
+    adb.enable = true;
     neovim = {
       enable = true;
       defaultEditor = true;
