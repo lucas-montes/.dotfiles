@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   nixpkgs.config.allowUnfree = true;
   home.packages = [
     pkgs.gimp
@@ -9,8 +10,6 @@
     pkgs.nautilus
 
     pkgs.sqlitestudio
-
-    pkgs.opencode
 
     pkgs.usbutils
     pkgs.openssl
@@ -30,7 +29,7 @@
     pkgs.pulseaudio
     pkgs.networkmanagerapplet
 
-
+    pkgs.pcsx2
     pkgs.melonDS
     pkgs.azahar
     pkgs.lutris

@@ -106,9 +106,9 @@
     };
   };
 
+  users.users.lucas.extraGroups = [ "adbusers" ];
+
   programs = {
-    # For android
-    adb.enable = true;
     neovim = {
       enable = true;
       defaultEditor = true;
