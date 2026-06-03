@@ -9,7 +9,8 @@
     ./modules/btop.nix
     ./modules/dev.nix
     ./modules/fzf.nix
-    ./modules/nvf.nix
+    #./modules/nvf.nix
+     ./modules/neovim
     ./modules/shell
     ./modules/starship.nix
     ./modules/tmux.nix

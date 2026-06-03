@@ -17,6 +17,7 @@
       firefox.enable = false;
       hyprland.enable = false;
       gnome.enable = false;
+      neovim.enable = true;
     };
     cursor = {
       package = pkgs.bibata-cursors;
@@ -27,7 +28,7 @@
     fonts = {
       emoji = {
         name = "Noto Color Emoji";
-        package = pkgs.font-awesome;
+        package = pkgs.noto-fonts-color-emoji;
       };
       sansSerif = {
         package = pkgs.dejavu_fonts;

@@ -2,6 +2,22 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- [[ Setting options from nvf ]]
+-- Disable backup, swap, and writebackup files
+vim.o.backup = false
+vim.o.writebackup = false
+vim.o.swapfile = false
+-- Store swap and backup files in /tmp
+vim.o.directory = "/tmp"
+vim.o.backupdir = "/tmp"
+
+-- Line wrapping disabled (nvf: wrap = false)
+vim.o.wrap = false
+
+-- Indent settings from nvf
+vim.o.shiftwidth = 4
+vim.o.tabstop = 4
+
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
@@ -34,9 +50,7 @@ vim.opt.cpoptions:append('I')
 vim.o.expandtab = true
 vim.o.smartindent = true
 vim.o.autoindent = true
-vim.o.tabstop = 4
 vim.o.softtabstop = 4
-vim.o.shiftwidth = 4
 
 -- stops line wrapping from being confusing
 vim.o.breakindent = true
@@ -131,3 +145,9 @@ vim.keymap.set({"n", "v", "x"}, '<C-a>', 'gg0vG$', { noremap = true, silent = tr
 vim.keymap.set({'n', 'v', 'x'}, '<leader>p', '"+p', { noremap = true, silent = true, desc = 'Paste from clipboard' })
 vim.keymap.set('i', '<C-p>', '<C-r><C-p>+', { noremap = true, silent = true, desc = 'Paste from clipboard from within insert mode' })
 vim.keymap.set("x", "<leader>P", '"_dP', { noremap = true, silent = true, desc = 'Paste over selection without erasing unnamed register' })
+
+-- Set a proper colorscheme; try stylix first, fall back to a built-in
+pcall(vim.cmd.colorscheme, "stylix")
+if vim.g.colors_name ~= "stylix" then
+  vim.cmd.colorscheme("habamax")
+end

@@ -20,16 +20,29 @@ in {
     vimdiffAlias = true;
 
     extraPackages = with pkgs; [
+      # LSP servers
       lua-language-server
       nixd
+      bash-language-server
+      typescript-language-server
+      ruff
+      pyright
+      rust-analyzer
+      # Formatters
       alejandra
+      # Clipboards
       xclip
       wl-clipboard
     ];
 
     plugins = with pkgs.vimPlugins; [
       undotree
-      which-key-nvim
+
+      {
+        plugin = which-key-nvim;
+        config = fromPlugin "whichkey";
+      }
+
       {
         plugin = nvim-lspconfig;
         config = fromPlugin "lsp";
@@ -39,8 +52,6 @@ in {
         plugin = comment-nvim;
         config = toLua ''require("Comment").setup()'';
       }
-
-      neodev-nvim
 
       {
         plugin = nvim-cmp;
@@ -60,7 +71,10 @@ in {
       luasnip
       friendly-snippets
 
-      lualine-nvim
+      {
+        plugin = lualine-nvim;
+        config = fromPlugin "lualine-config";
+      }
       nvim-web-devicons
 
       {
@@ -77,6 +91,50 @@ in {
       }
 
       vim-nix
+
+      {
+        plugin = harpoon2;
+        config = fromPlugin "harpoon";
+      }
+
+      {
+        plugin = trouble-nvim;
+        config = fromPlugin "trouble";
+      }
+
+      {
+        plugin = todo-comments-nvim;
+        config = fromPlugin "todo-comments";
+      }
+
+      supermaven-nvim
+
+      {
+        plugin = conform-nvim;
+        config = toLua ''
+          require("conform").setup({
+            formatters_by_ft = {
+              nix = { "alejandra", "nixfmt", "nixpkgs-fmt" },
+              python = { "ruff_format", "ruff_fix", "black" },
+              lua = { "stylua" },
+              rust = { "rustfmt", lsp_format = "fallback" },
+              javascript = { "prettierd", "prettier", lsp_format = "fallback" },
+              typescript = { "prettierd", "prettier", lsp_format = "fallback" },
+              javascriptreact = { "prettierd", "prettier", lsp_format = "fallback" },
+              typescriptreact = { "prettierd", "prettier", lsp_format = "fallback" },
+              json = { "prettierd", "prettier" },
+              yaml = { "prettierd", "prettier" },
+              markdown = { "prettierd", "prettier" },
+              bash = { "shfmt", "beautysh" },
+              ["*"] = { lsp_format = "fallback" },
+            },
+            format_on_save = {
+              timeout_ms = 500,
+              lsp_format = "fallback",
+            },
+          })
+        '';
+      }
     ];
 
     extraLuaConfig = ''
