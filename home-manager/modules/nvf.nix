@@ -85,6 +85,7 @@
           typescript.enable = false;
           ocaml.enable = true;
           python.enable = true;
+          haskell.enable = true;
         };
       };
     };

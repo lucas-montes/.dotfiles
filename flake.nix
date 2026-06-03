@@ -18,7 +18,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    procurator.url = "github:lucas-montes/procurator";
+    procurator.url = "github:lucas-montes/procurator/remote-connections";
   };
 
   outputs = {

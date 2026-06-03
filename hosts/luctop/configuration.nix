@@ -9,21 +9,24 @@
     ../../services/procurator.nix
   ];
 
-  # latest kernel to try to avoid errors with AMD Radeon 890M gpu
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
   # Ensure AMD GPU firmware is available
-  hardware.firmware = [pkgs.linux-firmware];
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
+  hardware = {
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+    };
+    firmware = [pkgs.linux-firmware];
   };
 
-  # AMDGPU specific kernel parameters to help with stability
-  boot.kernelParams = [
-    "amdgpu.sg_display=0" # Fixes some display freezes on newer AMD APUs
-    "amdgpu.dcdebugmask=0x12" # Workaround for PSR-related freezes
-  ];
+  boot = {
+    # latest kernel to try to avoid errors with AMD Radeon 890M gpu
+    kernelPackages = pkgs.linuxPackages_latest;
+    # AMDGPU specific kernel parameters to help with stability
+    kernelParams = [
+      "amdgpu.sg_display=0" # Fixes some display freezes on newer AMD APUs
+      "amdgpu.dcdebugmask=0x12" # Workaround for PSR-related freezes
+    ];
+  };
 
   nixpkgs.config.allowUnfree = true;
 
@@ -104,9 +107,14 @@
     gnome.gnome-keyring = {
       enable = true;
     };
+    # Enable Avahi to reach lucver.local
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+    };
   };
 
-  users.users.lucas.extraGroups = [ "adbusers" ];
+  users.users.lucas.extraGroups = ["adbusers"];
 
   programs = {
     neovim = {
