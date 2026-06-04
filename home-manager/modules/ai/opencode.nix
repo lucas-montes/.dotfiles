@@ -17,6 +17,10 @@ let
 
         };
         models = {
+          "deepseek-v4-flash" = {
+            name = "CrofAI: deepseek-v4-flash";
+            limit = { context = 1000000; output = 131072; };
+          };
           "deepseek-v4-pro" = {
             name = "CrofAI: deepseek-v4-pro";
             limit = { context = 1000000; output = 131072; };

@@ -17,7 +17,13 @@
       firefox.enable = false;
       hyprland.enable = false;
       gnome.enable = false;
-      neovim.enable = true;
+      neovim = {
+        enable = true;
+        transparentBackground = {
+          numberLine = true;
+          signColumn = true;
+        };
+      };
     };
     cursor = {
       package = pkgs.bibata-cursors;

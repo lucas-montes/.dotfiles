@@ -45,3 +45,14 @@ require('telescope').setup({
 })
 
 require('telescope').load_extension('fzf')
+
+-- Telescope keymaps (nvf defaults)
+local keymap = vim.keymap
+
+keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<CR>", { desc = "Find files" })
+keymap.set("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", { desc = "Live grep" })
+keymap.set("n", "<leader>fb", "<cmd>Telescope buffers<CR>", { desc = "Buffers" })
+keymap.set("n", "<leader>fh", "<cmd>Telescope help_tags<CR>", { desc = "Help tags" })
+keymap.set("n", "<leader>fr", "<cmd>Telescope resume<CR>", { desc = "Resume" })
+keymap.set("n", "<leader>fs", "<cmd>Telescope treesitter<CR>", { desc = "Treesitter" })
+keymap.set("n", "<leader>fld", "<cmd>Telescope diagnostics<CR>", { desc = "Diagnostics" })

@@ -46,23 +46,84 @@ local on_attach = function(client, bufnr)
 
     opts.desc = "Restart LSP"
     keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts)
+
+    -- nvf-style LSP keymaps (<leader>l* prefix)
+    opts.desc = "Code action"
+    keymap.set({ "n", "v" }, "<leader>la", vim.lsp.buf.code_action, opts)
+
+    opts.desc = "Go to definition"
+    keymap.set("n", "<leader>lgd", vim.lsp.buf.definition, opts)
+
+    opts.desc = "List references"
+    keymap.set("n", "<leader>lgr", "<cmd>Telescope lsp_references<CR>", opts)
+
+    opts.desc = "List implementations"
+    keymap.set("n", "<leader>lgi", "<cmd>Telescope lsp_implementations<CR>", opts)
+
+    opts.desc = "Go to type definition"
+    keymap.set("n", "<leader>lgt", "<cmd>Telescope lsp_type_definitions<CR>", opts)
+
+    opts.desc = "Hover"
+    keymap.set("n", "<leader>lh", vim.lsp.buf.hover, opts)
+
+    opts.desc = "Rename"
+    keymap.set("n", "<leader>ln", vim.lsp.buf.rename, opts)
+
+    opts.desc = "Format"
+    keymap.set("n", "<leader>lf", vim.lsp.buf.format, opts)
+
+    opts.desc = "Diagnostic float"
+    keymap.set("n", "<leader>le", vim.diagnostic.open_float, opts)
+
+    opts.desc = "Previous diagnostic"
+    keymap.set("n", "<leader>lgp", vim.diagnostic.goto_prev, opts)
+
+    opts.desc = "Next diagnostic"
+    keymap.set("n", "<leader>lgn", vim.diagnostic.goto_next, opts)
+
+    opts.desc = "Signature help"
+    keymap.set("i", "<C-l>", vim.lsp.buf.signature_help, opts)
+
+    opts.desc = "Document symbols"
+    keymap.set("n", "<leader>lS", "<cmd>Telescope lsp_document_symbols<CR>", opts)
+
+    opts.desc = "Workspace symbols"
+    keymap.set("n", "<leader>lws", "<cmd>Telescope lsp_workspace_symbols<CR>", opts)
+
+    opts.desc = "Document highlight"
+    keymap.set("n", "<leader>lH", vim.lsp.buf.document_highlight, opts)
+
+    opts.desc = "Toggle format on save"
+    keymap.set("n", "<leader>ltf", function()
+        vim.g.format_on_save = not vim.g.format_on_save
+        vim.notify("Format on save: " .. tostring(vim.g.format_on_save))
+    end, opts)
 end
 
 local capabilities = cmp_nvim_lsp.default_capabilities()
 
-local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-for type, icon in pairs(signs) do
-    local hl = "DiagnosticSign" .. type
-    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-end
+vim.diagnostic.config({
+    signs = {
+        text = {
+            [vim.diagnostic.severity.ERROR] = " ",
+            [vim.diagnostic.severity.WARN] = " ",
+            [vim.diagnostic.severity.HINT] = "󰠠 ",
+            [vim.diagnostic.severity.INFO] = " ",
+        },
+    },
+    underline = true,
+    update_in_insert = false,
+    virtual_text = true,
+})
 
--- Enable LSP servers using the nvim 0.11+ API (vim.lsp.enable).
--- nvim-lspconfig registers its server configs with vim.lsp.config,
--- so this is the correct API. require("lspconfig").setup() is deprecated.
---
+-- Enable LSP servers using vim.lsp.enable (Neovim 0.11+ API).
 -- Only enables a server if its binary is found in PATH.
 -- Nix-installed defaults (via extraPackages) provide the fallback,
 -- but entering a nix-shell with different tools just works.
+vim.lsp.config("*", {
+    capabilities = capabilities,
+})
+
 local servers = {
     "bashls", "ts_ls", "ruff", "nixd", "buf_ls", "volar",
     "pyright", "rust_analyzer", "lua_ls",
@@ -86,14 +147,22 @@ for _, name in ipairs(servers) do
     end
 end
 
--- Defaults applied to every LSP client
-vim.lsp.config("*", {
-    on_attach = on_attach,
-    capabilities = capabilities,
+-- Use LspAttach autocmd instead of on_attach in vim.lsp.config
+-- because Neovim 0.11's auto-attach doesn't call on_attach from config correctly
+vim.api.nvim_create_autocmd("LspAttach", {
+    group = vim.api.nvim_create_augroup("lsp_on_attach", { clear = true }),
+    callback = function(args)
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if client then
+            on_attach(client, args.buf)
+        end
+    end,
 })
 
 -- Per-server overrides
+-- on_attach is handled by the LspAttach autocmd above (no double-firing)
 vim.lsp.config("nixd", {
+    capabilities = capabilities,
     settings = {
         nixd = {
             formatting = { command = { "alejandra" } },
@@ -103,9 +172,9 @@ vim.lsp.config("nixd", {
 })
 
 vim.lsp.config("rust_analyzer", {
+    capabilities = capabilities,
     settings = {
         ["rust-analyzer"] = {
-            diagnostics = { enable = false },
             inlayHints = {
                 enable = true,
                 showParameterNames = true,
@@ -117,6 +186,7 @@ vim.lsp.config("rust_analyzer", {
 })
 
 vim.lsp.config("lua_ls", {
+    capabilities = capabilities,
     settings = {
         Lua = {
             diagnostics = { globals = { "vim" } },
@@ -131,6 +201,7 @@ vim.lsp.config("lua_ls", {
 })
 
 vim.lsp.config("pyright", {
+    capabilities = capabilities,
     settings = {
         pyright = {
             disableOrganizeImports = false,

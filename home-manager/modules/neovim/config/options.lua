@@ -40,6 +40,8 @@ vim.opt.scrolloff = 10
 
 -- Make line numbers default
 vim.wo.number = true
+vim.wo.relativenumber = true
+vim.wo.numberwidth = 3
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -57,6 +59,7 @@ vim.o.breakindent = true
 
 -- Save undo history
 vim.o.undofile = true
+vim.o.undodir = "/tmp"
 
 -- Case-insensitive searching UNLESS \C or capital in search
 vim.o.ignorecase = true
@@ -64,14 +67,16 @@ vim.o.smartcase = true
 
 -- Keep signcolumn on by default
 vim.wo.signcolumn = 'yes'
-vim.wo.relativenumber = true
+
+-- nvf default
+vim.o.cursorlineopt = "line"
 
 -- Decrease update time
 vim.o.updatetime = 250
 vim.o.timeoutlen = 300
 
 -- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menu,preview,noselect'
+vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
@@ -101,7 +106,6 @@ vim.g.netrw_banner=0
 -- [[ Basic Keymaps ]]
 
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
-vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format, { desc = 'Format current buffer with LSP' })
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = 'Toggle Undotree' })
 
 -- Keymaps for better default experience
@@ -127,11 +131,8 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setqflist, { desc = 'Open diagnostics in quickfix' })
 
-
--- kickstart.nvim starts you with this.
--- But it constantly clobbers your system clipboard whenever you delete anything.
 
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
@@ -146,8 +147,6 @@ vim.keymap.set({'n', 'v', 'x'}, '<leader>p', '"+p', { noremap = true, silent = t
 vim.keymap.set('i', '<C-p>', '<C-r><C-p>+', { noremap = true, silent = true, desc = 'Paste from clipboard from within insert mode' })
 vim.keymap.set("x", "<leader>P", '"_dP', { noremap = true, silent = true, desc = 'Paste over selection without erasing unnamed register' })
 
--- Set a proper colorscheme; try stylix first, fall back to a built-in
-pcall(vim.cmd.colorscheme, "stylix")
-if vim.g.colors_name ~= "stylix" then
-  vim.cmd.colorscheme("habamax")
-end
+-- mini.base16 is configured in the plugin config (loaded before this),
+-- which sets all highlights including LineNr, CursorLineNr, SignColumn,
+-- etc. from the Stylix base16 palette.
