@@ -9,7 +9,6 @@
     ./lazygit.nix
     ./mime.nix
     ./neovim
-    #./nvf.nix
     ./ai
     ./rofi.nix
     ./shell

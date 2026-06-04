@@ -19,30 +19,69 @@ in {
     vimAlias = true;
     vimdiffAlias = true;
 
-    extraPackages = with pkgs; [
-      # LSP servers
-      lua-language-server
-      nixd
-      bash-language-server
-      typescript-language-server
-      ruff
-      pyright
-      rust-analyzer
-      # Formatters (nvf defaults)
-      alejandra
-      stylua
-      shfmt
-      gofumpt
-      # Extra linters (nvf defaults: enableExtraDiagnostics)
-      statix
-      deadnix
-      shellcheck
-      luajitPackages.luacheck
-      nodePackages.markdownlint-cli2
-      golangci-lint
+    extraPackages = [
+      # Lua
+      pkgs.lua-language-server           # LSP
+      pkgs.stylua                        # formatter
+      pkgs.luajitPackages.luacheck       # linter
+
+      # Nix
+      pkgs.nixd                          # LSP
+      pkgs.alejandra                     # formatter
+      pkgs.statix                        # linter
+      pkgs.deadnix                       # linter
+
+      # Bash
+      pkgs.bash-language-server          # LSP
+      pkgs.shfmt                         # formatter
+      pkgs.shellcheck                    # linter
+
+      # Python
+      pkgs.ruff                          # LSP + formatter + linter
+      pkgs.pyright                       # LSP
+
+      # JS/TS
+      pkgs.typescript-language-server    # LSP
+
+      # Rust
+      pkgs.rust-analyzer                 # LSP
+
+      # Go
+      pkgs.gopls                         # LSP
+      pkgs.gofumpt                       # formatter
+      pkgs.golangci-lint                 # linter
+
+      # Dart/Flutter
+      pkgs.dart                          # LSP + formatter
+
+      # C/C++
+      pkgs.clang-tools                   # LSP + formatter
+
+      # Haskell
+      pkgs.haskell-language-server       # LSP
+      pkgs.fourmolu                      # formatter
+      pkgs.hlint                         # linter
+
+      # Erlang
+      pkgs.erlang-language-platform      # LSP
+      pkgs.erlfmt                        # formatter
+
+      # OCaml
+      pkgs.ocamlPackages.ocaml-lsp       # LSP
+      pkgs.ocamlformat                   # formatter
+
+      # SQL
+      pkgs.sqls                          # LSP
+
+      # Nushell
+      pkgs.nushell                       # LSP + formatter
+
+      # Markdown
+      pkgs.nodePackages.markdownlint-cli2  # linter
+
       # Clipboards
-      xclip
-      wl-clipboard
+      pkgs.xclip
+      pkgs.wl-clipboard
     ];
 
     plugins = with pkgs.vimPlugins; [
@@ -138,6 +177,12 @@ in {
           p.tree-sitter-markdown
           p.tree-sitter-markdown-inline
           p.tree-sitter-sql
+          p.tree-sitter-dart
+          p.tree-sitter-c
+          p.tree-sitter-haskell
+          p.tree-sitter-erlang
+          p.tree-sitter-ocaml
+          p.tree-sitter-vue
         ]);
         config = fromPlugin "treesitter";
       }
@@ -159,7 +204,10 @@ in {
         config = fromPlugin "todo-comments";
       }
 
-      supermaven-nvim
+      {
+        plugin = supermaven-nvim;
+        config = fromPlugin "supermaven";
+      }
 
       {
         plugin = conform-nvim;
@@ -183,14 +231,23 @@ in {
               css = { "prettierd", "prettier" },
               sql = { "sqlfluff", "sqruff" },
               toml = { "taplo" },
+              dart = { "dart_format" },
+              flutter = { "dart_format" },
+              ocaml = { "ocamlformat" },
+              c = { "clang-format" },
+              cpp = { "clang-format" },
+              haskell = { "fourmolu", "ormolu" },
+              erlang = { "erlfmt" },
+              nu = { "nu" },
             },
             default_format_opts = {
               lsp_format = "fallback",
             },
-            format_on_save = {
-              timeout_ms = 500,
-              lsp_format = "fallback",
-            },
+            -- format_on_save is disabled; use <leader>lf to format manually
+            -- format_on_save = {
+            --   timeout_ms = 500,
+            --   lsp_format = "fallback",
+            -- },
           })
         '';
       }
@@ -207,6 +264,10 @@ in {
             zsh = { "shellcheck" },
             go = { "golangci-lint" },
             markdown = { "markdownlint-cli2" },
+            dart = { "dartanalyzer" },
+            c = { "cpplint" },
+            cpp = { "cpplint" },
+            haskell = { "hlint" },
           }
 
           vim.api.nvim_create_autocmd("BufWritePost", {

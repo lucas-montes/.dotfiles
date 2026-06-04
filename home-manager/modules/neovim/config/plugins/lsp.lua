@@ -124,9 +124,20 @@ vim.lsp.config("*", {
     capabilities = capabilities,
 })
 
+-- Custom LSP configs for non-built-in servers (must be defined before enable)
+-- elp is built-in via nvim-lspconfig's lsp/elp.lua (cmd = { "elp", "server" })
+-- No custom config needed; just enable it below.
+
+vim.lsp.config("nu", {
+    capabilities = capabilities,
+    cmd = { "nu", "--lsp" },
+    filetypes = { "nu" },
+})
+
 local servers = {
     "bashls", "ts_ls", "ruff", "nixd", "buf_ls", "volar",
-    "pyright", "rust_analyzer", "lua_ls",
+    "pyright", "rust_analyzer", "lua_ls", "dartls", "gopls",
+    "clangd", "hls", "elp", "sqls", "ocamllsp", "nu",
 }
 
 local server_cmds = {
@@ -139,12 +150,33 @@ local server_cmds = {
     pyright = "pyright",
     rust_analyzer = "rust-analyzer",
     lua_ls = "lua-language-server",
+    dartls = "dart",
+    gopls = "gopls",
+    clangd = "clangd",
+    hls = "haskell-language-server",
+    elp = "elp",
+    sqls = "sqls",
+    ocamllsp = "ocaml-lsp",
+    nu = "nu",
 }
 
 for _, name in ipairs(servers) do
     if vim.fn.executable(server_cmds[name]) == 1 then
         vim.lsp.enable(name)
     end
+end
+
+-- Suppress noisy info/log-level LSP messages (e.g. ELP version banner)
+vim.lsp.handlers["window/logMessage"] = function(err, method, params, client_id)
+  if not (params and params.type) then return end
+  if params.type <= vim.lsp.protocol.MessageType.Log then return end
+  vim.notify(params.message, vim.lsp.protocol.MessageType[params.type])
+end
+
+vim.lsp.handlers["window/showMessage"] = function(err, method, params, client_id)
+  if not (params and params.type) then return end
+  if params.type <= vim.lsp.protocol.MessageType.Info then return end
+  vim.notify(params.message, vim.lsp.protocol.MessageType[params.type])
 end
 
 -- Use LspAttach autocmd instead of on_attach in vim.lsp.config

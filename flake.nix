@@ -11,8 +11,6 @@
 
     hyprland.url = "github:hyprwm/Hyprland";
 
-    nvf.url = "github:notashelf/nvf";
-
     stylix = {
       url = "github:danth/stylix/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";

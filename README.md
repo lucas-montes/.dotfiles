@@ -23,7 +23,7 @@ A modern, declarative desktop environment configuration using NixOS with Hyprlan
 ## 🛠️ Core Technologies
 
 ### **System Foundation**
-- **NixOS 25.05**: Declarative Linux distribution
+- **NixOS 25.11**: Declarative Linux distribution
 - **Hyprland**: Dynamic tiling Wayland compositor
 - **Home Manager**: Declarative dotfiles management
 - **Stylix**: System-wide theming framework
@@ -36,7 +36,7 @@ A modern, declarative desktop environment configuration using NixOS with Hyprlan
 - **Carapace**: Universal shell completion engine
 
 ### **Development Environment**
-- **Neovim/NVF**: Highly configured editor with LSP support
+- **Neovim**: Highly configured editor with LSP support
 - **VS Code**: Secondary editor with essential extensions
 - **Languages**: Rust, Python, Nix, TypeScript, Bash, Lua support
 - **Git**: Advanced configuration with delta for beautiful diffs
