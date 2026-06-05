@@ -154,7 +154,7 @@ in {
 
       {
         plugin = lualine-nvim;
-        config = fromPlugin "lualine-config";
+        config = fromPlugin "lualine";
       }
       nvim-web-devicons
 

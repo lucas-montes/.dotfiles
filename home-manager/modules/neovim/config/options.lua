@@ -101,6 +101,15 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+-- Auto reload files changed externally (e.g., from VSCode)
+vim.o.autoread = true
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
+  pattern = "*",
+  callback = function()
+    vim.cmd("checktime")
+  end,
+})
+
 vim.g.netrw_liststyle=0
 vim.g.netrw_banner=0
 -- [[ Basic Keymaps ]]
