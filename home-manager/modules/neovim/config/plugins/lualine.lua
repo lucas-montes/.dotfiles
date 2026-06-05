@@ -1,48 +1,18 @@
 local palette = require('mini.base16').config.palette
 
--- stylua: ignore
--- local colors = {
---   blue   = '#80a0ff',
---   cyan   = '#79dac8',
---   black  = '#080808',
---   white  = '#c6c6c6',
---   red    = '#ff5189',
---   violet = '#d183e8',
---   grey   = '#303030',
--- }
-
--- local bubbles_theme = {
---   normal = {
---     a = { fg = colors.black, bg = colors.violet },
---     b = { fg = colors.white, bg = colors.grey },
---     c = { fg = colors.white },
---   },
-
---   insert = { a = { fg = colors.black, bg = colors.blue } },
---   visual = { a = { fg = colors.black, bg = colors.cyan } },
---   replace = { a = { fg = colors.black, bg = colors.red } },
-
---   inactive = {
---     a = { fg = colors.white, bg = colors.black },
---     b = { fg = colors.white, bg = colors.black },
---     c = { fg = colors.white },
---   },
--- }
-
 local lualine_theme = {
     -- NORMAL mode (default bar state)
     normal   = {
-        a = { fg = palette.base00, bg = palette.base0D }, -- section a (mode)
-        b = { fg = palette.base05, bg = palette.base00 }, -- section b (file)
+        a = { fg = palette.base00, bg = palette.base0D }, -- section a (mode): blue
+        b = { fg = palette.base05, bg = palette.base01 }, -- section b (file + progress + LSP)
         c = { fg = palette.base05, bg = palette.base00 }, -- section c (center)
-        x = { fg = palette.base05, bg = palette.base00 }, -- section x (LSP/diag)
-        y = { fg = palette.base05, bg = palette.base00 }, -- section y (branch+changes)
-        z = { fg = palette.base00, bg = palette.base0D }, -- section z (trailing)
-        -- NOTE: fg = base00 means text is invisible on base00 bg.
+        x = { fg = palette.base05, bg = palette.base00 }, -- section x (center)
+        y = { fg = palette.base05, bg = palette.base01 }, -- section y (diag)
+        z = { fg = palette.base00, bg = palette.base09 }, -- section z (changes + branch): blue
     },
     -- MODE-SPECIFIC overrides: only section 'a' (mode) gets a colored bg
     -- Sections b/c/x/y/z use normal mode colors (black bar)
-    insert   = { a = { fg = palette.base00, bg = palette.base09 } }, -- mode bg: purple
+    insert   = { a = { fg = palette.base00, bg = palette.base08 } }, -- mode bg: purple
     visual   = { a = { fg = palette.base00, bg = palette.base0C } }, -- mode bg: cyan
     replace  = { a = { fg = palette.base00, bg = palette.base08 } }, -- mode bg: pinker
     command  = { a = { fg = palette.base00, bg = palette.base0A } }, -- mode bg: green-blue
@@ -68,17 +38,13 @@ require('lualine').setup {
     },
     sections = {
         lualine_a = {
-            { "mode", icons_enabled = true, separator = { left = '' }, right_padding = 2 },
+            { "mode", icons_enabled = true, separator = { left = '', right = '' }, right_padding = 2 },
         },
         lualine_b = {
-            { "filetype", colored = true, icon_only = true, icon = { align = "left" } },
             { "filename", symbols = { modified = " ", readonly = " " } },
-        },
-        lualine_c = {
-            -- center: black background
-            { "searchcount", maxcount = 999, timeout = 120 },
-        },
-        lualine_x = {
+            { "progress" },
+            { "location" },
+            { "filetype", colored = true, icon_only = true, icon = { align = "right" } },
             { function()
                 local buf_ft = vim.bo.filetype
                 local excluded_buf_ft = { toggleterm = true, NvimTree = true, ["neo-tree"] = true, TelescopePrompt = true }
@@ -89,22 +55,36 @@ require('lualine').setup {
                 local active_clients = {}
                 for _, client in ipairs(clients) do table.insert(active_clients, client.name) end
                 return table.concat(active_clients, ", ")
-            end, icon = " " },
+            end, separator = { right = "" } },
+        },
+        lualine_c = {
+            -- center: black background
+            { "searchcount", maxcount = 999, timeout = 120 },
+        },
+        lualine_x = {
+            -- center: black background
+        },
+        lualine_y = {
             { "diagnostics", sources = { "nvim_lsp", "nvim_diagnostic", "vim_lsp" },
                 symbols = { error = "󰅙 ", warn = " ", info = " ", hint = "󰌵 " },
                 colored = true, update_in_insert = false, always_visible = false,
-                diagnostics_color = { color_error = { fg = "red" }, color_warn = { fg = "yellow" }, color_info = { fg = "cyan" } } },
-        },
-        lualine_y = {
-            { "diff", colored = false,
-                diff_color = { added = "DiffAdd", modified = "DiffChange", removed = "DiffDelete" },
-                symbols = { added = "+", modified = "~", removed = "-" } },
-            { "branch", icon = " •", },
+                diagnostics_color = { color_error = { fg = palette.base08 }, color_warn = { fg = palette.base0B }, color_info = { fg = palette.base0C } },
+                separator = { left = '' },
+            },
         },
         lualine_z = {
-            { "progress" },
-            { "location" },
-            { "fileformat", color = { fg = palette.base00 }, symbols = { unix = "", dos = "", mac = "" }, separator = { right = '' }, left_padding = 2 },
+            { "diff", colored = false,
+                diff_color = { added = "DiffAdd", modified = "DiffChange", removed = "DiffDelete" },
+                symbols = { added = "+", modified = "~", removed = "-" },
+                color = { fg = palette.base00, bg = palette.base09 } },
+            { "branch", icon = " •", separator = { left = '', right = '' }, left_padding = 2,
+                color = function(branch)
+                    if branch == "master" or branch == "main" then
+                        return { fg = palette.base00, bg = palette.base0C }
+                    else
+                        return { fg = palette.base00, bg = palette.base08 }
+                    end
+                end },
         },
     },
     inactive_sections = {

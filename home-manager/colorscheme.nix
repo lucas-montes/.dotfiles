@@ -13,6 +13,6 @@
   base0B = "ebff87"; #yellow
   base0C = "a1efe4"; #cyan
   base0D = "51d6f4"; #blue og: 62d6e8
-  base0E = "ff55a1"; #pink og: b45bcf
+  base0E = "ff2fb3"; #pink og: b45bcf
   base0F = "00f769"; #green
 }
