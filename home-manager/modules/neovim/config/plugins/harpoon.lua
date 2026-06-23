@@ -4,7 +4,7 @@ harpoon:setup()
 -- Add keymaps for harpoon
 local keymap = vim.keymap
 
-keymap.set("n", "<leader>a", function() harpoon:list():append() end, { desc = "Add file to harpoon" })
+keymap.set("n", "<leader>a", function() harpoon:list():add() end, { desc = "Add file to harpoon" })
 keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = "Toggle harpoon menu" })
 
 keymap.set("n", "<leader>h1", function() harpoon:list():select(1) end, { desc = "Go to harpoon file 1" })
