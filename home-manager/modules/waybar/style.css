@@ -1,7 +1,8 @@
 * {
     all: unset;
     font-family:
-        JetBrainsMonoNerdFont,
+        JetBrains Mono,
+        Symbols Nerd Font Mono,
         Font Awesome;
     font-weight: bold;
     min-height: 0;

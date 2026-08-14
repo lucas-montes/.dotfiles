@@ -19,7 +19,8 @@
     enable = true;
     settings = rec {
       initial_session = {
-        command = "${pkgs.hyprland}/bin/hyprland";
+        # command = "${pkgs.hyprland}/bin/hyprland";
+        command = "start-hyprland";
         user = mainUser;
         # The arg is user not mainUser, if you change it, it get stuck in the boot screen and there are no errors
       };

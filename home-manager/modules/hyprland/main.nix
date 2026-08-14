@@ -12,10 +12,10 @@
       "$menu" = "rofi";
       "$browser" = "brave";
 
-      "windowrule" = [
-        "match:title ^(Picture in picture)$, float on"
-        "match:title ^(Picture in picture)$, pin on"
-        "match:float true, size 800 600"
+      "windowrulev2" = [
+        "float, title:^(Picture in picture)$"
+        "pin, title:^(Picture in picture)$"
+        "size 800 600, floating:1"
       ];
 
       exec-once = ["waybar" "[workspace 1] $browser" "[workspace 2] $terminal"];
@@ -67,6 +67,7 @@
       };
 
       dwindle = {
+        pseudotile = true;
         preserve_split = true;
       };
 
