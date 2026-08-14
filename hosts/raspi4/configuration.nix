@@ -190,7 +190,7 @@
       defaultEditor = true;
       viAlias = true;
       vimAlias = true;
-      withRuby = false;
+      withRuby = true;
     };
   };
   virtualisation.docker.enable = true;

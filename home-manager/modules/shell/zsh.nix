@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{config, pkgs, ...}: let
   shellAliases = import ./alias.nix;
 in {
   programs.zsh = {
@@ -15,6 +15,8 @@ in {
     };
 
     inherit shellAliases;
+
+    dotDir = config.home.homeDirectory;
 
     plugins = [
       {

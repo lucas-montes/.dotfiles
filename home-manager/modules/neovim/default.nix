@@ -18,6 +18,8 @@ in {
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
+    withRuby = true;
+    withPython3 = true;
 
     extraPackages = [
       # Lua
@@ -77,16 +79,22 @@ in {
       pkgs.nushell                       # LSP + formatter
 
       # Markdown
-      pkgs.nodePackages.markdownlint-cli2  # linter
+      pkgs.markdownlint-cli2              # linter
 
       # Clipboards
       pkgs.xclip
       pkgs.wl-clipboard
     ];
 
-    plugins = with pkgs.vimPlugins; [
+    plugins = with pkgs.vimPlugins; let
+      mkVimPlugin = plugin: {
+        inherit plugin;
+        type = "viml";
+      };
+    in [
       {
         plugin = undotree;
+        type = "viml";
         config = toLua ''
           vim.g.mapleader = ' '
           vim.g.maplocalleader = ' '
@@ -95,6 +103,7 @@ in {
 
       {
         plugin = mini-nvim;
+        type = "viml";
         config = toLua ''
           require('mini.base16').setup({
             palette = {
@@ -121,42 +130,48 @@ in {
 
       {
         plugin = which-key-nvim;
+        type = "viml";
         config = fromPlugin "whichkey";
       }
 
       {
         plugin = nvim-lspconfig;
+        type = "viml";
         config = fromPlugin "lsp";
       }
 
       {
         plugin = comment-nvim;
+        type = "viml";
         config = toLua ''require("Comment").setup()'';
       }
 
       {
         plugin = nvim-cmp;
+        type = "viml";
         config = fromPlugin "cmp";
       }
 
       {
         plugin = telescope-nvim;
+        type = "viml";
         config = fromPlugin "telescope";
       }
 
-      telescope-fzf-native-nvim
+      (mkVimPlugin telescope-fzf-native-nvim)
 
-      cmp_luasnip
-      cmp-nvim-lsp
+      (mkVimPlugin cmp_luasnip)
+      (mkVimPlugin cmp-nvim-lsp)
 
-      luasnip
-      friendly-snippets
+      (mkVimPlugin luasnip)
+      (mkVimPlugin friendly-snippets)
 
       {
         plugin = lualine-nvim;
+        type = "viml";
         config = fromPlugin "lualine";
       }
-      nvim-web-devicons
+      (mkVimPlugin nvim-web-devicons)
 
       {
         plugin = nvim-treesitter.withPlugins (p: [
@@ -184,33 +199,39 @@ in {
           p.tree-sitter-ocaml
           p.tree-sitter-vue
         ]);
+        type = "viml";
         config = fromPlugin "treesitter";
       }
 
-      vim-nix
+      (mkVimPlugin vim-nix)
 
       {
         plugin = harpoon2;
+        type = "viml";
         config = fromPlugin "harpoon";
       }
 
       {
         plugin = trouble-nvim;
+        type = "viml";
         config = fromPlugin "trouble";
       }
 
       {
         plugin = todo-comments-nvim;
+        type = "viml";
         config = fromPlugin "todo-comments";
       }
 
       {
         plugin = supermaven-nvim;
+        type = "viml";
         config = fromPlugin "supermaven";
       }
 
       {
         plugin = conform-nvim;
+        type = "viml";
         config = toLua ''
           require("conform").setup({
             formatters_by_ft = {
@@ -254,6 +275,7 @@ in {
 
       {
         plugin = nvim-lint;
+        type = "viml";
         config = toLua ''
           require("lint").linters_by_ft = {
             nix = { "statix", "deadnix" },
@@ -279,7 +301,7 @@ in {
       }
     ];
 
-    extraLuaConfig = ''
+    initLua = ''
       ${builtins.readFile ./config/options.lua}
     '';
   };
