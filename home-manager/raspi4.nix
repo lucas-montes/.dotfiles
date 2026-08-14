@@ -23,11 +23,6 @@
     stateVersion = homeStateVersion;
   };
 
-  home.packages = [
-    pkgs.jetbrains-mono
-    pkgs.font-awesome
-  ];
-
   stylix = {
     autoEnable = false;
     enable = true;

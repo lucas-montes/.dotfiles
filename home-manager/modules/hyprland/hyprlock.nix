@@ -13,7 +13,7 @@
           monitor = "";
           text = "$TIME";
           font_size = 64;
-          font_family = "JetBrains Mono Nerd Font 10";
+          font_family = "JetBrains Mono";
           position = "0, 10";
           valign = "top";
           halign = "center";

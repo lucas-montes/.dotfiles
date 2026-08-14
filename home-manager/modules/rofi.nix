@@ -10,7 +10,7 @@ in {
     enable = true;
     extraConfig = {
       modi = "drun";
-      font = "JetBrainsMono Nerd Font 12";
+      font = "JetBrains Mono 12";
       show-icons = true;
       disable-history = true;
       hover-select = true;
@@ -68,8 +68,8 @@ in {
       "textbox-prompt-colon" = {
         enabled = true;
         expand = false;
-        str = " ";
-        font = "JetBrainsMono Nerd Font 12";
+        str = "⌕ ";
+        font = "JetBrains Mono 12";
       };
 
       entry = {
