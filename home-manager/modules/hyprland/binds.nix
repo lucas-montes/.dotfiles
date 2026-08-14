@@ -12,7 +12,7 @@
       "$mainMod SHIFT, Q, exit,"
       "$mainMod,       F, togglefloating,"
       "$mainMod,       P, pin,"
-      "$mainMod,       D, togglesplit,"
+      "$mainMod,       D, layoutmsg, togglesplit"
       ", Print, exec, grimblast --notify --freeze copysave area"
 
       ", monitoradded, exec, hyprctl keyword monitor 'HDMI-A-1,preferred,auto,1'"
