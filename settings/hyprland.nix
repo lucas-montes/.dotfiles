@@ -29,4 +29,6 @@
   };
 
   security.pam.services.hyprlock = {};
+
+  security.pam.services.greetd.enableGnomeKeyring = true;
 }
