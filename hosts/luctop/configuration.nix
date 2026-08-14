@@ -24,7 +24,8 @@
     # AMDGPU specific kernel parameters to help with stability
     kernelParams = [
       "amdgpu.sg_display=0" # Fixes some display freezes on newer AMD APUs
-      "amdgpu.dcdebugmask=0x12" # Workaround for PSR-related freezes
+      # "amdgpu.dcdebugmask=0x12" # Workaround for PSR-related freezes
+      "amdgpu.dcdebugmask=0x410" # Disables BOTH PSR (0x10) and Panel Replay (0x400) to prevent TV static artifacts
     ];
   };
 

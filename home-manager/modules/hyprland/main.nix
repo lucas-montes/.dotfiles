@@ -29,9 +29,6 @@
         layout = "dwindle";
       };
 
-      # NVIDIA-specific settings that can cause freezes on AMD:
-      # cursor = {no_hardware_cursors = true;};
-
       decoration = {
         rounding = 10;
         active_opacity = 1.0;
