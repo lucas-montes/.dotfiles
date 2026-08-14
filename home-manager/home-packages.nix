@@ -32,7 +32,7 @@
     pkgs.yt-dlp
 
     pkgs.pcsx2
-    pkgs.melonDS
+    pkgs.melonds
     pkgs.azahar
     pkgs.lutris
     pkgs.wineWow64Packages.stable
