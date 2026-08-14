@@ -29,6 +29,8 @@
     pkgs.pulseaudio
     pkgs.networkmanagerapplet
 
+    pkgs.yt-dlp
+
     pkgs.pcsx2
     pkgs.melonDS
     pkgs.azahar
