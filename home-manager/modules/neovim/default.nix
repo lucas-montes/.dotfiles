@@ -4,14 +4,7 @@
   pkgs,
   ...
 }: let
-  inherit (config.lib.stylix) colors;
-  toLua = str: ''
-    lua << EOF
-    ${str}
-    EOF
-  '';
-  toLuaFile = file: toLua (builtins.readFile "${./config}/${file}.lua");
-  fromPlugin = file: toLuaFile "plugins/${file}";
+  fromPlugin = file: (builtins.readFile "${./config}/plugins/${file}.lua");
 in {
   programs.neovim = {
     enable = true;
@@ -23,63 +16,63 @@ in {
 
     extraPackages = [
       # Lua
-      pkgs.lua-language-server           # LSP
-      pkgs.stylua                        # formatter
-      pkgs.luajitPackages.luacheck       # linter
+      pkgs.lua-language-server # LSP
+      pkgs.stylua # formatter
+      pkgs.luajitPackages.luacheck # linter
 
       # Nix
-      pkgs.nixd                          # LSP
-      pkgs.alejandra                     # formatter
-      pkgs.statix                        # linter
-      pkgs.deadnix                       # linter
+      pkgs.nixd # LSP
+      pkgs.alejandra # formatter
+      pkgs.statix # linter
+      pkgs.deadnix # linter
 
       # Bash
-      pkgs.bash-language-server          # LSP
-      pkgs.shfmt                         # formatter
-      pkgs.shellcheck                    # linter
+      pkgs.bash-language-server # LSP
+      pkgs.shfmt # formatter
+      pkgs.shellcheck # linter
 
       # Python
-      pkgs.ruff                          # LSP + formatter + linter
-      pkgs.pyright                       # LSP
+      pkgs.ruff # LSP + formatter + linter
+      pkgs.pyright # LSP
 
       # JS/TS
-      pkgs.typescript-language-server    # LSP
+      pkgs.typescript-language-server # LSP
 
       # Rust
-      pkgs.rust-analyzer                 # LSP
+      pkgs.rust-analyzer # LSP
 
       # Go
-      pkgs.gopls                         # LSP
-      pkgs.gofumpt                       # formatter
-      pkgs.golangci-lint                 # linter
+      pkgs.gopls # LSP
+      pkgs.gofumpt # formatter
+      pkgs.golangci-lint # linter
 
       # Dart/Flutter
-      pkgs.dart                          # LSP + formatter
+      pkgs.dart # LSP + formatter
 
       # C/C++
-      pkgs.clang-tools                   # LSP + formatter
+      pkgs.clang-tools # LSP + formatter
 
       # Haskell
-      pkgs.haskell-language-server       # LSP
-      pkgs.fourmolu                      # formatter
-      pkgs.hlint                         # linter
+      pkgs.haskell-language-server # LSP
+      pkgs.fourmolu # formatter
+      pkgs.hlint # linter
 
       # Erlang
-      pkgs.erlang-language-platform      # LSP
-      pkgs.erlfmt                        # formatter
+      pkgs.erlang-language-platform # LSP
+      pkgs.erlfmt # formatter
 
       # OCaml
-      pkgs.ocamlPackages.ocaml-lsp       # LSP
-      pkgs.ocamlformat                   # formatter
+      pkgs.ocamlPackages.ocaml-lsp # LSP
+      pkgs.ocamlformat # formatter
 
       # SQL
-      pkgs.sqls                          # LSP
+      pkgs.sqls # LSP
 
       # Nushell
-      pkgs.nushell                       # LSP + formatter
+      pkgs.nushell # LSP + formatter
 
       # Markdown
-      pkgs.markdownlint-cli2              # linter
+      pkgs.markdownlint-cli2 # linter
 
       # Clipboards
       pkgs.xclip
@@ -94,67 +87,40 @@ in {
     in [
       {
         plugin = undotree;
-        type = "viml";
-        config = toLua ''
+        type = "lua";
+        config = ''
           vim.g.mapleader = ' '
           vim.g.maplocalleader = ' '
         '';
       }
 
       {
-        plugin = mini-nvim;
-        type = "viml";
-        config = toLua ''
-          require('mini.base16').setup({
-            palette = {
-              base00 = '#${colors.base00}',
-              base01 = '#${colors.base01}',
-              base02 = '#${colors.base02}',
-              base03 = '#${colors.base03}',
-              base04 = '#${colors.base04}',
-              base05 = '#${colors.base05}',
-              base06 = '#${colors.base06}',
-              base07 = '#${colors.base07}',
-              base08 = '#${colors.base08}',
-              base09 = '#${colors.base09}',
-              base0A = '#${colors.base0A}',
-              base0B = '#${colors.base0B}',
-              base0C = '#${colors.base0C}',
-              base0D = '#${colors.base0D}',
-              base0E = '#${colors.base0E}',
-              base0F = '#${colors.base0F}',
-            },
-          })
-        '';
-      }
-
-      {
         plugin = which-key-nvim;
-        type = "viml";
+        type = "lua";
         config = fromPlugin "whichkey";
       }
 
       {
         plugin = nvim-lspconfig;
-        type = "viml";
+        type = "lua";
         config = fromPlugin "lsp";
       }
 
       {
         plugin = comment-nvim;
-        type = "viml";
-        config = toLua ''require("Comment").setup()'';
+        type = "lua";
+        config = ''require("Comment").setup()'';
       }
 
       {
         plugin = nvim-cmp;
-        type = "viml";
+        type = "lua";
         config = fromPlugin "cmp";
       }
 
       {
         plugin = telescope-nvim;
-        type = "viml";
+        type = "lua";
         config = fromPlugin "telescope";
       }
 
@@ -168,7 +134,7 @@ in {
 
       {
         plugin = lualine-nvim;
-        type = "viml";
+        type = "lua";
         config = fromPlugin "lualine";
       }
       (mkVimPlugin nvim-web-devicons)
@@ -199,7 +165,7 @@ in {
           p.tree-sitter-ocaml
           p.tree-sitter-vue
         ]);
-        type = "viml";
+        type = "lua";
         config = fromPlugin "treesitter";
       }
 
@@ -207,76 +173,38 @@ in {
 
       {
         plugin = harpoon2;
-        type = "viml";
+        type = "lua";
         config = fromPlugin "harpoon";
       }
 
       {
         plugin = trouble-nvim;
-        type = "viml";
+        type = "lua";
         config = fromPlugin "trouble";
       }
 
       {
         plugin = todo-comments-nvim;
-        type = "viml";
+        type = "lua";
         config = fromPlugin "todo-comments";
       }
 
       {
         plugin = supermaven-nvim;
-        type = "viml";
+        type = "lua";
         config = fromPlugin "supermaven";
       }
 
       {
         plugin = conform-nvim;
-        type = "viml";
-        config = toLua ''
-          require("conform").setup({
-            formatters_by_ft = {
-              nix = { "alejandra", "nixfmt", "nixpkgs-fmt" },
-              python = { "ruff_format", "ruff_fix", "black" },
-              lua = { "stylua" },
-              rust = { "rustfmt" },
-              go = { "gofumpt", "goimports" },
-              javascript = { "prettierd", "prettier" },
-              typescript = { "prettierd", "prettier" },
-              javascriptreact = { "prettierd", "prettier" },
-              typescriptreact = { "prettierd", "prettier" },
-              json = { "prettierd", "prettier" },
-              yaml = { "prettierd", "prettier" },
-              markdown = { "prettierd", "prettier", "mdformat" },
-              bash = { "shfmt", "beautysh" },
-              html = { "prettierd", "prettier" },
-              css = { "prettierd", "prettier" },
-              sql = { "sqlfluff", "sqruff" },
-              toml = { "taplo" },
-              dart = { "dart_format" },
-              flutter = { "dart_format" },
-              ocaml = { "ocamlformat" },
-              c = { "clang-format" },
-              cpp = { "clang-format" },
-              haskell = { "fourmolu", "ormolu" },
-              erlang = { "erlfmt" },
-              nu = { "nu" },
-            },
-            default_format_opts = {
-              lsp_format = "fallback",
-            },
-            -- format_on_save is disabled; use <leader>lf to format manually
-            -- format_on_save = {
-            --   timeout_ms = 500,
-            --   lsp_format = "fallback",
-            -- },
-          })
-        '';
+        type = "lua";
+        config = fromPlugin "conform";
       }
 
       {
         plugin = nvim-lint;
-        type = "viml";
-        config = toLua ''
+        type = "lua";
+        config = ''
           require("lint").linters_by_ft = {
             nix = { "statix", "deadnix" },
             python = { "ruff" },

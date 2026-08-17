@@ -1,0 +1,37 @@
+require("conform").setup({
+    formatters_by_ft = {
+        nix = { "alejandra", "nixfmt", "nixpkgs-fmt" },
+        python = { "ruff_format", "ruff_fix", "black" },
+        lua = { "stylua" },
+        rust = { "rustfmt" },
+        go = { "gofumpt", "goimports" },
+        javascript = { "prettierd", "prettier" },
+        typescript = { "prettierd", "prettier" },
+        javascriptreact = { "prettierd", "prettier" },
+        typescriptreact = { "prettierd", "prettier" },
+        json = { "prettierd", "prettier" },
+        yaml = { "prettierd", "prettier" },
+        markdown = { "prettierd", "prettier", "mdformat" },
+        bash = { "shfmt", "beautysh" },
+        html = { "prettierd", "prettier" },
+        css = { "prettierd", "prettier" },
+        sql = { "sqlfluff", "sqruff" },
+        toml = { "taplo" },
+        dart = { "dart_format" },
+        flutter = { "dart_format" },
+        ocaml = { "ocamlformat" },
+        c = { "clang-format" },
+        cpp = { "clang-format" },
+        haskell = { "fourmolu", "ormolu" },
+        erlang = { "erlfmt" },
+        nu = { "nu" },
+    },
+    default_format_opts = {
+        lsp_format = "fallback",
+    },
+    -- format_on_save is disabled; use <leader>lf to format manually
+    -- format_on_save = {
+    --   timeout_ms = 500,
+    --   lsp_format = "fallback",
+    -- },
+})
