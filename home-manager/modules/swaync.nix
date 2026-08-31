@@ -1,6 +1,7 @@
 {
   services.swaync = {
     enable = true;
+    style = ./swaync.css;
     settings = {
       positionX = "right";
       positionY = "top";
@@ -33,7 +34,7 @@
         buttons-grid = {
           actions = [
             {
-              label = "";
+              label = "";
               command = "nm-connection-editor";
             }
             {
@@ -106,7 +107,7 @@
           };
 
           "menu#powermode-buttons" = {
-            label = "";
+            label = "󰐥";
             position = "right";
             actions = [
               {
@@ -130,19 +131,19 @@
             position = "left";
             actions = [
               {
-                label = "   Entire screen";
+                label = "󰹑   Entire screen";
                 command = "swaync-client -cp && sleep 1 && hyprshot -m output";
               }
               {
-                label = "   Select a region";
+                label = "󰹑   Select a region";
                 command = "swaync-client -cp && sleep 1 && hyprshot -m region";
               }
               {
-                label = "   Open screenshot menu";
+                label = "󰍜   Open screenshot menu";
                 command = "swaync-client -cp && rofi-screenshot";
               }
               {
-                label = "   Open screenshot folder";
+                label = "󰉋   Open screenshot folder";
                 command = "exo-open $HYPRSHOT_DIR";
               }
             ];

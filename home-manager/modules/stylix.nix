@@ -15,6 +15,7 @@
       firefox.enable = false;
       hyprland.enable = false;
       gnome.enable = false;
+      swaync.enable = false;
       neovim = {
         enable = true;
         transparentBackground = {

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   programs.vscode = {
     enable = true;
@@ -58,17 +58,17 @@
           "cargo" = true;
           "sed" = true;
         };
-        "chat.editor.fontFamily" = "JetBrains Mono";
+        "chat.editor.fontFamily" = lib.mkForce "JetBrains Mono, Symbols Nerd Font Mono";
         "chat.editor.fontSize" = 16.0;
-        "debug.console.fontFamily" = "JetBrains Mono";
+        "debug.console.fontFamily" = lib.mkForce "JetBrains Mono, Symbols Nerd Font Mono";
         "debug.console.fontSize" = 16.0;
 
         "remote.SSH.enableRemoteCommand" = true;
 
-        "editor.fontFamily" = "JetBrains Mono";
+        "editor.fontFamily" = lib.mkForce "JetBrains Mono, Symbols Nerd Font Mono";
         "editor.fontSize" = 16.0;
-        "editor.inlayHints.fontFamily" = "JetBrains Mono";
-        "editor.inlineSuggest.fontFamily" = "JetBrains Mono";
+        "editor.inlayHints.fontFamily" = lib.mkForce "JetBrains Mono, Symbols Nerd Font Mono";
+        "editor.inlineSuggest.fontFamily" = lib.mkForce "JetBrains Mono, Symbols Nerd Font Mono";
         "editor.minimap.enabled" = false;
         "editor.stickyScroll.enabled" = false;
         "extensions.autoCheckUpdates" = false;
@@ -77,10 +77,11 @@
         "diffEditor.experimental.showMoves" = true;
 
         "markdown.preview.fontSize" = 16.0;
-        "scm.inputFontFamily" = "JetBrains Mono";
+        "scm.inputFontFamily" = lib.mkForce "JetBrains Mono, Symbols Nerd Font Mono";
         "scm.inputFontSize" = 14.857142857142858;
         "screencastMode.fontSize" = 64.0;
         "telemetry.telemetryLevel" = "off";
+        "terminal.integrated.fontFamily" = "JetBrains Mono, Symbols Nerd Font Mono";
         "terminal.integrated.fontSize" = 16.0;
         "update.mode" = "none";
         "update.showReleaseNotes" = false;
