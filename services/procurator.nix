@@ -1,5 +1,5 @@
 {
-  networking.nameservers = [ "127.0.0.1" ];
+  # networking.nameservers = [ "127.0.0.1" ];
   services.procurator = {
     # Enable and configure the VMM host networking and worker service
     vmm = {

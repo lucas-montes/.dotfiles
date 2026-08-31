@@ -12,7 +12,7 @@ vim.o.directory = "/tmp"
 vim.o.backupdir = "/tmp"
 
 -- Line wrapping disabled (nvf: wrap = false)
-vim.o.wrap = false
+vim.o.wrap = true
 
 -- Indent settings from nvf
 vim.o.shiftwidth = 4

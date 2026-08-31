@@ -57,10 +57,11 @@
   networking = {
     hostName = "luctop";
     # speed up DHCP: don't block boot while dhcpcd waits for leases
-    dhcpcd = {
-      wait = "background";
-      extraConfig = "noarp";
-    };
+    # dhcpcd = {
+    #   wait = "background";
+    #   extraConfig = "noarp";
+    # };
+    # NOTE: we disable the dchpcd service because we use NetworkManager instead, which handles DHCP itself
   };
 
   systemd = {
