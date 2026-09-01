@@ -1,7 +1,48 @@
-{
+let
+  c = import ../colorscheme.nix;
+in {
   services.swaync = {
     enable = true;
-    style = ./swaync.css;
+    style =
+      ''
+        @define-color base00 #${c.base00};
+        @define-color base01 #${c.base01};
+        @define-color base02 #${c.base02};
+        @define-color base03 #${c.base03};
+        @define-color base04 #${c.base04};
+        @define-color base05 #${c.base05};
+        @define-color base06 #${c.base06};
+        @define-color base07 #${c.base07};
+        @define-color base08 #${c.base08};
+        @define-color base09 #${c.base09};
+        @define-color base0A #${c.base0A};
+        @define-color base0B #${c.base0B};
+        @define-color base0C #${c.base0C};
+        @define-color base0D #${c.base0D};
+        @define-color base0E #${c.base0E};
+        @define-color base0F #${c.base0F};
+        @define-color theme_fg @base05;
+        @define-color theme_fg_secondary @base06;
+        @define-color theme_bg @base00;
+        @define-color popup_bg @base00;
+        @define-color module_bg @base01;
+        @define-color module_hover_bg @base02;
+        @define-color button_bg @base02;
+        @define-color button_hover_bg @base03;
+        @define-color accent_color @base0D;
+        @define-color accent_color_hover @base0D;
+        @define-color border_light @base03;
+        @define-color border_dark @base00;
+        @define-color border_medium @base02;
+        @define-color icon_primary @theme_fg;
+        @define-color icon_secondary @base06;
+        @define-color slider_trough_bg @base02;
+        @define-color slider_thumb_bg @base05;
+        @define-color close_button_bg @base02;
+        @define-color close_button_hover_bg @base03;
+        @define-color mpris_player_bg @base01;
+      ''
+      + builtins.readFile ./swaync.css;
     settings = {
       positionX = "right";
       positionY = "top";
@@ -88,19 +129,19 @@
             position = "right";
             actions = [
               {
-                label = "   Reboot";
+                label = "    Reboot";
                 command = "systemctl reboot";
               }
               {
-                label = "   Lock";
+                label = "    Lock";
                 command = "loginctl lock-session $XDG_SESSION_ID";
               }
               {
-                label = "   Logout";
+                label = "    Logout";
                 command = "loginctl terminate-session $XDG_SESSION_ID";
               }
               {
-                label = "   Shut down";
+                label = "    Shut down";
                 command = "systemctl poweroff";
               }
             ];
@@ -131,19 +172,19 @@
             position = "left";
             actions = [
               {
-                label = "󰹑   Entire screen";
+                label = "󰹑    Entire screen";
                 command = "swaync-client -cp && sleep 1 && hyprshot -m output";
               }
               {
-                label = "󰹑   Select a region";
+                label = "󰹑    Select a region";
                 command = "swaync-client -cp && sleep 1 && hyprshot -m region";
               }
               {
-                label = "󰍜   Open screenshot menu";
+                label = "󰍜    Open screenshot menu";
                 command = "swaync-client -cp && rofi-screenshot";
               }
               {
-                label = "󰉋   Open screenshot folder";
+                label = "󰉋    Open screenshot folder";
                 command = "exo-open $HYPRSHOT_DIR";
               }
             ];
@@ -154,19 +195,19 @@
             position = "left";
             actions = [
               {
-                label = "   Entire screen";
+                label = "    Entire screen";
                 command = "swaync-client -cp && sleep 1 && recording.sh toggle fullscreen";
               }
               {
-                label = "   Select a region";
+                label = "    Select a region";
                 command = "swaync-client -cp && sleep 1 && recording.sh toggle region";
               }
               {
-                label = "   Stop";
+                label = "    Stop";
                 command = "swaync-client -cp && recording.sh stop";
               }
               {
-                label = "   Open screencast folder";
+                label = "    Open screencast folder";
                 command = "$XDG_VIDEOS_DIR/Screencasts";
               }
             ];
