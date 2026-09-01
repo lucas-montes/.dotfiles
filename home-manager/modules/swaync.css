@@ -50,7 +50,9 @@
 }
 
 .widget-menubar {
-  padding: 12px;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
 }
 
 .control-center > box > *:last-child {
@@ -192,18 +194,15 @@ scale slider {
   background-color: @slider_thumb_bg;
 }
 
-/* ── 6. Button Grid ── uniform 12px ────────────────────────────────── */
+/* ── 6. Button Grid ── 16px gap, 48x48, 18px centered ──────────────────── */
 .widget-buttons-grid > flowbox {
   padding: 0;
   background: none;
-}
-
-.widget-buttons-grid > flowbox {
-  margin: -6px;
+  margin: -8px;
 }
 
 .widget-buttons-grid > flowbox > flowboxchild {
-  padding: 10px;
+  padding: 8px;
   background: none;
 }
 
@@ -211,13 +210,20 @@ scale slider {
   background-color: @base02;
   border: 1px solid @border_medium;
   border-radius: 12px;
-  padding: 18px;
-  min-width: 36px;
-  min-height: 36px;
+  padding: 0;
+  min-width: 48px;
+  min-height: 48px;
+  font-size: 18px;
   color: @icon_secondary;
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button > label {
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
 }
 
 .widget-buttons-grid > flowbox > flowboxchild > button:hover {
@@ -234,19 +240,26 @@ scale slider {
   background-color: @accent_color_hover;
 }
 
-/* ── 6b. Menubar - uniform spacing icon→text ────────────────────────── */
+/* ── 6b. Menubar - single centered dropdown ──────────────────────────── */
 .widget-menubar > box > .menu-button-bar {
-  margin: -6px;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.widget-menubar > box > .menu-button-bar > .widget-menubar-container {
+  margin: 0 8px;
 }
 
 .widget-menubar > box > .menu-button-bar > .widget-menubar-container button {
   background-color: @button_bg;
   border: 1px solid @border_medium;
   border-radius: 12px;
-  padding: 14px 18px;
-  margin: 8px;
-  min-width: 40px;
-  min-height: 40px;
+  padding: 12px 24px;
+  margin: 0;
+  min-width: 48px;
+  min-height: 48px;
+  font-size: 18px;
   transition: background-color 0.15s ease;
 }
 
@@ -354,6 +367,8 @@ popover modelbutton label {
   border-radius: 50%;
   min-width: 24px;
   min-height: 24px;
+  padding: 0;
+  margin: 0;
   transition: background-color 0.15s ease;
 }
 
@@ -362,8 +377,8 @@ popover modelbutton label {
 }
 
 .control-center .close-button image {
-  margin-right: 12px;
-  /* Adjust this value for desired spacing */
+  margin: 0;
+  padding: 0;
   color: @icon_secondary;
 }
 
@@ -419,6 +434,8 @@ popover modelbutton label {
   border-radius: 50%;
   min-width: 28px;
   min-height: 28px;
+  padding: 0;
+  margin: 0;
   transition: background-color 0.15s ease;
 }
 
@@ -427,8 +444,18 @@ popover modelbutton label {
 }
 
 .floating-notifications .close-button image {
-  margin-right: 12px;
-  /* Adjust this value for desired spacing */
+  margin: 0;
+  padding: 0;
+  color: @icon_secondary;
+}
+
+.floating-notifications .close-button:hover {
+  background-color: @close_button_hover_bg;
+}
+
+.floating-notifications .close-button image {
+  margin: 0;
+  padding: 0;
   color: @icon_secondary;
 }
 
