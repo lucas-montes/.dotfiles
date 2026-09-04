@@ -17,6 +17,7 @@
     };
 
     procurator.url = "github:lucas-montes/procurator/remote-connections";
+    bandtrack.url = "github:lucas-montes/bandtrack";
   };
 
   outputs = {
@@ -73,6 +74,7 @@
         modules = [
           ./hosts/luctop/configuration.nix
           inputs.procurator.nixosModules.x86_64-linux.procurator
+          inputs.bandtrack.nixosModules.bandtrack
         ];
       };
 

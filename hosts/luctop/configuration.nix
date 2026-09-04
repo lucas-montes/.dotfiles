@@ -7,6 +7,7 @@
     ./hardware-configuration.nix
     ../../settings
     ../../services/procurator.nix
+    ../../services/bandtrack.nix
   ];
 
   # Ensure AMD GPU firmware is available
