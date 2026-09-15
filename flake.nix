@@ -1,5 +1,5 @@
 {
-   description = "My system configuration";
+  description = "My system configuration";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
@@ -18,12 +18,10 @@
 
     procurator.url = "github:lucas-montes/procurator/remote-connections";
     bandtrack.url = "github:lucas-montes/bandtrack";
+    envman.url = "path:/home/lucas/Projects/envman/envman";
   };
 
-  outputs = {
-    nixpkgs,
-    ...
-  } @ inputs: let
+  outputs = {nixpkgs, ...} @ inputs: let
     mainUser = "lucas";
   in {
     # Used by `nix flake init -t <flake>#<name>`
@@ -113,12 +111,16 @@
     #Let's keep the same home manager config for the lucver and the luctop
     homeConfigurations = {
       ${mainUser} = inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {system = "x86_64-linux";};
+        pkgs = import nixpkgs {
+          system = "x86_64-linux";
+          overlays = [inputs.envman.overlays.default];
+        };
+
         extraSpecialArgs = {
           inherit inputs mainUser;
           stateVersion = "25.05";
         };
-        modules = [./home-manager/home.nix];
+        modules = [./home-manager/home.nix inputs.envman.homeManagerModules.default];
       };
 
       "${mainUser}@lucver" = inputs.home-manager.lib.homeManagerConfiguration {
