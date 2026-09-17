@@ -10,16 +10,16 @@
     ../../services/bandtrack.nix
   ];
 
-  # Ensure AMD GPU firmware is available
-  hardware = {
-    graphics = {
-      enable = true;
-      enable32Bit = true;
-    };
-    firmware = [pkgs.linux-firmware];
-  };
+  hardware.firmware = [pkgs.linux-firmware];
 
   boot = {
+    # NOTE: this is a trick to speed up compilation and some things that might require read and write to files, we keep some things in RAM instead of disk, but it might cause some issues with some programs that expect to write to /tmp or /var/tmp
+    # and we would move something like export CARGO_TARGET_DIR=/tmp/shackle-target
+    # tmp = {
+    #   useTmpfs = true;
+    #   tmpfsSize = "8G";
+    # };
+
     # latest kernel to try to avoid errors with AMD Radeon 890M gpu
     kernelPackages = pkgs.linuxPackages_latest;
     # AMDGPU specific kernel parameters to help with stability
@@ -83,6 +83,8 @@
   # hardware.tuxedo-control-center.enable = true;
 
   services = {
+    # Cleans the ssd/nvme drive from unused blocks, to keep it healthy and fast
+    fstrim.enable = true;
     xserver.xkb = {
       layout = "us";
       variant = "";
