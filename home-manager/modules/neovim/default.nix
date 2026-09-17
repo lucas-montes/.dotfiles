@@ -1,9 +1,4 @@
-{
-  config,
-  inputs,
-  pkgs,
-  ...
-}: let
+{pkgs, ...}: let
   fromPlugin = file: (builtins.readFile "${./config}/plugins/${file}.lua");
 in {
   programs.neovim = {

@@ -16,6 +16,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    opencode.url = "github:anomalyco/opencode";
+
     procurator.url = "github:lucas-montes/procurator/remote-connections";
     bandtrack.url = "github:lucas-montes/bandtrack";
     envman.url = "path:/home/lucas/Projects/envman/envman";
@@ -23,6 +25,7 @@
 
   outputs = {nixpkgs, ...} @ inputs: let
     mainUser = "lucas";
+    stateVersion = "25.05";
   in {
     # Used by `nix flake init -t <flake>#<name>`
     templates = {
@@ -65,8 +68,7 @@
       luctop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
-          inherit inputs mainUser;
-          stateVersion = "25.05";
+          inherit inputs mainUser stateVersion;
           hostname = "luctop";
         };
         modules = [
@@ -117,8 +119,7 @@
         };
 
         extraSpecialArgs = {
-          inherit inputs mainUser;
-          stateVersion = "25.05";
+          inherit inputs mainUser stateVersion;
         };
         modules = [./home-manager/home.nix inputs.envman.homeManagerModules.default];
       };
@@ -126,8 +127,7 @@
       "${mainUser}@lucver" = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {system = "x86_64-linux";};
         extraSpecialArgs = {
-          inherit inputs mainUser;
-          stateVersion = "25.05";
+          inherit inputs mainUser stateVersion;
         };
         modules = [./home-manager/lucver.nix];
       };
@@ -136,8 +136,8 @@
       "${mainUser}@raspi4" = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {system = "aarch64-linux";};
         extraSpecialArgs = {
-          homeStateVersion = "25.05";
           inherit inputs;
+          homeStateVersion = stateVersion;
           user = mainUser;
         };
         modules = [./home-manager/raspi4.nix];

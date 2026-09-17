@@ -1,44 +1,25 @@
-let
+{ pkgs, inputs, ... }: let
   opencodeConfig = {
-    # instructions = [ "./AGENTS.md" ];
-    # mcp = {
-    #   fff = {
-    #     type = "local";
-    #     command = [ "${fffMcp}/bin/fff-mcp" ];
-    #     enabled = true;
-    #   };
-    # };
     provider = {
-      # CrofAI = {
-      #   npm = "@ai-sdk/openai-compatible";
-      #   name = "CrofAI";
-      #   options = {
-      #     baseURL = "https://crof.ai/v1";
-      #     apiKey = "nahcrof_IOvTVLqNuTRXUzPrbpBK";
-      #   };
-      #   models = {
-      #     "deepseek-v4-flash" = {
-      #       name = "CrofAI: deepseek-v4-flash";
-      #       limit = { context = 1000000; output = 131072; };
-      #     };
-      #     "deepseek-v4-pro" = {
-      #       name = "CrofAI: deepseek-v4-pro";
-      #       limit = { context = 1000000; output = 131072; };
-      #     };
-      #     "glm-5.1" = {
-      #       name = "CrofAI: glm-5.1";
-      #       limit = { context = 202752; output = 202752; };
-      #     };
-      #     "glm-5.1-precision" = {
-      #       name = "CrofAI: glm-5.1-precision";
-      #       limit = { context = 202752; output = 202752; };
-      #     };
-      #   };
-      # };
+      ollama = {
+        npm = "@ai-sdk/openai-compatible";
+        name = "ollama";
+        options = {
+          baseURL = "http://127.0.0.1:11434/v1/chat/completions";
+          apiKey = "test";
+        };
+        models = {
+          "qwen2.5-coder:14b" = {
+            name = "qwen2.5-coder:14b";
+            limit = { context = 1000000; output = 131072; };
+          };
+        };
+      };
     };
   };
 in {
   programs.opencode = {
+    package = inputs.opencode.packages.${pkgs.system}.default;
     enable = true;
     settings = opencodeConfig;
     agents = {

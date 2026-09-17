@@ -1,16 +1,17 @@
-{ pkgs, lib, ... }:
 {
+  pkgs,
+  lib,
+  ...
+}: {
   programs.vscode = {
     enable = true;
     profiles.default = {
       enableUpdateCheck = false;
       enableExtensionUpdateCheck = false;
-      extensions =
-        with pkgs.vscode-extensions;
+      extensions = with pkgs.vscode-extensions;
         [
           jnoortheen.nix-ide
           donjayamanne.githistory
-          github.copilot
           github.copilot-chat
           gruntfuggly.todo-tree
           mkhl.direnv
@@ -49,7 +50,7 @@
         "files.exclude"."**/.git" = false;
 
         "github.copilot.chat.commitMessageGeneration.instructions" = [
-          { "text" = "Always include a list of key changes."; }
+          {"text" = "Always include a list of key changes.";}
         ];
 
         "chat.tools.terminal.autoApprove" = {

@@ -49,20 +49,10 @@
 
       pkgs.home-manager
     ];
-    # etc = {
-    #   "chromium/native-messaging-hosts/eu.webeid.json".source = "${pkgs.web-eid-app}/share/web-eid/eu.webeid.json";
-    #   "opt/chrome/native-messaging-hosts/eu.webeid.json".source = "${pkgs.web-eid-app}/share/web-eid/eu.webeid.json";
-    # };
   };
 
   networking = {
     hostName = "luctop";
-    # speed up DHCP: don't block boot while dhcpcd waits for leases
-    # dhcpcd = {
-    #   wait = "background";
-    #   extraConfig = "noarp";
-    # };
-    # NOTE: we disable the dchpcd service because we use NetworkManager instead, which handles DHCP itself
   };
 
   systemd = {
@@ -93,8 +83,6 @@
   # hardware.tuxedo-control-center.enable = true;
 
   services = {
-    # TODO: maybe move this to the user home-manager
-    # Configure keymap in X11
     xserver.xkb = {
       layout = "us";
       variant = "";
