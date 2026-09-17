@@ -1,8 +1,12 @@
 {pkgs, ...}: {
   programs.btop = {
     enable = true;
-    package = pkgs.btop.override {cudaSupport = true;}; # For NVIDIA GPUs
-    # package = pkgs.btop;
-    extraConfig = "update_ms = 100";
+    package = pkgs.btop;
+    settings = {
+      update_ms = 100;
+      shown_boxes = "cpu mem net proc gpu0";
+      show_gpu_info = "On";
+      shown_gpus = "amd";
+    };
   };
 }

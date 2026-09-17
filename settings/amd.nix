@@ -21,21 +21,29 @@
         rocmPackages.rocblas
         rocmPackages.rocfft
         rocmPackages.rocsolver
-        amdvlk
         vulkan-loader
         vulkan-validation-layers
       ];
       extraPackages32 = with pkgs.pkgsi686Linux; [
         vulkan-loader
-        amdvlk
       ];
     };
   };
 
   environment.systemPackages = with pkgs; [
-    rocm-smi
+    rocmPackages.rocm-smi
+    rocmPackages.rocminfo
     clinfo
   ];
+
+  systemd.tmpfiles.rules = [
+    "L+ /opt/rocm - - - - ${pkgs.rocmPackages.clr}"
+  ];
+
+  environment.variables = {
+    HSA_OVERRIDE_GFX_VERSION = "11.5.0";
+    ROCM_PATH = "${pkgs.rocmPackages.clr}";
+  };
 
   # Add user to render and video groups for GPU access
   users.users.lucas.extraGroups = ["render" "video"];
