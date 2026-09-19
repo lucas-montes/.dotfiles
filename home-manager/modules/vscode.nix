@@ -10,6 +10,7 @@
       enableExtensionUpdateCheck = false;
       extensions = with pkgs.vscode-extensions;
         [
+          myriad-dreamin.tinymist
           jnoortheen.nix-ide
           donjayamanne.githistory
           github.copilot-chat

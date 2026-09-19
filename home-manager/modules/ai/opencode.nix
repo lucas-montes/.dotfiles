@@ -5,7 +5,7 @@
         npm = "@ai-sdk/openai-compatible";
         name = "ollama";
         options = {
-          baseURL = "http://127.0.0.1:11434/v1/chat/completions";
+          baseURL = "http://127.0.0.1:11434/v1/";
           apiKey = "test";
         };
         models = {
