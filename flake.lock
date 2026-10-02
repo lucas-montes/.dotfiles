@@ -175,8 +175,8 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1789133310,
-        "narHash": "sha256-YapkS7EvEgiUrNG4FKnUpD3j+jWwq5pcIDBsVIojXa0=",
+        "lastModified": 1790035219,
+        "narHash": "sha256-6ZDjM6nY5apxOf4XqGBMaV7BYc8lAxbwc5Kk+hUhJSY=",
         "path": "/home/lucas/Projects/envman/envman",
         "type": "path"
       },

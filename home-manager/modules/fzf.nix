@@ -1,7 +1,9 @@
 {
-  programs.fzf = {
-    enable = true;
-    changeDirWidgetCommand = "fd --type d";
-    #    defaultCommand = "find .";
+  programs = {
+    fzf = {
+      enable = true;
+      changeDirWidgetCommand = "fd --type d";
+      #    defaultCommand = "find .";
+    };
   };
 }
