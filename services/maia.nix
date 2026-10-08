@@ -17,10 +17,6 @@
     # same database, so there is nothing extra to start.
     desktop.enable = true;
 
-    # The desktop app and the service open the same SQLite file, so the user
-    # account has to be in the maia group or it cannot write the database.
-    extraUsers = [ "lucas" ];
-
     # Exercise images are served from here rather than from the database's
     # directory, which keeps 3 GB of media in the working tree instead of
     # /var/lib.
