@@ -21,6 +21,16 @@
     procurator.url = "github:lucas-montes/procurator/remote-connections";
     bandtrack.url = "github:lucas-montes/bandtrack";
     envman.url = "path:/home/lucas/Projects/envman/envman";
+
+    # `git+file` rather than `path`: the monorepo root is not a git repository,
+    # so a `path:` input would copy the whole tree -- 19 GB of build output,
+    # datasets and media -- into the store on every evaluation. Git resolves this
+    # one with .gitignore semantics and picks up committed work only, which is
+    # what a deployment should be built from anyway.
+    maia = {
+      url = "git+file:///home/lucas/Projects/maia/server?ref=master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {nixpkgs, ...} @ inputs: let
@@ -75,6 +85,7 @@
           ./hosts/luctop/configuration.nix
           inputs.procurator.nixosModules.x86_64-linux.procurator
           inputs.bandtrack.nixosModules.bandtrack
+          inputs.maia.nixosModules.default
         ];
       };
 

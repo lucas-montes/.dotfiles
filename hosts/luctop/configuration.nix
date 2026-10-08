@@ -8,6 +8,7 @@
     ../../settings
     ../../services/procurator.nix
     ../../services/bandtrack.nix
+    ../../services/maia.nix
   ];
 
   hardware.firmware = [pkgs.linux-firmware];
