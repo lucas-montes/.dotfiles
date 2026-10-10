@@ -767,11 +767,11 @@
         "sce": "sce"
       },
       "locked": {
-        "lastModified": 1791509723,
-        "narHash": "sha256-clp8wVFSov3U5JpIQVxJ3Qr88xoT4Oi/VDpPyxs8JWA=",
+        "lastModified": 1791629449,
+        "narHash": "sha256-CgcSvkw3KI6unj7jEz+UPrT63YPrtaAh4zCm1WyDo2E=",
         "ref": "master",
-        "rev": "8c238085a5939feaed0b9d99daba961f865afa2d",
-        "revCount": 60,
+        "rev": "be9504b620d8a324923c36e943559f801d694762",
+        "revCount": 65,
         "type": "git",
         "url": "file:///home/lucas/Projects/maia/server"
       },
