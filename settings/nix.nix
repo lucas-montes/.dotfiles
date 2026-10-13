@@ -23,15 +23,15 @@
       ];
       experimental-features = ["nix-command" "flakes"];
       warn-dirty = false;
-      keep-outputs = true;
-      keep-derivations = true;
+      keep-outputs = false;
+      keep-derivations = false;
     };
     optimise.automatic = true;
     package = pkgs.nixVersions.stable;
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 30d";
+      options = "--delete-older-than 7d";
     };
   };
 }

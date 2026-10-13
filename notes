@@ -4,3 +4,1389 @@ https://kinesis-ergo.com/wp-content/uploads/Adv360-SmartSet-Direct-Programming-G
 
 ## Turn off lights mouse harpoon
 With the mouse powered off, hold down the middle mouse button / scroll wheel. Turn the mouse on to BT or 2.4Ghz mode. If you want to turn it back on just do the same thing
+
+
+
+
+This guide documents how to identify the storage components in a NixOS laptop, determine what PCIe generation and lane width are actually supported, understand the difference between the SSD's capabilities and the laptop's M.2 slot capabilities, and benchmark the current storage setup before making changes.
+
+The examples below are based on a laptop with:
+
+- AMD Ryzen AI 9 HX 370 / Strix-family platform
+- 32 GiB RAM
+- 1 TiB-class NVMe SSD
+- NixOS
+- ext4 root filesystem
+- Rust/Cargo and Nix development workloads
+
+The exact commands are intentionally written so they can be reused on another NixOS system.
+
+---
+
+## 1. The important pieces to distinguish
+
+There are several different components involved in an NVMe connection:
+
+```text
+CPU / SoC
+   │
+   │ PCIe root complex / host bridge
+   ▼
+PCIe root port / upstream bridge
+   │
+   │ PCIe link
+   ▼
+M.2 slot
+   │
+   │ PCIe link
+   ▼
+NVMe controller
+   │
+   ▼
+NAND flash / SSD
+```
+
+These components have different capabilities.
+
+For example, an SSD might support only PCIe 3.0 x4 while the laptop's M.2 slot supports PCIe 4.0 x4. In that case the link will operate at PCIe 3.0 x4 because the SSD is the limiting component.
+
+Conversely, a PCIe 4.0 SSD installed in a PCIe 3.0-only slot will also run at PCIe 3.0.
+
+Therefore:
+
+> Never infer the maximum capability of the laptop's M.2 slot solely from the current SSD's negotiated link speed.
+
+---
+
+# 2. Identify the physical disk and partitions
+
+Start with:
+
+```bash
+lsblk -o NAME,SIZE,FSTYPE,FSVER,MOUNTPOINTS,UUID,MODEL
+```
+
+### What it does
+
+`lsblk` lists block devices.
+
+Useful columns:
+
+- `NAME` — device name such as `nvme0n1`
+- `SIZE` — capacity
+- `FSTYPE` — filesystem type
+- `MOUNTPOINTS` — where partitions are mounted
+- `UUID` — filesystem UUID
+- `MODEL` — device model when available
+
+Typical output might look like:
+
+```text
+nvme0n1       931.5G
+├─nvme0n1p1     1G vfat                    /boot
+├─nvme0n1p2   897G ext4                    /
+└─nvme0n1p3  33.5G swap                   [SWAP]
+```
+
+This tells us the disk layout, but not yet the PCIe capabilities.
+
+---
+
+# 3. Determine which filesystem backs `/`
+
+Run:
+
+```bash
+findmnt -no SOURCE,FSTYPE,OPTIONS /
+```
+
+Example:
+
+```text
+/dev/nvme0n1p2 ext4 rw,relatime
+```
+
+This tells us:
+
+- which partition contains `/`
+- which filesystem is being used
+- which mount options are active
+
+In this system the root filesystem is ext4 and currently uses `relatime`.
+
+This is relevant because filesystem behavior affects development workloads such as:
+
+- Cargo
+- Git
+- Nix builds
+- compiler temporary files
+- metadata-heavy operations
+
+---
+
+# 4. Check whether `/tmp` is a separate filesystem
+
+Run:
+
+```bash
+findmnt /tmp
+```
+
+If this produces no output, `/tmp` is not a separate mount and is therefore normally part of the root filesystem.
+
+You can also inspect all mounts:
+
+```bash
+findmnt
+```
+
+For Rust development, this matters because putting temporary/build-heavy data on tmpfs can sometimes be much faster than writing it to the SSD.
+
+---
+
+# 5. Identify the NVMe controller with PCIe topology
+
+Install/use `pciutils` temporarily:
+
+```bash
+sudo nix shell nixpkgs#pciutils -c lspci -tv
+```
+
+### What it does
+
+`lspci -t` displays the PCIe device tree.
+
+This is one of the most important commands in this guide because it shows the relationship between:
+
+- AMD root complex
+- PCIe host bridge
+- root port
+- NVMe controller
+
+Example:
+
+```text
+-[0000:00]-+-03.0  AMD Strix/Strix Halo Dummy Host Bridge
+           +-03.2-[64]----00.0  Crucial P2 NVMe
+```
+
+Interpretation:
+
+```text
+00:03.0
+   │
+   └── 00:03.2 PCIe root port
+          │
+          └── 64:00.0 NVMe controller
+```
+
+The important detail is that **the upstream PCIe port is `00:03.2`** in this example.
+
+Do not assume that the parent is `01:00.0`; use the topology output to find the actual parent.
+
+---
+
+# 6. Inspect the NVMe controller itself
+
+Once you know the NVMe PCI address, run:
+
+```bash
+sudo nix shell nixpkgs#pciutils -c lspci -vv -s 64:00.0
+```
+
+Replace `64:00.0` with the address shown by your own `lspci -tv`.
+
+You can narrow the output to PCIe link information:
+
+```bash
+sudo nix shell nixpkgs#pciutils -c lspci -vv -s 64:00.0 | grep -E 'LnkCap|LnkSta'
+```
+
+Typical output:
+
+```text
+LnkCap: Speed 8GT/s, Width x4
+LnkSta: Speed 8GT/s, Width x4
+```
+
+### What we are looking at
+
+`LnkCap` means **Link Capabilities**.
+
+It describes what that PCIe device can support for the current link.
+
+`LnkSta` means **Link Status**.
+
+It describes what the link is actually using right now.
+
+Important PCIe speeds:
+
+| PCIe generation | Link rate |
+|---|---:|
+| PCIe 1.x | 2.5 GT/s |
+| PCIe 2.x | 5 GT/s |
+| PCIe 3.x | 8 GT/s |
+| PCIe 4.x | 16 GT/s |
+| PCIe 5.x | 32 GT/s |
+
+`GT/s` means gigatransfers per second. It is not the same thing as MB/s, because PCIe has encoding/protocol overhead.
+
+For storage, the lane width is equally important:
+
+```text
+x1
+x2
+x4
+```
+
+An NVMe SSD normally wants x4 for maximum bandwidth.
+
+---
+
+# 7. Inspect the PCIe upstream/root port
+
+This is the critical step for finding the **maximum capability of the laptop's M.2 connection**.
+
+Suppose `lspci -tv` showed:
+
+```text
+03.2-[64]----00.0  NVMe controller
+```
+
+Then inspect `00:03.2`:
+
+```bash
+sudo nix shell nixpkgs#pciutils -c lspci -vv -s 00:03.2
+```
+
+Or just:
+
+```bash
+sudo nix shell nixpkgs#pciutils -c lspci -vv -s 00:03.2 | grep -E 'LnkCap|LnkSta'
+```
+
+Example:
+
+```text
+LnkCap: Speed 16GT/s, Width x4
+LnkSta: Speed 8GT/s, Width x4
+```
+
+This is extremely informative.
+
+It means:
+
+```text
+Laptop/root port maximum: PCIe 4.0 x4
+Current negotiated link:   PCIe 3.0 x4
+```
+
+If the installed SSD is a PCIe 3.0 device, that is expected: the SSD is limiting the negotiated speed.
+
+### Example interpretations
+
+#### Case A: Gen4 slot + Gen3 SSD
+
+```text
+Root port:
+LnkCap: Speed 16GT/s, Width x4
+LnkSta: Speed 8GT/s, Width x4
+
+SSD:
+LnkCap: Speed 8GT/s, Width x4
+LnkSta: Speed 8GT/s, Width x4
+```
+
+Conclusion:
+
+```text
+M.2 slot: PCIe 4.0 x4 capable
+SSD:      PCIe 3.0 x4
+Current:  PCIe 3.0 x4
+```
+
+A PCIe 4.0 SSD could potentially use the faster link.
+
+#### Case B: Gen3 slot + Gen4 SSD
+
+```text
+Root port:
+LnkCap: Speed 8GT/s, Width x4
+
+SSD:
+LnkCap: Speed 16GT/s, Width x4
+```
+
+Conclusion:
+
+```text
+M.2 slot: PCIe 3.0 x4
+SSD:      PCIe 4.0 x4 capable
+Current:  PCIe 3.0 x4
+```
+
+The laptop slot limits the SSD.
+
+#### Case C: Gen4 slot + Gen4 SSD
+
+```text
+Root port:
+LnkCap: Speed 16GT/s, Width x4
+LnkSta: Speed 16GT/s, Width x4
+
+SSD:
+LnkCap: Speed 16GT/s, Width x4
+LnkSta: Speed 16GT/s, Width x4
+```
+
+Conclusion:
+
+```text
+PCIe 4.0 x4 is fully negotiated.
+```
+
+#### Case D: x2 instead of x4
+
+If you see:
+
+```text
+Width x2
+```
+
+the connection has only two PCIe lanes.
+
+Even if the generation is correct, x2 substantially reduces maximum bandwidth compared with x4.
+
+---
+
+# 8. Check the NVMe device identity
+
+Install/use `nvme-cli`:
+
+```bash
+sudo nix shell nixpkgs#nvme-cli
+```
+
+Then:
+
+```bash
+sudo nvme id-ctrl /dev/nvme0n1
+```
+
+Useful fields include:
+
+- Model Number (`mn`)
+- Firmware Revision (`fr`)
+- Serial Number (`sn`)
+- Vendor ID
+- Optional capabilities
+- Power-state information
+- Namespace/controller capabilities
+
+A shorter version:
+
+```bash
+sudo nvme id-ctrl /dev/nvme0n1 | grep -E '^(vid|ssvid|mn|fr|oacs|oncs|vwc)'
+```
+
+The model and firmware are useful when looking up the manufacturer's specifications.
+
+Do not assume a device is fast or slow solely from its advertised sequential bandwidth. NAND type, DRAM, controller behavior, sustained-write behavior, thermals, and random I/O matter for development workloads.
+
+---
+
+# 9. Check NVMe SMART/health information
+
+Run:
+
+```bash
+sudo nvme smart-log /dev/nvme0n1
+```
+
+Important fields include:
+
+- `critical_warning`
+- `temperature`
+- `available_spare`
+- `percentage_used`
+- `data_units_read`
+- `data_units_written`
+- `media_errors`
+- `num_err_log_entries`
+
+### General interpretation
+
+Healthy-looking values include:
+
+```text
+critical_warning : 0
+available_spare  : high
+media_errors     : 0
+```
+
+`percentage_used` is an estimate of endurance consumption.
+
+Do not interpret a non-zero error-log count automatically as NAND failure. The NVMe error log can contain invalid-command or compatibility-related errors that are different from media errors.
+
+---
+
+# 10. Inspect the NVMe error log
+
+Run:
+
+```bash
+sudo nvme error-log /dev/nvme0n1
+```
+
+This helps determine whether errors are:
+
+- invalid commands
+- media/data integrity errors
+- aborted commands
+- timeouts
+- other controller-reported errors
+
+If you see repeated entries with something like:
+
+```text
+Invalid Field in Command
+```
+
+while SMART reports:
+
+```text
+media_errors : 0
+critical_warning : 0
+```
+
+that is a very different situation from repeated media errors or controller resets.
+
+Always correlate NVMe error-log entries with kernel logs:
+
+```bash
+dmesg --ctime | grep -iE 'nvme|timeout|reset|error|abort'
+```
+
+---
+
+# 11. Check NVMe Autonomous Power State Transition (APST)
+
+Run:
+
+```bash
+sudo nvme get-feature /dev/nvme0n1 -f 0x0c -H
+```
+
+Feature `0x0c` is **Autonomous Power State Transition**.
+
+You may see:
+
+```text
+Autonomous Power State Transition Enable (APSTE): Enabled
+```
+
+and entries such as:
+
+```text
+Idle Time Prior to Transition: 100 ms
+Idle Transition Power State: 3
+```
+
+### Why this matters
+
+APST allows the NVMe controller to enter lower-power states after periods of inactivity.
+
+This can reduce power consumption, particularly important on laptops.
+
+It can also introduce some wake-up latency.
+
+Do **not** disable APST just because it is enabled. For a laptop, power management is generally desirable unless measurements show that it is hurting the workload.
+
+If you eventually test disabling deeper power states, one possible kernel parameter is:
+
+```nix
+boot.kernelParams = [
+  "nvme_core.default_ps_max_latency_us=0"
+];
+```
+
+Treat this as an experiment, not a default optimization.
+
+---
+
+# 12. Check the NVMe I/O scheduler
+
+Run:
+
+```bash
+cat /sys/block/nvme0n1/queue/scheduler
+```
+
+Example:
+
+```text
+[none] mq-deadline kyber
+```
+
+The item in square brackets is the currently selected scheduler.
+
+For modern NVMe SSDs, `none` is a sensible baseline because the SSD itself handles a lot of request scheduling.
+
+Do not expect changing the scheduler to produce dramatic gains in normal Rust/Nix workloads.
+
+---
+
+# 13. Check filesystem features
+
+Run:
+
+```bash
+sudo tune2fs -l /dev/nvme0n1p2 | grep 'Filesystem features'
+```
+
+This tells you which ext4 features are enabled.
+
+Useful features include:
+
+- journaling
+- extents
+- metadata checksums
+- directory indexing
+- 64-bit addressing
+- delayed allocation-related capabilities
+
+Also check block size:
+
+```bash
+sudo tune2fs -l /dev/nvme0n1p2 | grep 'Block size'
+```
+
+---
+
+# 14. Check ext4 reserved blocks
+
+Run:
+
+```bash
+sudo tune2fs -l /dev/nvme0n1p2 | grep -E 'Reserved block count|Block count|Block size'
+```
+
+The default ext4 reserved space is commonly 5%.
+
+Reserved blocks are primarily about preserving filesystem behavior and administrative recovery space when a filesystem becomes very full.
+
+Reducing the reserve is not a magic SSD-speed optimization.
+
+For a development machine, keeping some reserved space is reasonable.
+
+---
+
+# 15. Check TRIM/discard support
+
+Check whether the filesystem advertises discard support:
+
+```bash
+findmnt -no SOURCE,FSTYPE,OPTIONS /
+```
+
+Do not confuse these two approaches:
+
+### Continuous discard
+
+```text
+discard
+```
+
+### Periodic discard
+
+```bash
+fstrim
+```
+
+Periodic `fstrim` is generally preferable to continuously issuing discard requests on many systems.
+
+Check the systemd timer:
+
+```bash
+systemctl status fstrim.timer
+```
+
+and:
+
+```bash
+systemctl cat fstrim.timer
+```
+
+On NixOS, periodic trimming can be enabled with:
+
+```nix
+services.fstrim.enable = true;
+```
+
+Do not repeatedly run `sudo fstrim -v /` merely as a performance benchmark.
+
+A large reported trim amount is not a measurement of normal SSD throughput.
+
+---
+
+# 16. Important lesson about fstrim
+
+A command such as:
+
+```bash
+sudo fstrim -v /
+```
+
+may report hundreds of GiB trimmed.
+
+The reported number represents the amount of filesystem space that can potentially be discarded; it does not mean the SSD physically wrote hundreds of GiB.
+
+Also, `fstrim` performance can be very different from normal reads/writes.
+
+If a trim operation takes a very long time and `iostat` shows the NVMe device near 100% utilization, the SSD/controller is spending a lot of time processing discard requests.
+
+That does **not** by itself prove that the filesystem or SSD is slow during normal I/O.
+
+---
+
+# 17. Monitor normal I/O with iostat
+
+Install/use `sysstat`:
+
+```bash
+sudo nix shell nixpkgs#sysstat -c iostat -xz 1
+```
+
+Important columns include:
+
+- `r/s` — reads per second
+- `w/s` — writes per second
+- `rkB/s` — read throughput
+- `wkB/s` — write throughput
+- `await` — average I/O completion time
+- `%util` — approximate device utilization
+
+For example:
+
+```text
+Device     r/s   w/s   rkB/s   wkB/s   await   %util
+nvme0n1    ...   ...    ...     ...      ...      ...
+```
+
+During a normal benchmark:
+
+- high `%util` means the device is busy
+- high `await` indicates higher I/O latency
+- high throughput with reasonable latency is generally expected during sequential workloads
+
+Do not compare `%util` from a `fstrim` run with `%util` from a Rust build as if they were equivalent workloads.
+
+---
+
+# 18. Benchmark sequential storage
+
+Install/use `fio`:
+
+```bash
+sudo nix shell nixpkgs#fio
+```
+
+Create a dedicated test directory:
+
+```bash
+mkdir -p ~/ssd-test
+```
+
+Use a test file rather than the raw disk.
+
+### Sequential read
+
+```bash
+sudo nix shell nixpkgs#fio -c fio \
+  --name=seqread \
+  --filename="$HOME/ssd-test/testfile" \
+  --size=8G \
+  --bs=1M \
+  --rw=read \
+  --direct=1 \
+  --iodepth=32 \
+  --runtime=30 \
+  --time_based \
+  --group_reporting
+```
+
+### Sequential write
+
+```bash
+sudo nix shell nixpkgs#fio -c fio \
+  --name=seqwrite \
+  --filename="$HOME/ssd-test/testfile" \
+  --size=8G \
+  --bs=1M \
+  --rw=write \
+  --direct=1 \
+  --iodepth=32 \
+  --runtime=30 \
+  --time_based \
+  --group_reporting
+```
+
+### What to look at
+
+Look for:
+
+```text
+READ: bw=...
+WRITE: bw=...
+```
+
+This gives a rough measure of sustained sequential throughput.
+
+Compare it with the SSD manufacturer's specifications, but remember that:
+
+- benchmark conditions differ
+- thermal throttling matters
+- filesystem and test configuration matter
+- a laptop may not sustain desktop benchmark conditions
+
+Remove the test file afterwards:
+
+```bash
+rm ~/ssd-test/testfile
+```
+
+---
+
+# 19. Benchmark random I/O
+
+Random I/O is often more relevant to development workloads.
+
+### Random 4 KiB read
+
+```bash
+sudo nix shell nixpkgs#fio -c fio \
+  --name=randread \
+  --filename="$HOME/ssd-test/testfile" \
+  --size=8G \
+  --bs=4k \
+  --rw=randread \
+  --direct=1 \
+  --iodepth=32 \
+  --runtime=30 \
+  --time_based \
+  --group_reporting
+```
+
+### Random 4 KiB write
+
+```bash
+sudo nix shell nixpkgs#fio -c fio \
+  --name=randwrite \
+  --filename="$HOME/ssd-test/testfile" \
+  --size=8G \
+  --bs=4k \
+  --rw=randwrite \
+  --direct=1 \
+  --iodepth=32 \
+  --runtime=30 \
+  --time_based \
+  --group_reporting
+```
+
+Pay attention to:
+
+- IOPS
+- bandwidth
+- average latency
+- percentile latency
+
+For development workloads, random I/O and metadata latency can be more informative than headline sequential throughput.
+
+---
+
+# 20. Benchmark your real Rust workload
+
+Synthetic benchmarks are useful, but the most important benchmark is the workload you actually care about.
+
+Go to the project:
+
+```bash
+cd ~/Projects/shackle
+```
+
+First make sure the project is in a known state.
+
+Then:
+
+```bash
+hyperfine --warmup 2 'cargo check'
+```
+
+You can also use:
+
+```bash
+time cargo check
+```
+
+For a meaningful comparison, repeat the same command after each storage/configuration change.
+
+Examples of things worth comparing:
+
+```text
+Current ext4 + P2
+        ↓
+ext4 + noatime
+        ↓
+ext4 + tmpfs /tmp
+        ↓
+Cargo target on tmpfs
+        ↓
+New PCIe 4.0 TLC + DRAM SSD
+```
+
+Do not compare runs while unrelated variables such as compilation state, thermal conditions, or dependency downloads are changing.
+
+---
+
+# 21. Benchmark Cargo with target/ on tmpfs
+
+This is especially relevant on a 32 GiB RAM development machine.
+
+A NixOS configuration can make `/tmp` a tmpfs:
+
+```nix
+boot.tmp = {
+  useTmpfs = true;
+  tmpfsSize = "8G";
+};
+```
+
+Then configure Cargo:
+
+```toml
+# ~/Projects/shackle/.cargo/config.toml
+
+[build]
+target-dir = "/tmp/shackle-target"
+```
+
+This changes the workload from:
+
+```text
+Rust source
+   ↓
+NVMe
+   ↓
+target/
+```
+
+to:
+
+```text
+Rust source
+   ↓
+NVMe
+
+compiler artifacts
+   ↓
+RAM / tmpfs
+```
+
+This can be particularly effective because Rust builds generate many intermediate files.
+
+### Tradeoffs
+
+Advantages:
+
+- much lower latency
+- no SSD writes for the target directory
+- target artifacts benefit from RAM-speed filesystem operations
+
+Disadvantages:
+
+- consumes RAM
+- build artifacts disappear after reboot
+- the target directory must fit in the configured tmpfs
+
+With 32 GiB RAM, an initial tmpfs size around 8 GiB is a reasonable experiment.
+
+---
+
+# 22. Check the size of your current Cargo artifacts
+
+Before moving them:
+
+```bash
+cd ~/Projects/shackle
+du -sh target
+```
+
+Also inspect your Cargo data:
+
+```bash
+du -sh ~/.cargo
+```
+
+This helps determine how much space a RAM-backed build directory may need.
+
+Do not put the entire Cargo home on tmpfs unless you have a specific reason. Keeping the registry and downloaded dependencies on persistent storage avoids unnecessary downloads after reboot.
+
+---
+
+# 23. Check Git metadata workload
+
+Git is another metadata-heavy workload.
+
+Run:
+
+```bash
+cd ~/Projects/shackle
+hyperfine --warmup 3 'git status'
+```
+
+This can help determine whether filesystem metadata performance matters for your actual development workflow.
+
+---
+
+# 24. Compare filesystem mount options
+
+Current state:
+
+```bash
+findmnt -no SOURCE,FSTYPE,OPTIONS /
+```
+
+If you currently see:
+
+```text
+rw,relatime
+```
+
+you can experimentally consider:
+
+```nix
+fileSystems."/" = {
+  device = "/dev/disk/by-uuid/YOUR-UUID";
+  fsType = "ext4";
+  options = [ "noatime" ];
+};
+```
+
+`noatime` eliminates access-time updates.
+
+This is a relatively conservative optimization.
+
+Do not stack many filesystem options at once. Change one thing, reboot if necessary, verify with `findmnt`, and benchmark again.
+
+---
+
+# 25. Check the SSD's firmware
+
+Use:
+
+```bash
+sudo nvme id-ctrl /dev/nvme0n1 | grep -E '^(mn|fr)'
+```
+
+This gives:
+
+- model number
+- firmware revision
+
+If investigating a firmware update, use the SSD manufacturer's official support documentation and verify the exact model and current firmware first.
+
+Do not flash firmware from an unofficial source.
+
+---
+
+# 26. Current example: interpreting the observed system
+
+For the system this guide was originally created from, the important facts were:
+
+```text
+SSD:
+Crucial P2
+CT1000P2SSD8
+1 TB class
+DRAM-less
+
+Current NVMe link:
+PCIe 3.0 x4
+8 GT/s x4
+
+Upstream/root port:
+PCIe 4.0 x4 capable
+16 GT/s x4
+
+Current filesystem:
+ext4
+
+Root mount:
+rw,relatime
+
+RAM:
+32 GiB
+```
+
+Therefore:
+
+```text
+Laptop M.2 connection:
+PCIe 4.0 x4 capable
+
+Current SSD:
+PCIe 3.0 x4
+
+Current negotiated link:
+PCIe 3.0 x4
+```
+
+This means a PCIe 4.0 x4 SSD is technically capable of using the faster link on this system.
+
+---
+
+# 27. What makes a good upgrade for Rust/Nix?
+
+Do not choose an SSD solely by sequential MB/s.
+
+For development workloads, useful characteristics include:
+
+1. PCIe 4.0 x4 compatibility
+2. TLC NAND
+3. Dedicated DRAM
+4. Strong random I/O
+5. Good sustained-write behavior
+6. Reasonable thermals
+7. Good firmware stability
+8. Appropriate endurance
+
+High-end PCIe 4.0 examples include:
+
+- Samsung 990 Pro
+- WD Black SN850X
+- Solidigm P44 Pro
+- Crucial T500
+
+These are examples of the class of drive to investigate, not a requirement to purchase a specific model.
+
+---
+
+# 28. Kernel tuning: what is worth testing?
+
+### NVMe scheduler
+
+Check:
+
+```bash
+cat /sys/block/nvme0n1/queue/scheduler
+```
+
+`none` is a good baseline for NVMe.
+
+### APST
+
+Check:
+
+```bash
+sudo nvme get-feature /dev/nvme0n1 -f 0x0c -H
+```
+
+Keep APST enabled unless measurements show a problem.
+
+### APST experiment
+
+Only as a controlled test:
+
+```nix
+boot.kernelParams = [
+  "nvme_core.default_ps_max_latency_us=0"
+];
+```
+
+Then benchmark the same workload.
+
+If there is no meaningful improvement, remove it.
+
+This setting can increase power consumption and is therefore not automatically beneficial on a laptop.
+
+---
+
+# 29. Kernel/storage changes that should not be blindly applied
+
+Avoid blindly copying generic "Linux SSD optimization" lists.
+
+In particular, do not assume that these are beneficial:
+
+```text
+huge nr_requests
+very large read-ahead
+aggressive ext4 commit intervals
+continuous discard
+disabled journaling
+random I/O scheduler changes
+disabling all power management
+```
+
+Each changes a tradeoff involving:
+
+- latency
+- throughput
+- power consumption
+- durability
+- memory usage
+- thermal behavior
+
+Benchmark first.
+
+---
+
+# 30. Recommended investigation order
+
+For a Rust/Nix development laptop, use this order:
+
+### Step 1 — Identify hardware
+
+```bash
+lsblk -o NAME,SIZE,FSTYPE,FSTYPE,MOUNTPOINTS,UUID,MODEL
+```
+
+```bash
+sudo nix shell nixpkgs#pciutils -c lspci -tv
+```
+
+### Step 2 — Identify the NVMe controller
+
+```bash
+sudo nix shell nixpkgs#pciutils -c lspci -vv -s 64:00.0 | grep -E 'LnkCap|LnkSta'
+```
+
+### Step 3 — Identify the upstream port
+
+```bash
+sudo nix shell nixpkgs#pciutils -c lspci -vv -s 00:03.2 | grep -E 'LnkCap|LnkSta'
+```
+
+### Step 4 — Identify NVMe firmware and health
+
+```bash
+sudo nvme id-ctrl /dev/nvme0n1
+```
+
+```bash
+sudo nvme smart-log /dev/nvme0n1
+```
+
+### Step 5 — Check power management
+
+```bash
+sudo nvme get-feature /dev/nvme0n1 -f 0x0c -H
+```
+
+### Step 6 — Check filesystem
+
+```bash
+findmnt -no SOURCE,FSTYPE,OPTIONS /
+```
+
+```bash
+sudo tune2fs -l /dev/nvme0n1p2 | grep 'Filesystem features'
+```
+
+### Step 7 — Check scheduler
+
+```bash
+cat /sys/block/nvme0n1/queue/scheduler
+```
+
+### Step 8 — Check TRIM scheduling
+
+```bash
+systemctl status fstrim.timer
+```
+
+### Step 9 — Establish performance baseline
+
+```bash
+hyperfine --warmup 2 'cd ~/Projects/shackle && cargo check'
+```
+
+```bash
+cd ~/Projects/shackle
+hyperfine --warmup 3 'git status'
+```
+
+### Step 10 — Run controlled storage benchmarks
+
+Use `fio` in a dedicated test directory.
+
+### Step 11 — Test software optimizations
+
+Test one at a time:
+
+```text
+noatime
+tmpfs /tmp
+Cargo target on tmpfs
+```
+
+### Step 12 — Only then evaluate hardware replacement
+
+If the laptop supports PCIe 4.0 x4 and the current SSD is PCIe 3.0 x4, a good PCIe 4.0 SSD becomes a technically meaningful upgrade candidate.
+
+---
+
+# 31. A useful result-reporting template
+
+When comparing configurations, record:
+
+```text
+Hardware
+--------
+Laptop:
+CPU:
+RAM:
+
+SSD
+---
+Model:
+Firmware:
+Capacity:
+NAND type:
+DRAM:
+PCIe capability:
+
+PCIe root port
+---------------
+LnkCap:
+LnkSta:
+
+Filesystem
+----------
+Filesystem:
+Mount options:
+Scheduler:
+
+NVMe health
+-----------
+Temperature:
+Percentage used:
+Media errors:
+Error log entries:
+
+Benchmark
+---------
+cargo check:
+git status:
+fio sequential read:
+fio sequential write:
+fio random read:
+fio random write:
+```
+
+This makes it much easier to distinguish:
+
+- a hardware limitation
+- a PCIe link limitation
+- an SSD controller/NAND limitation
+- filesystem overhead
+- compiler workload
+- memory/cache effects
+- thermal throttling
+
+---
+
+# 32. The most important principle
+
+The fastest configuration is not necessarily the one with the largest synthetic benchmark.
+
+For a NixOS Rust workstation, optimize the actual critical path:
+
+```text
+Rust source
+   ↓
+Cargo
+   ↓
+compiler
+   ↓
+many small reads/writes + metadata
+   ↓
+target/
+```
+
+rather than optimizing only:
+
+```text
+large sequential read/write
+```
+
+For this reason, benchmark `cargo check`, incremental builds, and `git status` alongside `fio`.
+
+A PCIe 4.0 SSD can provide substantially more bandwidth than the current PCIe 3.0 P2, but moving Cargo's high-churn build artifacts to RAM may also produce a significant improvement without replacing the SSD.
+
+---
+
+# Quick command reference
+
+```bash
+# Block devices
+lsblk -o NAME,SIZE,FSTYPE,FSVER,MOUNTPOINTS,UUID,MODEL
+
+# Root filesystem
+findmnt -no SOURCE,FSTYPE,OPTIONS /
+
+# /tmp mount
+findmnt /tmp
+
+# PCIe topology
+sudo nix shell nixpkgs#pciutils -c lspci -tv
+
+# NVMe controller link
+sudo nix shell nixpkgs#pciutils -c lspci -vv -s 64:00.0 | grep -E 'LnkCap|LnkSta'
+
+# NVMe upstream port link
+sudo nix shell nixpkgs#pciutils -c lspci -vv -s 00:03.2 | grep -E 'LnkCap|LnkSta'
+
+# NVMe identity
+sudo nvme id-ctrl /dev/nvme0n1
+
+# NVMe health
+sudo nvme smart-log /dev/nvme0n1
+
+# NVMe errors
+sudo nvme error-log /dev/nvme0n1
+
+# APST
+sudo nvme get-feature /dev/nvme0n1 -f 0x0c -H
+
+# Kernel NVMe messages
+dmesg --ctime | grep -iE 'nvme|timeout|reset|error|abort'
+
+# I/O scheduler
+cat /sys/block/nvme0n1/queue/scheduler
+
+# Filesystem features
+sudo tune2fs -l /dev/nvme0n1p2 | grep 'Filesystem features'
+
+# ext4 reserved blocks
+sudo tune2fs -l /dev/nvme0n1p2 | grep -E 'Reserved block count|Block count|Block size'
+
+# TRIM timer
+systemctl status fstrim.timer
+systemctl cat fstrim.timer
+
+# I/O monitoring
+sudo nix shell nixpkgs#sysstat -c iostat -xz 1
+
+# Rust benchmark
+cd ~/Projects/shackle
+hyperfine --warmup 2 'cargo check'
+
+# Git metadata benchmark
+hyperfine --warmup 3 'git status'
+
+# Cargo target size
+du -sh target
+
+# Cargo home size
+du -sh ~/.cargo
+```
