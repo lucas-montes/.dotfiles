@@ -9,6 +9,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     hyprland.url = "github:hyprwm/Hyprland";
 
     stylix = {
@@ -16,26 +21,30 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     opencode.url = "github:anomalyco/opencode";
 
     procurator.url = "github:lucas-montes/procurator/remote-connections";
     bandtrack.url = "github:lucas-montes/bandtrack";
-    envman.url = "path:/home/lucas/Projects/envman/envman";
 
-    # `git+file` rather than `path`: the monorepo root is not a git repository,
-    # so a `path:` input would copy the whole tree -- 19 GB of build output,
-    # datasets and media -- into the store on every evaluation. Git resolves this
-    # one with .gitignore semantics and picks up committed work only, which is
-    # what a deployment should be built from anyway.
     maia = {
-      url = "git+file:///home/lucas/Projects/maia/server?ref=master";
+      url = "github:lucas-montes/maia";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = {nixpkgs, ...} @ inputs: let
+  outputs = {
+    nixpkgs,
+    ...
+  } @ inputs: let
     mainUser = "lucas";
     stateVersion = "25.05";
+    system = "x86_64-linux";
+    pkgs = nixpkgs.legacyPackages.${system};
   in {
     # Used by `nix flake init -t <flake>#<name>`
     templates = {
@@ -73,8 +82,42 @@
       };
     };
 
+    # Installer for the new SSD. Run `nix run .#install-luctop-zfs` from the
+    # repo root: it formats and installs ONLY the WD SN850X, whose by-id path
+    # can never resolve to the old Crucial P2, so the current system is safe.
+    # It uses the disko pinned in flake.lock.
+    #
+    # A bootable image is intentionally not provided: the root pool uses a
+    # prompted passphrase (keylocation=prompt), which cannot be set while
+    # building an unattended image.
+    apps.${system}.install-luctop-zfs = {
+      type = "app";
+      program = "${
+        pkgs.writeShellApplication {
+          name = "install-luctop-zfs";
+          runtimeInputs = [inputs.disko.packages.${system}.disko-install];
+          text = ''
+            set -euo pipefail
+
+            disk=/dev/disk/by-id/nvme-WD_BLACK_SN850X_2000GB_25364G803949
+
+            if [ ! -e "$disk" ]; then
+              echo "error: new SSD not present at $disk" >&2
+              exit 1
+            fi
+
+            echo "Installing luctop-zfs to $disk ($(readlink -f "$disk"))"
+            echo "The old Crucial P2 is not touched by this command."
+
+            exec disko-install --flake .#luctop-zfs --disk main "$disk" "$@"
+          '';
+        }
+      }/bin/install-luctop-zfs";
+    };
+
     nixosConfigurations = {
-      # Laptop configuration currently the tuxedo
+      # Laptop on the old Crucial P2 SSD (ext4). Production stays rebuildable
+      # from this configuration until cutover.
       luctop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
@@ -83,6 +126,25 @@
         };
         modules = [
           ./hosts/luctop/configuration.nix
+          inputs.procurator.nixosModules.x86_64-linux.procurator
+          inputs.bandtrack.nixosModules.bandtrack
+          inputs.maia.nixosModules.default
+        ];
+      };
+
+      # Laptop on the new WD SN850X SSD (ZFS + disko). Experimental until the
+      # old disk is retired.
+      luctop-zfs = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs mainUser stateVersion;
+          hostname = "luctop-zfs";
+        };
+        modules = [
+          ./hosts/luctop-zfs/configuration.nix
+          ./hosts/luctop-zfs/zfs.nix
+          ./hosts/luctop-zfs/disko.nix
+          inputs.disko.nixosModules.disko
           inputs.procurator.nixosModules.x86_64-linux.procurator
           inputs.bandtrack.nixosModules.bandtrack
           inputs.maia.nixosModules.default
@@ -126,13 +188,14 @@
       ${mainUser} = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
           system = "x86_64-linux";
-          overlays = [inputs.envman.overlays.default];
         };
 
         extraSpecialArgs = {
           inherit inputs mainUser stateVersion;
         };
-        modules = [./home-manager/home.nix inputs.envman.homeManagerModules.default];
+        modules = [
+          ./home-manager/home.nix
+        ];
       };
 
       "${mainUser}@lucver" = inputs.home-manager.lib.homeManagerConfiguration {
