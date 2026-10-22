@@ -768,11 +768,11 @@
         "sce": "sce"
       },
       "locked": {
-        "lastModified": 1792599702,
-        "narHash": "sha256-/8nlAvDuIXFVlHReZYQSOTpO2AXNhYBZZ8P+hCt5bWo=",
+        "lastModified": 1792701213,
+        "narHash": "sha256-h/bGkKFaQBXQa8LfK3SzfCv6qUDopLg2WUJKnWagBGA=",
         "owner": "lucas-montes",
         "repo": "maia",
-        "rev": "a7f6b64611ceca3da5e1272fdcef2c328bf96fe4",
+        "rev": "f2b9f2da8ad8037b312c5293a68a419a57f477d5",
         "type": "github"
       },
       "original": {

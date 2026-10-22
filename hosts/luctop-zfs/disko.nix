@@ -41,9 +41,16 @@
 
     zpool.zroot = {
       type = "zpool";
-      # ashift 12 matches this NVMe drive's 4K sectors. This is a pool-creation
-      # decision; it cannot be changed later without recreating the pool.
-      options.ashift = "12";
+      options = {
+        # ashift 12 matches this NVMe drive's 4K sectors. This is a
+        # pool-creation decision; it cannot be changed later without
+        # recreating the pool.
+        ashift = "12";
+        # autotrim issues TRIM continuously as blocks are freed, avoiding the
+        # latency burst of a periodic `zpool trim` (which is disabled in
+        # zfs.nix). https://openzfs.github.io/openzfs-docs/man/master/7/zpoolprops.7.html#autotrim
+        autotrim = "on";
+      };
       # Snapshot the installed root before the first NixOS installation, while
       # it is still empty. The guard keeps reruns idempotent instead of
       # failing if the snapshot already exists.
@@ -62,6 +69,11 @@
         compression = "zstd-3";
         acltype = "posixacl";
         xattr = "sa";
+        # dnodesize=auto grows a file's dnode only as needed, letting small
+        # files and their xattrs live inline (embedded data) and cutting
+        # metadata IO. Pairs with xattr=sa and auto-enables large_dnode.
+        # https://openzfs.github.io/openzfs-docs/man/master/7/zfsprops.7.html#dnodesize
+        dnodesize = "auto";
       };
       datasets = {
         # Encrypt the installed root directly with ZFS instead of adding LUKS.
@@ -77,6 +89,10 @@
             keylocation = "prompt";
             recordsize = "128K";
             atime = "off";
+            # Treat synchronous writes as olog-less: coalesce them through the
+            # normal TXG instead of committing each to the ZIL. Correct for
+            # workloads that do not need per-write durability (e.g. app state).
+            logbias = "throughput";
           };
         };
         # A large record size lets zstd compress across the many relatively
@@ -89,17 +105,64 @@
           options = {
             recordsize = "1M";
             atime = "off";
+            # The store is reproducible, so a power loss that drops the last
+            # writes is recoverable; sync=disabled skips ZIL writes entirely.
+            # logbias=throughput keeps those writes batching through the TXG.
+            logbias = "throughput";
+            sync = "disabled";
           };
         };
         # Documents and configuration are dominated by smaller files, so use a
-        # smaller record size than /nix. This is the dataset selective restic
-        # backups are expected to cover.
+        # smaller record size than /nix. This is the dataset the selective
+        # restic backups and the weekly snapshots are expected to cover.
         "root/home" = {
           type = "zfs_fs";
           mountpoint = "/home";
           options = {
-            recordsize = "64K";
+            recordsize = "128K";
             atime = "off";
+          };
+        };
+        # The datasets below are mounted over existing home subdirectories, so
+        # disko owns each mount root; zfs.nix takes care of giving them
+        # lucas:users via systemd.tmpfiles. They stay atime=off as the pool is
+        # never read for its access times.
+        #
+        # Documents is the only dataset with snapshots enabled. The base
+        # com.sun:auto-snapshot property stays unset (opt-out), and only the
+        # weekly cadence is turned on, so just the weekly timer creates them.
+        "root/home/Documents" = {
+          type = "zfs_fs";
+          mountpoint = "/home/lucas/Documents";
+          options = {
+            recordsize = "128K";
+            atime = "off";
+            "com.sun:auto-snapshot:weekly" = "true";
+          };
+        };
+        # Downloads hold large, few-files reads/writes where a 1M
+        # record size maximizes sequential throughput.
+        "root/home/Downloads" = {
+          type = "zfs_fs";
+          mountpoint = "/home/lucas/Downloads";
+          options = {
+            recordsize = "1M";
+            atime = "off";
+          };
+        };
+        # .cache is disposable build/app cache: sync=disabled avoids ZIL writes
+        # for a filesystem we are happy to lose, and the refquota keeps it from
+        # eating the pool (it only bounds data, not snapshots).
+        # https://openzfs.github.io/openzfs-docs/man/master/7/zfsprops.7.html#refquota
+        "root/home/.cache" = {
+          type = "zfs_fs";
+          mountpoint = "/home/lucas/.cache";
+          options = {
+            recordsize = "128K";
+            atime = "off";
+            sync = "disabled";
+            refquota = "20G";
+            "com.sun:auto-snapshot" = "false";
           };
         };
         # Keep logs separate so log growth, pruning, or a log-focused rollback
@@ -109,7 +172,7 @@
           type = "zfs_fs";
           mountpoint = "/var/log";
           options = {
-            recordsize = "128K";
+            recordsize = "1M";
             atime = "off";
           };
         };
