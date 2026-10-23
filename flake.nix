@@ -95,7 +95,8 @@
       program = "${
         pkgs.writeShellApplication {
           name = "install-luctop-zfs";
-          runtimeInputs = [inputs.disko.packages.${system}.disko-install];
+          # zfs provides the zpool binary for the post-install pool export.
+          runtimeInputs = [inputs.disko.packages.${system}.disko-install pkgs.zfs];
           text = ''
             set -euo pipefail
 
@@ -109,7 +110,37 @@
             echo "Installing luctop-zfs to $disk ($(readlink -f "$disk"))"
             echo "The old Crucial P2 is not touched by this command."
 
-            exec disko-install --flake .#luctop-zfs --disk main "$disk" "$@"
+            # No exec: the pool export below must run in this same shell after
+            # a successful install. "$@" passes disko-install flags through
+            # (e.g. --dry-run).
+            disko-install --flake .#luctop-zfs --disk main "$disk" "$@"
+
+            # A dry-run builds and prints what would run; it must not touch
+            # pool state, so stop here.
+            for arg in "$@"; do
+              case "$arg" in
+                --dry-run)
+                  echo "dry-run: skipping the post-install pool export."
+                  exit 0
+                  ;;
+              esac
+            done
+
+            # disko-install leaves the freshly created zroot imported into the
+            # *running* system's kernel session, and the pool's on-disk state
+            # then says "last used by this system, not cleanly exported". The
+            # new system's initrd imports with forceImportRoot=false (by
+            # design, in hosts/luctop-zfs/zfs.nix) and refuses to take over
+            # such a pool - observed as an endless "A start job is running
+            # for import ZFS pool zroot" on the first boot. Exporting here
+            # marks the pool cleanly exported, so every install hands off
+            # deterministically. The guard also skips when a dry-run ran
+            # against a session that still has an unrelated leftover pool
+            # imported.
+            if zpool list -H zroot >/dev/null 2>&1; then
+              zpool export zroot
+              echo "zroot exported cleanly; reboot and pick the WD in the firmware boot menu (F7/F12)."
+            fi
           '';
         }
       }/bin/install-luctop-zfs";

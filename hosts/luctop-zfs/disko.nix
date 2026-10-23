@@ -185,25 +185,6 @@
             atime = "off";
           };
         };
-        # 16G is a cold safety net alongside zram, not hibernation storage:
-        # NixOS disables hibernation for ZFS by default. The volume inherits
-        # the pool's encryption and avoids caching swap pages in ARC.
-        "root/swap" = {
-          type = "zfs_volume";
-          size = "16G";
-          content = {
-            type = "swap";
-          };
-          options = {
-            volblocksize = "4096";
-            compression = "zle";
-            logbias = "throughput";
-            sync = "always";
-            primarycache = "metadata";
-            secondarycache = "none";
-            "com.sun:auto-snapshot" = "false";
-          };
-        };
       };
     };
   };

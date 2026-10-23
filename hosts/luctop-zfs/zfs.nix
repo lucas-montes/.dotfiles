@@ -50,7 +50,7 @@
   fileSystems."/nix".neededForBoot = true;
   fileSystems."/var/log".neededForBoot = true;
 
-  # Documents/Downloads/Games/.cache are separate datasets mounted over their
+  # Documents/Downloads/.cache are separate datasets mounted over their
   # directories, so disko creates each mount root as root:root. The rest of
   # /home/lucas belongs to lucas:users (the isNormalUser group, gid 100), so
   # give these the same ownership or apps and home-manager cannot write into
@@ -58,7 +58,6 @@
   systemd.tmpfiles.rules = [
     "d /home/lucas/Documents 0755 lucas users - -"
     "d /home/lucas/Downloads 0755 lucas users - -"
-    "d /home/lucas/Games 0755 lucas users - -"
     "d /home/lucas/.cache 0700 lucas users - -"
   ];
 }
