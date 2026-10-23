@@ -37,10 +37,7 @@
     };
   };
 
-  outputs = {
-    nixpkgs,
-    ...
-  } @ inputs: let
+  outputs = {nixpkgs, ...} @ inputs: let
     mainUser = "lucas";
     stateVersion = "25.05";
     system = "x86_64-linux";
@@ -82,70 +79,6 @@
       };
     };
 
-    # Installer for the new SSD. Run `nix run .#install-luctop-zfs` from the
-    # repo root: it formats and installs ONLY the WD SN850X, whose by-id path
-    # can never resolve to the old Crucial P2, so the current system is safe.
-    # It uses the disko pinned in flake.lock.
-    #
-    # A bootable image is intentionally not provided: the root pool uses a
-    # prompted passphrase (keylocation=prompt), which cannot be set while
-    # building an unattended image.
-    apps.${system}.install-luctop-zfs = {
-      type = "app";
-      program = "${
-        pkgs.writeShellApplication {
-          name = "install-luctop-zfs";
-          # zfs provides the zpool binary for the post-install pool export.
-          runtimeInputs = [inputs.disko.packages.${system}.disko-install pkgs.zfs];
-          text = ''
-            set -euo pipefail
-
-            disk=/dev/disk/by-id/nvme-WD_BLACK_SN850X_2000GB_25364G803949
-
-            if [ ! -e "$disk" ]; then
-              echo "error: new SSD not present at $disk" >&2
-              exit 1
-            fi
-
-            echo "Installing luctop-zfs to $disk ($(readlink -f "$disk"))"
-            echo "The old Crucial P2 is not touched by this command."
-
-            # No exec: the pool export below must run in this same shell after
-            # a successful install. "$@" passes disko-install flags through
-            # (e.g. --dry-run).
-            disko-install --flake .#luctop-zfs --disk main "$disk" "$@"
-
-            # A dry-run builds and prints what would run; it must not touch
-            # pool state, so stop here.
-            for arg in "$@"; do
-              case "$arg" in
-                --dry-run)
-                  echo "dry-run: skipping the post-install pool export."
-                  exit 0
-                  ;;
-              esac
-            done
-
-            # disko-install leaves the freshly created zroot imported into the
-            # *running* system's kernel session, and the pool's on-disk state
-            # then says "last used by this system, not cleanly exported". The
-            # new system's initrd imports with forceImportRoot=false (by
-            # design, in hosts/luctop-zfs/zfs.nix) and refuses to take over
-            # such a pool - observed as an endless "A start job is running
-            # for import ZFS pool zroot" on the first boot. Exporting here
-            # marks the pool cleanly exported, so every install hands off
-            # deterministically. The guard also skips when a dry-run ran
-            # against a session that still has an unrelated leftover pool
-            # imported.
-            if zpool list -H zroot >/dev/null 2>&1; then
-              zpool export zroot
-              echo "zroot exported cleanly; reboot and pick the WD in the firmware boot menu (F7/F12)."
-            fi
-          '';
-        }
-      }/bin/install-luctop-zfs";
-    };
-
     nixosConfigurations = {
       # Laptop on the old Crucial P2 SSD (ext4). Production stays rebuildable
       # from this configuration until cutover.
@@ -157,24 +90,8 @@
         };
         modules = [
           ./hosts/luctop/configuration.nix
-          inputs.procurator.nixosModules.x86_64-linux.procurator
-          inputs.bandtrack.nixosModules.bandtrack
-          inputs.maia.nixosModules.default
-        ];
-      };
-
-      # Laptop on the new WD SN850X SSD (ZFS + disko). Experimental until the
-      # old disk is retired.
-      luctop-zfs = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit inputs mainUser stateVersion;
-          hostname = "luctop-zfs";
-        };
-        modules = [
-          ./hosts/luctop-zfs/configuration.nix
-          ./hosts/luctop-zfs/zfs.nix
-          ./hosts/luctop-zfs/disko.nix
+          ./hosts/luctop/zfs.nix
+          ./hosts/luctop/disko.nix
           inputs.disko.nixosModules.disko
           inputs.procurator.nixosModules.x86_64-linux.procurator
           inputs.bandtrack.nixosModules.bandtrack

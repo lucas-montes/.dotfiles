@@ -2,8 +2,8 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 #
-# Old-SSD (Crucial P2, ext4) variant. The new-SSD ZFS layout lives in
-# hosts/luctop-zfs/ and is declared there by disko.
+# New-SSD (WD SN850X) variant. Filesystems and swap come from disko.nix;
+# this file only carries the detected hardware modules.
 {
   config,
   lib,
@@ -30,24 +30,7 @@
     extraModulePackages = [];
   };
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/5b5945a6-a995-4db6-9146-c3ea6476038e";
-    fsType = "ext4";
-    options = [ "noatime" ];
-  };
-
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/1A7B-945A";
-    fsType = "vfat";
-    options = [
-      "fmask=0077"
-      "dmask=0077"
-    ];
-  };
-
-  swapDevices = [
-    {device = "/dev/disk/by-uuid/61e472dc-5242-447c-b808-b71b155393aa";}
-  ];
+  # Root, /boot and swap are declared by disko for the new-SSD ZFS layout.
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
