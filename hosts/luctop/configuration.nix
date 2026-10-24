@@ -1,7 +1,6 @@
 {
   lib,
   pkgs,
-  inputs,
   mainUser,
   stateVersion,
   ...
@@ -20,11 +19,6 @@
     # Pinned to the newest kernel known to work with this flake's ZFS release.
     # linuxPackages_latest can move past ZFS's supported kernel range and break evaluation.
     kernelPackages = pkgs.linuxPackages_7_2;
-
-    # Never let installs on the new ESP reorder the old system's NVRAM boot entry.
-    # systemd-boot is installed on the currently mounted ESP, but firmware
-    # variables keep the old disk as the default entry until cutover.
-    loader.efi.canTouchEfiVariables = lib.mkForce false;
 
     # NOTE: this is a trick to speed up compilation and some things that might require read and write to files, we keep some things in RAM instead of disk, but it might cause some issues with some programs that expect to write to /tmp or /var/tmp
     # and we would move something like export CARGO_TARGET_DIR=/tmp/shackle-target

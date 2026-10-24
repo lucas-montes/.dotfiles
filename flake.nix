@@ -33,7 +33,6 @@
 
     maia = {
       url = "github:lucas-montes/maia";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
