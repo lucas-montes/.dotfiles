@@ -134,36 +134,6 @@ in {
       }
       (mkVimPlugin nvim-web-devicons)
 
-      {
-        plugin = nvim-treesitter.withPlugins (p: [
-          p.tree-sitter-nix
-          p.tree-sitter-vim
-          p.tree-sitter-bash
-          p.tree-sitter-lua
-          p.tree-sitter-python
-          p.tree-sitter-json
-          p.tree-sitter-rust
-          p.tree-sitter-html
-          p.tree-sitter-css
-          p.tree-sitter-javascript
-          p.tree-sitter-typescript
-          p.tree-sitter-go
-          p.tree-sitter-toml
-          p.tree-sitter-yaml
-          p.tree-sitter-markdown
-          p.tree-sitter-markdown-inline
-          p.tree-sitter-sql
-          p.tree-sitter-dart
-          p.tree-sitter-c
-          p.tree-sitter-haskell
-          p.tree-sitter-erlang
-          p.tree-sitter-ocaml
-          p.tree-sitter-vue
-        ]);
-        type = "lua";
-        config = fromPlugin "treesitter";
-      }
-
       (mkVimPlugin vim-nix)
 
       {
@@ -199,28 +169,37 @@ in {
       {
         plugin = nvim-lint;
         type = "lua";
-        config = ''
-          require("lint").linters_by_ft = {
-            nix = { "statix", "deadnix" },
-            python = { "ruff" },
-            lua = { "luacheck" },
-            bash = { "shellcheck" },
-            sh = { "shellcheck" },
-            zsh = { "shellcheck" },
-            go = { "golangci-lint" },
-            markdown = { "markdownlint-cli2" },
-            dart = { "dartanalyzer" },
-            c = { "cpplint" },
-            cpp = { "cpplint" },
-            haskell = { "hlint" },
-          }
+        config = fromPlugin "nvim-lint";
+      }
 
-          vim.api.nvim_create_autocmd("BufWritePost", {
-            callback = function()
-              require("lint").try_lint()
-            end,
-          })
-        '';
+      {
+        plugin = nvim-treesitter.withPlugins (p: [
+          p.tree-sitter-nix
+          p.tree-sitter-vim
+          p.tree-sitter-bash
+          p.tree-sitter-lua
+          p.tree-sitter-python
+          p.tree-sitter-json
+          p.tree-sitter-rust
+          p.tree-sitter-html
+          p.tree-sitter-css
+          p.tree-sitter-javascript
+          p.tree-sitter-typescript
+          p.tree-sitter-go
+          p.tree-sitter-toml
+          p.tree-sitter-yaml
+          p.tree-sitter-markdown
+          p.tree-sitter-markdown-inline
+          p.tree-sitter-sql
+          p.tree-sitter-dart
+          p.tree-sitter-c
+          p.tree-sitter-haskell
+          p.tree-sitter-erlang
+          p.tree-sitter-ocaml
+          p.tree-sitter-vue
+        ]);
+        type = "lua";
+        config = fromPlugin "treesitter";
       }
     ];
 

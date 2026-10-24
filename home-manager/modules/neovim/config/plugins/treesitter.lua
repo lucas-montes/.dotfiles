@@ -1,5 +1,9 @@
-local ok, treesitter_configs = pcall(require, 'nvim-treesitter.configs')
+local ok, treesitter_configs = xpcall(function()
+  return require("nvim-treesitter.configs")
+end, debug.traceback)
+
 if not ok then
+  vim.api.nvim_err_writeln("nvim-treesitter failed to load:\n" .. tostring(treesitter_configs))
   return
 end
 
