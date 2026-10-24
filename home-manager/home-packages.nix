@@ -1,10 +1,6 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   nixpkgs.config.allowUnfree = true;
   home.packages = [
-    pkgs.gimp
-    pkgs.obs-studio
-    pkgs.audacity
     pkgs.nomacs
     pkgs.xournalpp
     pkgs.nautilus
@@ -30,13 +26,5 @@
     pkgs.networkmanagerapplet
 
     pkgs.yt-dlp
-
-    pkgs.pcsx2
-    pkgs.melonds
-    pkgs.azahar
-    pkgs.lutris
-    pkgs.wineWow64Packages.stable
-    pkgs.winetricks
-    pkgs.gamescope
   ];
 }

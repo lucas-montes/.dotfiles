@@ -2,7 +2,7 @@
   shellAliases = import ./alias.nix;
 in {
   programs.zsh = {
-    enable = true;
+    enable = false;
     enableCompletion = true;
     autosuggestion.enable = false;
     autocd = true;

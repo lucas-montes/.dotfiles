@@ -35,7 +35,7 @@
       };
     };
     jujutsu = {
-      enable = true;
+      enable = false;
       settings = {
         user = {
           inherit email name;

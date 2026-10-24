@@ -1,4 +1,8 @@
-{ pkgs, inputs, ... }: let
+{
+  pkgs,
+  inputs,
+  ...
+}: let
   opencodeConfig = {
     provider = {
       ollama = {
@@ -11,7 +15,10 @@
         models = {
           "qwen2.5-coder:14b" = {
             name = "qwen2.5-coder:14b";
-            limit = { context = 1000000; output = 131072; };
+            limit = {
+              context = 1000000;
+              output = 131072;
+            };
           };
         };
       };
