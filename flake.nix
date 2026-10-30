@@ -1,6 +1,11 @@
 {
   description = "My system configuration";
 
+  nixConfig = {
+    extra-substituters = ["https://cache.numtide.com"];
+    extra-trusted-public-keys = ["niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="];
+  };
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
 
@@ -26,7 +31,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    opencode.url = "github:anomalyco/opencode";
+    opencode.url = "github:numtide/llm-agents.nix";
 
     procurator.url = "github:lucas-montes/procurator/remote-connections";
     bandtrack.url = "github:lucas-montes/bandtrack";
