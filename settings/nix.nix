@@ -2,7 +2,7 @@
   nix = {
     settings = {
       trusted-users = ["lucas"];
-      auto-optimise-store = true;
+      auto-optimise-store = false;
       substituters = [
         "https://cache.nixos.org/"
         "https://nix-community.cachix.org/"

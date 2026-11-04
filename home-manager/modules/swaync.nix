@@ -146,6 +146,28 @@ in {
               }
             ];
           };
+
+          # Picks the power-profiles-daemon profile directly, rather than
+          # cycling, so the current choice is always visible as a label
+          # instead of having to remember where a toggle landed.
+          "menu#power-profiles" = {
+            label = "";
+            position = "right";
+            actions = [
+              {
+                label = "    Performance";
+                command = "powerprofilesctl set performance";
+              }
+              {
+                label = "    Balanced";
+                command = "powerprofilesctl set balanced";
+              }
+              {
+                label = "    Power saver";
+                command = "powerprofilesctl set power-saver";
+              }
+            ];
+          };
         };
       };
     };

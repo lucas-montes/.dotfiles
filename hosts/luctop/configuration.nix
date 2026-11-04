@@ -1,5 +1,4 @@
 {
-  lib,
   pkgs,
   mainUser,
   stateVersion,
@@ -95,8 +94,10 @@
   # hardware.tuxedo-control-center.enable = true;
 
   services = {
+    # Allows to change the power-policy of the cpu
+    power-profiles-daemon.enable = true;
     # Cleans the ssd/nvme drive from unused blocks, to keep it healthy and fast
-    fstrim.enable = true;
+    fstrim.enable = false; # not needed anymore: disabled services.zfs.trim.enable in favor of continuous autotrim in disko.nix
     xserver.xkb = {
       layout = "us";
       variant = "";
