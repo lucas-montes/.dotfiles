@@ -818,11 +818,11 @@
         "sce": "sce"
       },
       "locked": {
-        "lastModified": 1793362589,
-        "narHash": "sha256-qwKSdCywTyg10J86qA3UOzHaXUEEWw/suUes9ISQy30=",
+        "lastModified": 1793724195,
+        "narHash": "sha256-EfoNqA6Xp0+4YPMUqaUFyzYRG0QA49nTMglcKAnfrIY=",
         "owner": "lucas-montes",
         "repo": "maia",
-        "rev": "f5d0c668f7ca43e111793e0a298a3f2e24478a88",
+        "rev": "804ca2756d09b6079f4d6e5814e094d36c5f51b1",
         "type": "github"
       },
       "original": {

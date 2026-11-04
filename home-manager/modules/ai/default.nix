@@ -1,1 +1,1 @@
-{imports = [./opencode.nix];}
+{imports = [./opencode.nix ./claude.nix];}
