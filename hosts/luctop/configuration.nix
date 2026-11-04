@@ -19,12 +19,17 @@
     # linuxPackages_latest can move past ZFS's supported kernel range and break evaluation.
     kernelPackages = pkgs.linuxPackages_7_2;
 
-    # NOTE: this is a trick to speed up compilation and some things that might require read and write to files, we keep some things in RAM instead of disk, but it might cause some issues with some programs that expect to write to /tmp or /var/tmp
-    # and we would move something like export CARGO_TARGET_DIR=/tmp/shackle-target
-    # tmp = {
-    #   useTmpfs = true;
-    #   tmpfsSize = "8G";
-    # };
+    # /tmp in RAM speeds up compilation (object files, cargo/go build dirs
+    # avoid ZFS writes) and pairs with the zram tuning in zram.nix, which
+    # deliberately favors pushing cold pages into zram swap over evicting
+    # the page cache under this kind of memory pressure. Capped at 8G so a
+    # build that fills it can't starve the rest of the system; programs that
+    # expect to write large or persistent things to /tmp or /var/tmp (e.g.
+    # export CARGO_TARGET_DIR=/tmp/shackle-target) should point elsewhere.
+    tmp = {
+      useTmpfs = true;
+      tmpfsSize = "8G";
+    };
 
     # AMDGPU specific kernel parameters to help with stability
     kernelParams = [
