@@ -8,9 +8,14 @@
         "position" = "top";
         modules-left = ["custom/maia"];
         modules-center = ["clock"];
-        modules-right = ["group/hardware" "power-profiles-daemon" "network" "hyprland/language" "battery"];
-
-        "hyprland/language" = {format = "{short} {variant}";};
+        modules-right = [
+          "group/hardware"
+          "network"
+          "pulseaudio"
+          "battery"
+          "power-profiles-daemon"
+          "bluetooth"
+        ];
 
         "custom/maia" = {
           exec = "$HOME/Projects/maia/target/debug/cli waybar";
@@ -90,6 +95,27 @@
             balanced = "";
             power-saver = "";
           };
+        };
+
+        "pulseaudio" = {
+          format = "{icon} {volume}%";
+          format-muted = "󰖁 Muted";
+          format-icons = {
+            default = ["󰕿" "󰖀" "󰕾"];
+          };
+          on-click = "pavucontrol";
+          tooltip = true;
+        };
+
+        "bluetooth" = {
+          format = "";
+          format-disabled = "󰂲";
+          format-off = "󰂲";
+          format-connected = " {num_connections}";
+          tooltip-format = "{controller_alias}\t{controller_address}";
+          tooltip-format-connected = "{controller_alias}\t{controller_address}\n\n{device_enumerate}";
+          tooltip-format-enumerate-connected = "{device_alias}\t{device_address}";
+          on-click = "blueman-manager";
         };
 
         "network" = {

@@ -3,7 +3,7 @@
   inputs,
   ...
 }: let
-  opencode2 = inputs.opencode.packages.${pkgs.system}.opencode2;
+  opencode2 = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.opencode2;
   # numtide's llm-agents.nix ships OpenCode 2 as "opencode2"; keep the plain
   # "opencode" command name as a symlinked wrapper.
   opencode2Wrapped = pkgs.symlinkJoin {

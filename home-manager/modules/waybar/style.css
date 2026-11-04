@@ -49,11 +49,12 @@ tooltip label {
 }
 
 #custom-maia,
-#language,
 #network,
 #battery,
 #hardware,
 #power-profiles-daemon,
+#pulseaudio,
+#bluetooth,
 #clock {
     color: #dfdfdf;
     padding: 0px 10px;
