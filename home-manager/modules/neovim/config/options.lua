@@ -2,6 +2,10 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- Bytecode-cache Lua module loads (replaces impatient.nvim). Must run before
+-- any plugin require() to cache their modules too.
+vim.loader.enable()
+
 -- [[ Setting options from nvf ]]
 -- Disable backup, swap, and writebackup files
 vim.o.backup = false
@@ -11,7 +15,7 @@ vim.o.swapfile = false
 vim.o.directory = "/tmp"
 vim.o.backupdir = "/tmp"
 
--- Line wrapping disabled (nvf: wrap = false)
+-- Line wrapping enabled (overrides nvf's default of wrap = false)
 vim.o.wrap = true
 
 -- Indent settings from nvf
@@ -57,9 +61,12 @@ vim.o.softtabstop = 4
 -- stops line wrapping from being confusing
 vim.o.breakindent = true
 
--- Save undo history
+-- Save undo history. Kept out of /tmp (unlike swap/backup above) since the
+-- point of undofile is to survive across reboots, which a tmpfs /tmp won't.
 vim.o.undofile = true
-vim.o.undodir = "/tmp"
+local undodir = vim.fn.stdpath("state") .. "/undo"
+vim.fn.mkdir(undodir, "p")
+vim.o.undodir = undodir
 
 -- Case-insensitive searching UNLESS \C or capital in search
 vim.o.ignorecase = true

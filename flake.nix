@@ -39,8 +39,6 @@
   outputs = {nixpkgs, ...} @ inputs: let
     mainUser = "lucas";
     stateVersion = "25.05";
-    system = "x86_64-linux";
-    pkgs = nixpkgs.legacyPackages.${system};
   in {
     # Used by `nix flake init -t <flake>#<name>`
     templates = {

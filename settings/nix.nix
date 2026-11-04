@@ -1,15 +1,9 @@
 {pkgs, ...}: {
   nix = {
     settings = {
-      trusted-users = ["lucas"];
+      trusted-users = ["@wheel"];
       auto-optimise-store = false;
       substituters = [
-        "https://cache.nixos.org/"
-        "https://nix-community.cachix.org/"
-        "https://hyprland.cachix.org"
-        "https://cache.numtide.com"
-      ];
-      trusted-substituters = [
         "https://cache.nixos.org/"
         "https://nix-community.cachix.org/"
         "https://hyprland.cachix.org"

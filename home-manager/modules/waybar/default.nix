@@ -75,7 +75,10 @@
         };
 
         "temperature" = {
-          "hwmon-path-abs" = "/sys/devices/platform/coretemp.0/hwmon";
+          # k10temp (AMD) lives on the SMU's PCI function, not a stable
+          # platform device like Intel's coretemp. 0000:00:18.3 is the SMU
+          # function address on this host.
+          "hwmon-path-abs" = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";
           "input-filename" = "temp1_input";
           "critical-threshold" = 80;
           "format" = " {temperatureC}°C";

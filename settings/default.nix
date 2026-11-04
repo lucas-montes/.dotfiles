@@ -1,6 +1,5 @@
 {
   imports = [
-    ./amd.nix
     ./audio.nix
     ./bluetooth.nix
     ./boot.nix
@@ -15,4 +14,8 @@
     ./user.nix
     ./zram.nix
   ];
+
+  # GPU-specific modules (amd.nix, nvidia.nix) are imported per-host, not
+  # here, since the two hosts sharing this file have different GPUs.
+  nixpkgs.config.allowUnfree = true;
 }
