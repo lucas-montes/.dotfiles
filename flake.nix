@@ -28,7 +28,7 @@
 
     opencode.url = "github:numtide/llm-agents.nix";
 
-    procurator.url = "github:lucas-montes/procurator/remote-connections";
+    procurator.url = "github:lucas-montes/procurator";
     bandtrack.url = "github:lucas-montes/bandtrack";
 
     maia = {
