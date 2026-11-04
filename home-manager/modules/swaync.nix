@@ -64,7 +64,6 @@ in {
         "title"
         "volume"
         "backlight"
-        "menubar"
         "buttons-grid"
         "inhibitors"
         "dnd"
@@ -122,53 +121,6 @@ in {
         };
 
         volume = {label = "";};
-
-        menubar = {
-          "menu#power-buttons" = {
-            label = "";
-            position = "right";
-            actions = [
-              {
-                label = "    Reboot";
-                command = "systemctl reboot";
-              }
-              {
-                label = "    Lock";
-                command = "loginctl lock-session $XDG_SESSION_ID";
-              }
-              {
-                label = "    Logout";
-                command = "loginctl terminate-session $XDG_SESSION_ID";
-              }
-              {
-                label = "    Shut down";
-                command = "systemctl poweroff";
-              }
-            ];
-          };
-
-          # Picks the power-profiles-daemon profile directly, rather than
-          # cycling, so the current choice is always visible as a label
-          # instead of having to remember where a toggle landed.
-          "menu#power-profiles" = {
-            label = "";
-            position = "right";
-            actions = [
-              {
-                label = "    Performance";
-                command = "powerprofilesctl set performance";
-              }
-              {
-                label = "    Balanced";
-                command = "powerprofilesctl set balanced";
-              }
-              {
-                label = "    Power saver";
-                command = "powerprofilesctl set power-saver";
-              }
-            ];
-          };
-        };
       };
     };
   };

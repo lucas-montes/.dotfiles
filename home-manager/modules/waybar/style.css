@@ -53,6 +53,7 @@ tooltip label {
 #network,
 #battery,
 #hardware,
+#power-profiles-daemon,
 #clock {
     color: #dfdfdf;
     padding: 0px 10px;

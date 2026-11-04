@@ -31,7 +31,6 @@
 .widget-volume,
 .widget-backlight,
 .widget-buttons-grid,
-.widget-menubar,
 .control-center-list > box > *:not(.widget-title) {
   background-color: @module_bg;
   border-radius: 12px;
@@ -47,12 +46,6 @@
 
 .widget-buttons-grid {
   padding: 12px;
-}
-
-.widget-menubar {
-  padding: 16px;
-  display: flex;
-  justify-content: center;
 }
 
 .control-center > box > *:last-child {
@@ -238,88 +231,6 @@ scale slider {
 
 .widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked:hover {
   background-color: @accent_color_hover;
-}
-
-/* ── 6b. Menubar - single centered dropdown ──────────────────────────── */
-.widget-menubar > box > .menu-button-bar {
-  margin: 0;
-  display: flex;
-  justify-content: center;
-}
-
-.widget-menubar > box > .menu-button-bar > .widget-menubar-container {
-  margin: 0 8px;
-}
-
-.widget-menubar > box > .menu-button-bar > .widget-menubar-container button {
-  background-color: @button_bg;
-  border: 1px solid @border_medium;
-  border-radius: 12px;
-  padding: 12px 24px;
-  margin: 0;
-  min-width: 48px;
-  min-height: 48px;
-  font-size: 18px;
-  transition: background-color 0.15s ease;
-}
-
-.widget-menubar > box > .menu-button-bar > .widget-menubar-container button:hover {
-  background-color: @button_hover_bg;
-}
-
-.widget-menubar .widget-menubar-item {
-  padding: 8px 0;
-}
-
-popover.background {
-  background-color: @module_bg;
-  border: 1px solid @border_medium;
-  border-radius: 12px;
-  padding: 8px;
-}
-
-popover.background menu,
-popover.background modelbutton {
-  background-color: transparent;
-  border-radius: 10px;
-}
-
-popover modelbutton {
-  padding: 14px 20px;
-  margin: 6px 8px;
-  border-radius: 10px;
-  transition: background-color 0.15s ease;
-}
-
-popover modelbutton:hover,
-popover modelbutton:focus {
-  background-color: @module_hover_bg;
-}
-
-popover modelbutton image {
-  margin-right: 0;
-  min-width: 0;
-  min-height: 0;
-  opacity: 0;
-}
-
-popover modelbutton label {
-  margin-left: 0;
-  padding-left: 0;
-}
-
-.widget-menubar .widget-menubar-item box image {
-  margin-right: 0;
-  min-width: 0;
-  min-height: 0;
-  opacity: 0;
-}
-
-.widget-menubar > box > .menu-button-bar > .widget-menubar-container button image {
-  margin-right: 0;
-  min-width: 0;
-  min-height: 0;
-  opacity: 0;
 }
 
 /* ── 7. Notification Center ─────────────────────────────────────── */

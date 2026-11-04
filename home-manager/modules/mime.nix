@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  config,
+  ...
+}: let
   apps = {
     "text/markdown" = "nvim.desktop";
     "text/plain" = "nvim.desktop";
@@ -42,6 +46,13 @@ in {
   xdg = {
     enable = true;
     mime.enable = true;
+    userDirs = {
+      enable = true;
+      createDirectories = true;
+      extraConfig = {
+        XDG_SCREENSHOTS_DIR = "${config.home.homeDirectory}/Pictures/Screenshots";
+      };
+    };
     desktopEntries = {
       zathura = createEntry "zathura";
       nomacs = createEntry "nomacs";

@@ -8,7 +8,7 @@
         "position" = "top";
         modules-left = ["custom/maia"];
         modules-center = ["clock"];
-        modules-right = ["group/hardware" "network" "hyprland/language" "battery"];
+        modules-right = ["group/hardware" "power-profiles-daemon" "network" "hyprland/language" "battery"];
 
         "hyprland/language" = {format = "{short} {variant}";};
 
@@ -79,6 +79,17 @@
         "group/hardware" = {
           "orientation" = "horizontal";
           "modules" = ["cpu" "memory" "disk" "temperature"];
+        };
+
+        "power-profiles-daemon" = {
+          format = "{icon}";
+          tooltip-format = "Power profile: {profile}\nClick to cycle";
+          format-icons = {
+            default = "";
+            performance = "";
+            balanced = "";
+            power-saver = "";
+          };
         };
 
         "network" = {
