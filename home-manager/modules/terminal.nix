@@ -12,6 +12,7 @@
           "ctrl+s>j=goto_split:bottom"
           "ctrl+s>l=goto_split:right"
           "ctrl+s>c=new_split:right"
+          "ctrl+s>x=close_surface"
           "ctrl+s>enter=toggle_split_zoom"
         ];
         gtk-tabs-location = "hidden";
