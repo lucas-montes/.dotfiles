@@ -48,7 +48,7 @@ tooltip label {
     margin-right: 5px;
 }
 
-#custom-maia,
+#custom-agenda,
 #network,
 #battery,
 #hardware,
@@ -66,6 +66,12 @@ tooltip label {
         background-color: #000000;
     }
 }
+
+#custom-agenda { padding: 0px 10px; }
+#custom-agenda.overdue { color: #f38ba8; font-weight: bold; }
+#custom-agenda.due-today { color: #f9e2af; }
+#custom-agenda.meeting { color: #89b4fa; }
+#custom-agenda.clear { color: #a6e3a1; }
 
 #battery.critical:not(.charging) {
     color: #f53c3c;

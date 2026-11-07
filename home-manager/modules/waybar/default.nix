@@ -1,4 +1,8 @@
-{lib, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   programs.waybar = {
     enable = true;
     style = lib.mkAfter (builtins.readFile ./style.css);
@@ -6,7 +10,7 @@
       {
         "layer" = "top";
         "position" = "top";
-        modules-left = ["custom/maia"];
+        modules-left = ["custom/agenda"];
         modules-center = ["clock"];
         modules-right = [
           "group/hardware"
@@ -17,11 +21,15 @@
           "bluetooth"
         ];
 
-        "custom/maia" = {
-          exec = "$HOME/Projects/maia/target/debug/cli waybar";
-          format = "  {}";
+        "custom/agenda" = {
+          # Home for the curl+jq one-liner against maia's GET /agenda
+          # (server/context/waybar-agenda.md). Wrapping the checked-in file with
+          # writeShellScript guarantees it is executable in the store —
+          # referencing ${./agenda.sh} directly only works if git tracks the
+          # exec bit.
+          exec = "${pkgs.writeShellScript "waybar-agenda" (builtins.readFile ./agenda.sh)}";
+          return-type = "json"; # script emits {"text","tooltip","class"}
           interval = 60;
-          tooltip = true;
         };
 
         battery = {
@@ -38,7 +46,7 @@
           max-length = 25;
         };
 
-        "clock" = {
+        clock = {
           format = "  {:%A - %B | %d/%m/%Y - %R}";
           tooltip = true;
           tooltip-format = "<tt><small>{calendar}</small></tt>";
@@ -74,7 +82,7 @@
           "path" = "/";
         };
 
-        "temperature" = {
+        temperature = {
           # k10temp (AMD) lives on the SMU's PCI function, not a stable
           # platform device like Intel's coretemp. 0000:00:18.3 is the SMU
           # function address on this host.
@@ -110,18 +118,19 @@
           tooltip = true;
         };
 
-        "bluetooth" = {
-          format = "";
-          format-disabled = "󰂲";
+        bluetooth = {
+          format = "󰂯";
+          format-on = "󰂯";
           format-off = "󰂲";
-          format-connected = " {num_connections}";
+          format-disabled = "󰂲";
+          format-connected = "󰂱 {num_connections}";
           tooltip-format = "{controller_alias}\t{controller_address}";
           tooltip-format-connected = "{controller_alias}\t{controller_address}\n\n{device_enumerate}";
           tooltip-format-enumerate-connected = "{device_alias}\t{device_address}";
           on-click = "blueman-manager";
         };
 
-        "network" = {
+        network = {
           format = "{icon} {ipaddr}";
           format-wifi = "{icon} {signalStrength}%";
           format-ethernet = "{icon} {ipaddr}";
