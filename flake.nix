@@ -26,13 +26,21 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    opencode.url = "github:numtide/llm-agents.nix";
+    llm-agents.url = "github:numtide/llm-agents.nix";
 
-    procurator.url = "github:lucas-montes/procurator";
-    bandtrack.url = "github:lucas-montes/bandtrack";
+    procurator = {
+      url = "github:lucas-montes/procurator";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    bandtrack = {
+      url = "github:lucas-montes/bandtrack";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     maia = {
       url = "github:lucas-montes/maia";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
