@@ -1,6 +1,26 @@
-{
+{pkgs, ...}: let
+  cyclePowerProfile = pkgs.writeShellApplication {
+    name = "cycle-power-profile";
+    runtimeInputs = [pkgs.power-profiles-daemon pkgs.libnotify];
+    text = ''
+      profiles=(performance balanced power-saver)
+      current=$(powerprofilesctl get)
+      next=performance
+      for i in "''${!profiles[@]}"; do
+        if [ "''${profiles[$i]}" = "$current" ]; then
+          next=''${profiles[$(( (i + 1) % ''${#profiles[@]} ))]}
+        fi
+      done
+      powerprofilesctl set "$next"
+      notify-send -t 1500 "Power profile" "$next"
+    '';
+  };
+in {
+  home.packages = [cyclePowerProfile];
+
   wayland.windowManager.hyprland.settings = {
     bind = [
+      ", F3, exec, cycle-power-profile"
       "$mainMod,       T, exec, $terminal"
       "$mainMod,       V, exec, code"
       "$mainMod,       B, exec, $browser"
