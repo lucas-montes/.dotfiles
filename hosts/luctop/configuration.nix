@@ -96,6 +96,17 @@
   # TODO: maybe worth testing again the tuxedo control center
   # hardware.tuxedo-control-center.enable = true;
 
+  # power-profiles-daemon has no AC/battery awareness of its own; these udev
+  # rules call powerprofilesctl whenever the Mains supply's online state
+  # changes, covering both hotplug (unplug/plug) and the coldplug "add" event
+  # udev replays at boot for whatever the state already is. RUN+= runs
+  # synchronously as root against the system bus, which is where
+  # power-profiles-daemon lives, so no session bus access is needed.
+  services.udev.extraRules = ''
+    SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="1", RUN+="${pkgs.power-profiles-daemon}/bin/powerprofilesctl set performance"
+    SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ATTR{online}=="0", RUN+="${pkgs.power-profiles-daemon}/bin/powerprofilesctl set balanced"
+  '';
+
   services = {
     # Allows to change the power-policy of the cpu
     power-profiles-daemon.enable = true;
