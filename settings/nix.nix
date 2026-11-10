@@ -19,6 +19,15 @@
       warn-dirty = false;
       keep-outputs = false;
       keep-derivations = false;
+
+      # A stalled substituter (e.g. cache.numtide.com under load) otherwise
+      # hangs each download attempt for its full 300s default before even
+      # trying the next of the 5 default attempts -- up to 25 minutes wasted
+      # on one nar. Fail fast and let nix move on (retry, fall back to
+      # another substituter, or build locally) instead.
+      connect-timeout = 5;
+      stalled-download-timeout = 20;
+      download-attempts = 3;
     };
     optimise.automatic = true;
     package = pkgs.nixVersions.stable;
